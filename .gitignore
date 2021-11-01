@@ -1,1 +1,6 @@
 #gitignore for parent directory of devops-netology project
+# файлы из IDE Pycharm:
+profiles_settings.xml
+modules.xml
+misc.xml
+vcs.xml
