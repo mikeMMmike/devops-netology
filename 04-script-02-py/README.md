@@ -123,7 +123,6 @@ while True:
         check = socket.gethostbyname(ns)
         if check != ip:
             ns2ip[ns] = str(check)
-            type(ip)
             print(f'[ERROR] {ns} IP mismatch: {ip} New IP: {check}')
         else:
             print(f'{ns} - {ip}')
