@@ -53,18 +53,42 @@
 
 Ответ.
 -----
+
 * VirtualBox:
+```bash
+mike@make-lptp:~$ VBoxManage -v
+5.1.38_Ubuntur122592
+```
+
+* Vagrant:
+```bash
+mike@make-lptp:~$ vagrant -v
+Vagrant 2.2.19
+```
+
+* Ansible:
+```bash
+
+```
+
+
+Делаю ДЗ на рабочем ПК под ОС Windows. выяснилось, что Ansible под Windows нет.
+Ниже версии гипервизора и Vagrant с рбочего ПК. Выше указаны версии с ноутбука на Linux.
+использовал его для решения задачи с Ansible
+
+* VirtualBox Windows:
 ```bash
 PS C:\Program Files\Oracle\VirtualBox> .\VBoxManage -v
 6.1.28r147628
 ```
-* Vagrant:
+* Vagrant Windows:
 ```bash
 PS C:\Program Files\Oracle\VirtualBox> vagrant -v
 Vagrant 2.2.19
 ```
-* Ansible
-```bash
+* Ansible Windows:
+```
+под Windows нет. вроде бы есть под WSL, но это не точно
 ```
 
 Задача 4 (*)
