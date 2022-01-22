@@ -57,24 +57,27 @@
 * VirtualBox:
 ```bash
 mike@make-lptp:~$ VBoxManage -v
-5.1.38_Ubuntur122592
+6.1.26_Ubuntur145957
 ```
 
 * Vagrant:
 ```bash
-mike@make-lptp:~$ vagrant -v
-Vagrant 2.2.19
+root@ORN-IT001:/home/mike# vagrant -v
+Vagrant 2.2.6
 ```
 
 * Ansible:
 ```bash
-
+root@ORN-IT001:/home/mike# ansible --version
+ansible 2.9.6
 ```
 
 
 Делаю ДЗ на рабочем ПК под ОС Windows. выяснилось, что Ansible под Windows нет.
-Ниже версии гипервизора и Vagrant с рбочего ПК. Выше указаны версии с ноутбука на Linux.
-использовал его для решения задачи с Ansible
+Ниже версии гипервизора и Vagrant с рабочего ПК. Выше указаны версии ПО в WSL.
+использовал его для решения задачи с установкой Ansible. Позже установлю роль 
+Hyper-V, разверну в ней виртуалку с Ubuntu для использования ansible. По причине
+отсутствия Ansible в Windows не смогу прямо сейчас сделать ДЗ со звездочкой.  
 
 * VirtualBox Windows:
 ```bash
@@ -88,7 +91,7 @@ Vagrant 2.2.19
 ```
 * Ansible Windows:
 ```
-под Windows нет. вроде бы есть под WSL, но это не точно
+под Windows нет. есть под WSL. Версию в WLS указал выше.
 ```
 
 Задача 4 (*)
@@ -100,5 +103,9 @@ Vagrant 2.2.19
 docker ps
 
 ```
+К сожалению, в WSL vagrant работает не корректно. по какой-то причине при вызове в WSL 
+команды Vagrant Up система кажет ошибку запуска powershell. возможно является особенностью
+работы WSL. в целом, задача повторения практики с лекции не сложная, т.к. доступны все ресурсы
+для ее воспроизведения.
 
 ```
