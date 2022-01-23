@@ -399,4 +399,47 @@ root@vagrant:/home/vagrant/scripts# bash ./certscript.sh
 root@vagrant:/home/vagrant/scripts# date
 Sun 23 Jan 2022 10:07:28 PM +05
 ```
-Перезагрузим страницу сайта https://test.netology.ru и проверим сертификат. Сертификат перевыпущен и используется web сервером. [Скриншот]() 
+Перезагрузим страницу сайта https://test.netology.ru и проверим сертификат. Сертификат перевыпущен и используется web сервером. [Скриншот ScriptWorksToo.PNG](https://github.com/mikeMMmike/devops-netology/blob/main/pcs-devsys-diplom/ScriptWorksToo.PNG). Можно переходить к следующему заданию.
+
+**10. Поместите скрипт в crontab, чтобы сертификат обновлялся какого-то числа каждого месяца в удобное для вас время.**
+
+Ответ.
+
+Создадим новый crontab файл для исполнения. Добавим для исполнения в ближайшее время скрипт перевыпуска сертификата с запуском каждый месяц c выводом результата работы в логфайл и перезапустим демон cron:
+```bash
+root@vagrant:/home/vagrant/scripts# crontab -e
+no crontab for root - using an empty one
+
+Select an editor.  To change later, run 'select-editor'.
+  1. /bin/nano        <---- easiest
+  2. /usr/bin/vim.basic
+  3. /usr/bin/vim.tiny
+  4. /bin/ed
+
+Choose 1-4 [1]: 1
+crontab: installing new crontab
+crontab: installing new crontab
+root@vagrant:/home/vagrant/scripts# service cron restart
+```
+Содержание файла crontab. Буквально - запустить в 0:33 24 числа каждого месяца в любой день недели скрипт на исполнение с выводом stdout в файл лога:
+```
+33 0 24 * * bash /home/vagrant/scripts/certscript.sh >> /home/vagrant/scripts/certscript.log
+```
+В ходе тестирования запуска скрипта из crontab выяснилось, что без экспорта переменных окружения Vault не создает сертификат. У меня было предположение, что потребуется экспорт переменных окружения Vault, но на предыдущих этапах не столкнулся с такой необходимостью. Добавил экспорт переменных окружения Vault в скрипт перевыпуска сертификатов:
+```bash
+#!/bin/bash
+#Export an environment variable for the vault
+export VAULT_ADDR=http://127.0.0.1:8200
+export VAULT_TOKEN=root
+#create certificate
+vault write -format=json pki_int/issue/netology-dot-ru common_name="test.netology.ru" ttl="720h" > /etc/ssl/test.netology.ru.crt
+#create certificates for web server
+cat /etc/ssl/test.netology.ru.crt | jq -r '.data.certificate' > /etc/ssl/test.netology.ru.crt.pem
+cat /etc/ssl/test.netology.ru.crt | jq -r '.data.ca_chain[ ]' >> /etc/ssl/test.netology.ru.crt.pem
+cat /etc/ssl/test.netology.ru.crt | jq -r '.data.private_key' > /etc/ssl/test.netology.ru.crt.key
+cp /etc/ssl/test.netology.ru.crt.pem /etc/ssl/test.netology.ru.cert.crt
+#restart web server
+systemctl restart nginx.service
+```
+
+Для демонстрации сделал еще 1 скриншот, показывающий, что веб-сервер работает; страница в браузере загружена по протоколу HTTPS с применением сертификата, перевыпущенного при помощи crontab (время запуска задания в chon и дата создания файла открытого ключа совпадают): [wellDone.PNG](https://github.com/mikeMMmike/devops-netology/blob/main/pcs-devsys-diplom/wellDone.PNG) 
