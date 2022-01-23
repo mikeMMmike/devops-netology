@@ -310,6 +310,8 @@ vagrant@vagrant:~$ vault write -format=json pki_int/issue/netology-dot-ru common
 root@vagrant:/etc/ssl# cat /etc/ssl/test.netology.ru.crt | jq -r '.data.certificate' > /etc/ssl/test.netology.ru.crt.pem
 root@vagrant:/etc/ssl# cat /etc/ssl/test.netology.ru.crt | jq -r '.data.ca_chain[ ]' >> /etc/ssl/test.netology.ru.crt.pem
 root@vagrant:/etc/ssl# cat /etc/ssl/test.netology.ru.crt | jq -r '.data.private_key' > /etc/ssl/test.netology.ru.crt.key
+root@vagrant:/etc/ssl# cp /etc/ssl/test.netology.ru.crt.pem /etc/ssl/test.netology.ru.cert.crt
+
 ```
 
 **5. Установите корневой сертификат созданного центра сертификации в доверенные в хостовой системе.**
@@ -358,6 +360,43 @@ root@vagrant:/etc/nginx# systemctl restart nginx.service
 ```
 127.0.0.1	test.netology.ru
 ```
-Проверяем работу в браузере страницу https://test.netology.ru/. Работает! Файл скриншота [itWorks.PNG](https://github.com/mikeMMmike/devops-netology/blob/main/pcs-devsys-diplom/itWorks.PNG)
+Проверяем работу, открыв в браузере страницу https://test.netology.ru/. Работает! Файл скриншота [itWorks.PNG](https://github.com/mikeMMmike/devops-netology/blob/main/pcs-devsys-diplom/itWorks.PNG)
 
+**9. Создайте скрипт, который будет генерировать новый сертификат в vault:**
+* **генерируем новый сертификат так, чтобы не переписывать конфиг nginx;**
+* **перезапускаем nginx для применения нового сертификата.**
 
+Ответ.
+Создадим директорию scripts в домашней директории и перейдем в нее:
+```bash
+root@vagrant:/home/vagrant# mkdir ./scripts
+root@vagrant:/home/vagrant# cd ./scripts/
+```
+Создадим файл скрипта с содержимым и назначим файл исполняемым:
+```bash
+root@vagrant:/home/vagrant/scripts# touch certscript.sh
+root@vagrant:/home/vagrant/scripts# chmod +x ./certscript.sh
+```
+Отредактируем файл, приведя его в соответствие с решаемой задачей:
+```bash
+root@vagrant:/home/vagrant/scripts# nano certscript.sh
+#!/bin/bash
+#create certificate
+vault write -format=json pki_int/issue/netology-dot-ru common_name="test.netology.ru" ttl="720h" > /etc/ssl/test.netology.ru.crt
+#create certificates for web server
+cat /etc/ssl/test.netology.ru.crt | jq -r '.data.certificate' > /etc/ssl/test.netology.ru.crt.pem
+cat /etc/ssl/test.netology.ru.crt | jq -r '.data.ca_chain[ ]' >> /etc/ssl/test.netology.ru.crt.pem
+cat /etc/ssl/test.netology.ru.crt | jq -r '.data.private_key' > /etc/ssl/test.netology.ru.crt.key
+cp /etc/ssl/test.netology.ru.crt.pem /etc/ssl/test.netology.ru.cert.crt
+#restart web server
+systemctl restart nginx.service
+```
+Проверим работу скрипта с указанием даты:
+```bash
+root@vagrant:/home/vagrant/scripts# date
+Sun 23 Jan 2022 10:06:51 PM +05
+root@vagrant:/home/vagrant/scripts# bash ./certscript.sh
+root@vagrant:/home/vagrant/scripts# date
+Sun 23 Jan 2022 10:07:28 PM +05
+```
+Перезагрузим страницу сайта https://test.netology.ru и проверим сертификат. Сертификат перевыпущен и используется web сервером. [Скриншот]() 
