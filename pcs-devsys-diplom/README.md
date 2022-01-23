@@ -239,7 +239,7 @@ You may need to set the following environment variable:
 The unseal key and root token are displayed below in case you want to
 seal/unseal the Vault or re-authenticate.
 
-Unseal Key: jn8MhEv3oCWGpnEefB9z7N8OyXt6AK9LE9iNRChvt7c=
+Unseal Key: blah-blah-blah
 Root Token: root
 
 Development mode should NOT be used in production installations!
@@ -315,7 +315,7 @@ root@vagrant:/etc/ssl# cat /etc/ssl/test.netology.ru.crt | jq -r '.data.private_
 **5. Установите корневой сертификат созданного центра сертификации в доверенные в хостовой системе.**
 
 Ответ.
-Корневой сертификат ЦС Vault скопировали на хост и установили в хранилище Доверенных корневых ЦС [скрин CA.PNG]() 
+Корневой сертификат ЦС Vault скопировали на хост и установили в хранилище Доверенных корневых ЦС [скрин CA.PNG](https://github.com/mikeMMmike/devops-netology/blob/main/pcs-devsys-diplom/CA.PNG) 
 
 **6. Установите nginx.**
 
@@ -358,6 +358,6 @@ root@vagrant:/etc/nginx# systemctl restart nginx.service
 ```
 127.0.0.1	test.netology.ru
 ```
-Проверяем работу в браузере страницу https://test.netology.ru/. Работает! Файл скриншота [itWorks.PNG]()
+Проверяем работу в браузере страницу https://test.netology.ru/. Работает! Файл скриншота [itWorks.PNG](https://github.com/mikeMMmike/devops-netology/blob/main/pcs-devsys-diplom/itWorks.PNG)
 
 
