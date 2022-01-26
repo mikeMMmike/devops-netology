@@ -150,6 +150,87 @@ test: digest: sha256:1ec8143585a975c672a3ded4cdab7ae0afbf707cdc2fd9706ebbc5a834c
 
 Задача 3
 =======
+* Запустите первый контейнер из образа centos c любым тэгом в фоновом режиме, подключив папку /data из текущей рабочей директории на хостовой машине в /data контейнера;
+* Запустите второй контейнер из образа debian в фоновом режиме, подключив папку /data из текущей рабочей директории на хостовой машине в /data контейнера;
+* Подключитесь к первому контейнеру с помощью docker exec и создайте текстовый файл любого содержания в /data;
+* Добавьте еще один файл в папку /data на хостовой машине;
+* Подключитесь во второй контейнер и отобразите листинг и содержание файлов в /data контейнера.
+
 
 Ответ
 ------
+Запустите первый контейнер из образа centos c любым тэгом в фоновом режиме, подключив папку /data из текущей рабочей директории на хостовой машине в /data контейнера;
+
+```bash
+root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker/docker# docker pull centos:centos8.4.2105
+centos8.4.2105: Pulling from library/centos
+a1d0c7532777: Pull complete 
+Digest: sha256:a27fd8080b517143cbbbab9dfb7c8571c40d67d534bbdee55bd6c473f432b177
+Status: Downloaded newer image for centos:centos8.4.2105
+docker.io/library/centos:centos8.4.2105
+
+root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker/docker# docker images
+REPOSITORY                       TAG               IMAGE ID       CREATED        SIZE
+ubuntu-nginx-devops              test              8d7247403e7b   3 hours ago    171MB
+mikemmmike/ubuntu-nginx-devops   test              8d7247403e7b   3 hours ago    171MB
+ubuntu-nginx-devops              latest            3883be43da96   4 hours ago    171MB
+ubuntu/nginx                     1.18-21.10_beta   2b4ebbe96785   12 days ago    136MB
+ubuntu/nginx                     latest            2b4ebbe96785   12 days ago    136MB
+centos                           centos8.4.2105    5d0da3dc9764   4 months ago   231MB
+
+root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker/docker# docker run -it -v /home/mike/devops/05-virt-03-docker/data:/tmp/data 5d0da3dc9764 bash
+[root@db77e4c008d8 /]#
+ctrl+p ctrl+q
+```
+
+Запустите второй контейнер из образа debian в фоновом режиме, подключив папку /data из текущей рабочей директории на хостовой машине в /data контейнера:
+```bash
+root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker/docker# docker pull debian
+Using default tag: latest
+latest: Pulling from library/debian
+0e29546d541c: Pull complete 
+Digest: sha256:2906804d2a64e8a13a434a1a127fe3f6a28bf7cf3696be4223b06276f32f1f2d
+Status: Downloaded newer image for debian:latest
+docker.io/library/debian:latest
+root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker/docker# docker images
+REPOSITORY                       TAG               IMAGE ID       CREATED        SIZE
+mikemmmike/ubuntu-nginx-devops   test              8d7247403e7b   3 hours ago    171MB
+ubuntu-nginx-devops              test              8d7247403e7b   3 hours ago    171MB
+ubuntu-nginx-devops              latest            3883be43da96   4 hours ago    171MB
+ubuntu/nginx                     1.18-21.10_beta   2b4ebbe96785   12 days ago    136MB
+ubuntu/nginx                     latest            2b4ebbe96785   12 days ago    136MB
+debian                           latest            6f4986d78878   5 weeks ago    124MB
+centos                           centos8.4.2105    5d0da3dc9764   4 months ago   231MB
+root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker/docker# docker run -it -v /home/mike/devops/05-virt-03-docker/data:/tmp/data 6f4986d78878 bash
+```
+
+Подключитесь к первому контейнеру с помощью docker exec и создайте текстовый файл любого содержания в /data
+```bash
+root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker/docker# `docker exec -it db77e4c008d8 bash`
+[root@db77e4c008d8 /]# echo "this message from centos container" > /tmp/data/centos_file.txt
+[root@db77e4c008d8 /]# ls /tmp/data/
+centos_file.txt
+ctrl+p ctrl+q
+```
+
+Добавьте еще один файл в папку /data на хостовой машине
+```bash
+root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker/docker# echo "this is file from host" > ./data/host_file.txt
+root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker/docker# ls ./data/
+host_file.txt
+```
+
+Подключитесь во второй контейнер и отобразите листинг и содержание файлов в /data контейнера.
+```bash
+oot@mike-VirtualBox:/home/mike/devops/05-virt-03-docker/docker# docker ps
+CONTAINER ID   IMAGE          COMMAND   CREATED          STATUS          PORTS     NAMES
+414c08a2d146   6f4986d78878   "bash"    24 minutes ago   Up 24 minutes             bold_brahmagupta
+db77e4c008d8   5d0da3dc9764   "bash"    35 minutes ago   Up 35 minutes             thirsty_elbakyan
+root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker/docker# docker exec -it 414c08a2d146 bash
+root@414c08a2d146:/# ls /tmp/data/
+centos_file.txt
+root@414c08a2d146:/# cat /tmp/data/centos_file.txt 
+this message from centos container
+```
+
+**По какой-то причине файл из Контейнера Centos отображается в контейнере Debian, но недоступен на хосте. Файл из контейнера Debian не отображается ни в контейнере Centos, ни на хосте. Файл из хоста не отображается в обоих контейнерах. Проверил параметры запуска контейнеров - вроде верно. Пробовал менять директорию монтирования - тщетно. В чем может быть причина? Не правильная реализация? Буду рад обратной связи**  
