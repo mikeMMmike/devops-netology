@@ -630,3 +630,125 @@ b961545b3dcb   grafana/grafana:7.4.2                       "/run.sh"            
 Все контейнеры на месте. Перейдем в web-браузере на страницу сервиса мониторинга Grafana, авторизуемся и изучим показания. Сервис работает.
 [Скриншот](https://github.com/mikeMMmike/devops-netology/tree/main/05-virt-04-docker-compose/src/screenshots/05-04-03-Grafana.png) с ответом.
 
+Удаляем тестовую ВМ:
+
+```bash
+mike@make-lptp:~/PycharmProjects/devops-netology/05-virt-04-docker-compose/src$ cd ./terraform/
+mike@make-lptp:~/PycharmProjects/devops-netology/05-virt-04-docker-compose/src/terraform$ terraform destroy -auto-approve
+yandex_vpc_network.default: Refreshing state... [id=enp5sotr8a09fi27q8en]
+yandex_vpc_subnet.default: Refreshing state... [id=e9blnuhb9umomp1ilucm]
+yandex_compute_instance.node01: Refreshing state... [id=fhmmplfhof4m35k7kj46]
+
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  - destroy
+
+Terraform will perform the following actions:
+
+  # yandex_compute_instance.node01 will be destroyed
+  - resource "yandex_compute_instance" "node01" {
+      - allow_stopping_for_update = true -> null
+      - created_at                = "2022-02-03T19:20:28Z" -> null
+      - folder_id                 = "b1g3bh3ss0hbu8t6droq" -> null
+      - fqdn                      = "node01.netology.cloud" -> null
+      - hostname                  = "node01" -> null
+      - id                        = "fhmmplfhof4m35k7kj46" -> null
+      - labels                    = {} -> null
+      - metadata                  = {
+          - "ssh-keys" = <<-EOT
+                centos:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMMr/15yM5M5sBDbcJkZ/YWnZ4ET3xtnLiG7hmHAi8Mx kish_forever@bk.ru
+            EOT
+        } -> null
+      - name                      = "node01" -> null
+      - network_acceleration_type = "standard" -> null
+      - platform_id               = "standard-v1" -> null
+      - status                    = "running" -> null
+      - zone                      = "ru-central1-a" -> null
+
+      - boot_disk {
+          - auto_delete = true -> null
+          - device_name = "fhmvbjo22tjjrab9vve1" -> null
+          - disk_id     = "fhmvbjo22tjjrab9vve1" -> null
+          - mode        = "READ_WRITE" -> null
+
+          - initialize_params {
+              - block_size = 4096 -> null
+              - image_id   = "fd8ii3dh9ua63uvagqgv" -> null
+              - name       = "root-node01" -> null
+              - size       = 50 -> null
+              - type       = "network-ssd" -> null
+            }
+        }
+
+      - network_interface {
+          - index              = 0 -> null
+          - ip_address         = "192.168.101.21" -> null
+          - ipv4               = true -> null
+          - ipv6               = false -> null
+          - mac_address        = "d0:0d:16:cd:5f:1c" -> null
+          - nat                = true -> null
+          - nat_ip_address     = "62.84.124.122" -> null
+          - nat_ip_version     = "IPV4" -> null
+          - security_group_ids = [] -> null
+          - subnet_id          = "e9blnuhb9umomp1ilucm" -> null
+        }
+
+      - placement_policy {}
+
+      - resources {
+          - core_fraction = 100 -> null
+          - cores         = 8 -> null
+          - gpus          = 0 -> null
+          - memory        = 8 -> null
+        }
+
+      - scheduling_policy {
+          - preemptible = false -> null
+        }
+    }
+
+  # yandex_vpc_network.default will be destroyed
+  - resource "yandex_vpc_network" "default" {
+      - created_at = "2022-02-03T19:17:13Z" -> null
+      - folder_id  = "b1g3bh3ss0hbu8t6droq" -> null
+      - id         = "enp5sotr8a09fi27q8en" -> null
+      - labels     = {} -> null
+      - name       = "net" -> null
+      - subnet_ids = [
+          - "e9blnuhb9umomp1ilucm",
+        ] -> null
+    }
+
+  # yandex_vpc_subnet.default will be destroyed
+  - resource "yandex_vpc_subnet" "default" {
+      - created_at     = "2022-02-03T19:17:14Z" -> null
+      - folder_id      = "b1g3bh3ss0hbu8t6droq" -> null
+      - id             = "e9blnuhb9umomp1ilucm" -> null
+      - labels         = {} -> null
+      - name           = "subnet" -> null
+      - network_id     = "enp5sotr8a09fi27q8en" -> null
+      - v4_cidr_blocks = [
+          - "192.168.101.0/24",
+        ] -> null
+      - v6_cidr_blocks = [] -> null
+      - zone           = "ru-central1-a" -> null
+    }
+
+Plan: 0 to add, 0 to change, 3 to destroy.
+
+Changes to Outputs:
+  - external_ip_address_node01_yandex_cloud = "62.84.124.122" -> null
+  - internal_ip_address_node01_yandex_cloud = "192.168.101.21" -> null
+yandex_compute_instance.node01: Destroying... [id=fhmmplfhof4m35k7kj46]
+yandex_compute_instance.node01: Still destroying... [id=fhmmplfhof4m35k7kj46, 10s elapsed]
+yandex_compute_instance.node01: Still destroying... [id=fhmmplfhof4m35k7kj46, 20s elapsed]
+yandex_compute_instance.node01: Still destroying... [id=fhmmplfhof4m35k7kj46, 30s elapsed]
+yandex_compute_instance.node01: Still destroying... [id=fhmmplfhof4m35k7kj46, 40s elapsed]
+yandex_compute_instance.node01: Destruction complete after 41s
+yandex_vpc_subnet.default: Destroying... [id=e9blnuhb9umomp1ilucm]
+yandex_vpc_subnet.default: Destruction complete after 3s
+yandex_vpc_network.default: Destroying... [id=enp5sotr8a09fi27q8en]
+yandex_vpc_network.default: Destruction complete after 0s
+
+Destroy complete! Resources: 3 destroyed.
+
+```
