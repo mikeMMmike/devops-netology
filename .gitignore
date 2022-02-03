@@ -4,3 +4,4 @@
 /05-virt-04-docker-compose/src/terraform/key.json
 /05-virt-04-docker-compose/src/terraform/terraform.tfstate
 /05-virt-04-docker-compose/src/terraform/terraform.tfstate.backup
+/05-virt-04-docker-compose/src/terraform/.terraform/

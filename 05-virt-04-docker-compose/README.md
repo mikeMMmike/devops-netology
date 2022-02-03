@@ -4,8 +4,9 @@
 Для получения зачета, вам необходимо предоставить:
 Скриншот страницы, как на слайде из презентации (слайд 37).
 
-Ответ:
+Ответ.
 #####
+
 ```bash
 mike@make-lptp:~$ yc init
 Welcome! This command will take you through the configuration process.
@@ -547,4 +548,85 @@ internal_ip_address_node01_yandex_cloud = "192.168.101.21"
 
 По завершении процесса создания ВМ перейдем в web-интерфейс Я.Облака и проверим наличие созданной ВМ.
 Ответ: [Скришот](https://github.com/mikeMMmike/devops-netology/tree/main/05-virt-04-docker-compose/src/screenshots/05-04-02-VM_node01.png)
+
+
+Задача 3.
+-----
+
+Создать ваш первый готовый к боевой эксплуатации компонент мониторинга, состоящий из стека микросервисов.
+Для получения зачета, вам необходимо предоставить:
+* Скриншот работающего веб-интерфейса Grafana с текущими метриками, как на примере ниже
+
+Ответ.
+#####
+
+Перейдем в каталог и запустим на исполнение ansible-playbook:
+
+```bash
+mike@make-lptp:~/PycharmProjects/devops-netology/05-virt-04-docker-compose/src$ cd ./ansible/
+mike@make-lptp:~/PycharmProjects/devops-netology/05-virt-04-docker-compose/src/ansible$ ansible-playbook provision.yml 
+
+PLAY [nodes] *******************************************************************************************************************************
+
+TASK [Gathering Facts] *********************************************************************************************************************
+The authenticity of host '62.84.124.122 (62.84.124.122)' can't be established.
+ECDSA key fingerprint is SHA256:NPDAI23vFII5RAH0rKa1QRIzBdOq66+GhdKP961sLQY.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+ok: [node01.netology.cloud]
+
+TASK [Create directory for ssh-keys] *******************************************************************************************************
+ok: [node01.netology.cloud]
+
+TASK [Adding rsa-key in /root/.ssh/authorized_keys] ****************************************************************************************
+changed: [node01.netology.cloud]
+
+TASK [Checking DNS] ************************************************************************************************************************
+changed: [node01.netology.cloud]
+
+TASK [Installing tools] ********************************************************************************************************************
+changed: [node01.netology.cloud] => (item=['git', 'curl'])
+
+TASK [Add docker repository] ***************************************************************************************************************
+changed: [node01.netology.cloud]
+
+TASK [Installing docker package] ***********************************************************************************************************
+changed: [node01.netology.cloud] => (item=['docker-ce', 'docker-ce-cli', 'containerd.io'])
+
+TASK [Enable docker daemon] ****************************************************************************************************************
+changed: [node01.netology.cloud]
+
+TASK [Install docker-compose] **************************************************************************************************************
+changed: [node01.netology.cloud]
+
+TASK [Synchronization] *********************************************************************************************************************
+changed: [node01.netology.cloud]
+
+TASK [Pull all images in compose] **********************************************************************************************************
+changed: [node01.netology.cloud]
+
+TASK [Up all services in compose] **********************************************************************************************************
+changed: [node01.netology.cloud]
+
+PLAY RECAP *********************************************************************************************************************************
+node01.netology.cloud      : ok=12   changed=10   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0 
+```
+
+Подключимся по ssh к севреру и просмотрим список запущенных контейнеров:
+
+```bash
+mike@make-lptp:~/PycharmProjects/devops-netology/05-virt-04-docker-compose/src/ansible$ ssh centos@62.84.124.122
+[centos@node01 ~]$ sudo docker ps
+CONTAINER ID   IMAGE                                       COMMAND                  CREATED          STATUS                    PORTS                                                                              NAMES
+87dbdbe9dfb8   prom/prometheus:v2.17.1                     "/bin/prometheus --c…"   15 minutes ago   Up 14 minutes             9090/tcp                                                                           prometheus
+b64c000b89b5   gcr.io/google-containers/cadvisor:v0.34.0   "/usr/bin/cadvisor -…"   15 minutes ago   Up 14 minutes (healthy)   8080/tcp                                                                           cadvisor
+bd23bada38ef   prom/node-exporter:v0.18.1                  "/bin/node_exporter …"   15 minutes ago   Up 14 minutes             9100/tcp                                                                           nodeexporter
+8db6de1ddcfb   prom/alertmanager:v0.20.0                   "/bin/alertmanager -…"   15 minutes ago   Up 14 minutes             9093/tcp                                                                           alertmanager
+692b8474277a   stefanprodan/caddy                          "/sbin/tini -- caddy…"   15 minutes ago   Up 14 minutes             0.0.0.0:3000->3000/tcp, 0.0.0.0:9090-9091->9090-9091/tcp, 0.0.0.0:9093->9093/tcp   caddy
+1b8943a2a113   prom/pushgateway:v1.2.0                     "/bin/pushgateway"       15 minutes ago   Up 14 minutes             9091/tcp                                                                           pushgateway
+b961545b3dcb   grafana/grafana:7.4.2                       "/run.sh"                15 minutes ago   Up 14 minutes             3000/tcp                                                                           grafana
+
+```
+
+Все контейнеры на месте. Перейдем в web-браузере на страницу сервиса мониторинга Grafana, авторизуемся и изучим показания. Сервис работает.
+[Скриншот](https://github.com/mikeMMmike/devops-netology/tree/main/05-virt-04-docker-compose/src/screenshots/05-04-03-Grafana.png) с ответом.
 
