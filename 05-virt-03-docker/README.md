@@ -206,7 +206,7 @@ root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker/docker# docker run -it 
 
 Подключитесь к первому контейнеру с помощью docker exec и создайте текстовый файл любого содержания в /data
 ```bash
-root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker/docker# `docker exec -it db77e4c008d8 bash`
+root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker/docker# docker exec -it db77e4c008d8 bash
 [root@db77e4c008d8 /]# echo "this message from centos container" > /tmp/data/centos_file.txt
 [root@db77e4c008d8 /]# ls /tmp/data/
 centos_file.txt
@@ -222,7 +222,7 @@ host_file.txt
 
 Подключитесь во второй контейнер и отобразите листинг и содержание файлов в /data контейнера.
 ```bash
-oot@mike-VirtualBox:/home/mike/devops/05-virt-03-docker/docker# docker ps
+root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker/docker# docker ps
 CONTAINER ID   IMAGE          COMMAND   CREATED          STATUS          PORTS     NAMES
 414c08a2d146   6f4986d78878   "bash"    24 minutes ago   Up 24 minutes             bold_brahmagupta
 db77e4c008d8   5d0da3dc9764   "bash"    35 minutes ago   Up 35 minutes             thirsty_elbakyan
@@ -234,3 +234,80 @@ this message from centos container
 ```
 
 **По какой-то причине файл из Контейнера Centos отображается в контейнере Debian, но недоступен на хосте. Файл из контейнера Debian не отображается ни в контейнере Centos, ни на хосте. Файл из хоста не отображается в обоих контейнерах. Проверил параметры запуска контейнеров - вроде верно. Пробовал менять директорию монтирования - тщетно. В чем может быть причина? Не правильная реализация? Буду рад обратной связи**  
+
+
+Доработка задания 1.
+=====
+
+Задание 1
+Вместо apt-get нужно использовать apt.
+Посмотрите, что выполняет команда COPY в докер-файле.
+
+Ответ.
+-----
+Благодарю за подсказки:)
+
+На хостовой машине создали файл example.html
+
+```bash
+root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker/docker# nano ./example.html
+
+<html>
+<head>
+Hey, Netology
+</head>
+<body>
+<h1>I’m DevOps Engineer!</h1>
+</body>
+</html>
+```
+
+Поправил Dockerfile:
+```bash
+FROM ubuntu/nginx
+
+#скопируем файл HTML, установим nano(для редактирования конфигов), перезапустим nginx
+MAINTAINER mikemmmike
+COPY ./example.html /var/www/html/index.nginx-debian.html
+RUN apt update && apt install -y nano && service nginx start
+```
+
+
+
+Доработка Задания 3.
+=====
+Задание 3
+Не увидел создания файла из debian. Оно точно было?
+
+вы подключали в контейнер /home/mike/devops/05-virt-03-docker/data
+а создавали на хосте в /home/mike/devops/05-virt-03-docker/docker/data/
+
+Ответ.
+-----
+Да, действительно: проверил пути и выяснил, что создавал файл на хосте не в той директории. Пересоздал файл в корректной директории:
+
+```bash
+root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker/docker# cd ..
+root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker# echo "this is file from host" > ./data/host_file.txt
+```
+Запустил контейнер с дебиан:
+
+```bash
+root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker# docker run -it -v /home/mike/devops/05-virt-03-docker/data:/tmp/data 6f4986d78878 bash
+root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker# docker ps
+CONTAINER ID   IMAGE          COMMAND   CREATED          STATUS          PORTS     NAMES
+4b679c1c0780   6f4986d78878   "bash"    13 minutes ago   Up 13 minutes             sleepy_archimedes
+db77e4c008d8   5d0da3dc9764   "bash"    9 days ago       Up 9 days                 thirsty_elbakyan
+```
+
+Листинг и содержимое файлов в контейнере Debian:
+```bash
+root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker# docker exec -it 4b679c1c0780 bash
+root@4b679c1c0780:/# ls /tmp/data/
+centos_file.txt  host_file.txt
+root@4b679c1c0780:/# cat /tmp/data/centos_file.txt && cat /tmp/data/host_file.txt 
+this message from centos container
+this is file from host
+```
+
+По условиям задачи в Debian нужно только просмотреть смонтированную директорию и файлы в ней. Все действительно работает:)
