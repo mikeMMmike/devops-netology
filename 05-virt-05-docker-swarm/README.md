@@ -269,7 +269,7 @@ xxiusvtiz1enwqcnuyu4womps     node04.netology.yc   Ready     Active             
 s66st5g3h1afmp75c71onru2i     node05.netology.yc   Ready     Active                          20.10.12
 rc31achpczbsuukvzgd6o8ym2     node06.netology.yc   Ready     Active                          20.10.12
 ```
-[Скриншот с ответом](https://github.com/mikeMMmike/devops-netology/tree/main/05-virt-05-docker-swarm/src/screenshots/05-05-2_node_list.png) с ответом.
+[Скриншот с ответом](https://github.com/mikeMMmike/devops-netology/tree/main/05-virt-05-docker-swarm/src/screenshots/05-05-2_node_list.png)
 
 
 Задача 3
@@ -296,4 +296,4 @@ bf1uf6g9swwv   swarm_monitoring_node-exporter      global       6/6        stefa
 pptsr4jq939v   swarm_monitoring_prometheus         replicated   1/1        stefanprodan/swarmprom-prometheus:v2.5.0       
 l1i3ydfwi78q   swarm_monitoring_unsee              replicated   1/1        cloudflare/unsee:v0.8.0       
 ```
-[Скриншот с ответом](https://github.com/mikeMMmike/devops-netology/tree/main/05-virt-05-docker-swarm/src/screenshots/05-05-3_service_list.png) с ответом.
+[Скриншот с ответом](https://github.com/mikeMMmike/devops-netology/tree/main/05-virt-05-docker-swarm/src/screenshots/05-05-3_service_list.png)
