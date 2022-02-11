@@ -285,6 +285,8 @@ docker service ls
 
 Подключимся к лидеру кластера и проверим список запущенных микросервисов:
 ```bash
+mike@make-lptp:~/PycharmProjects/devops-netology/05-virt-05-docker-swarm/src/terraform$ ssh centos@62.84.117.113
+[centos@node01 ~]$ sudo -i
 [root@node01 ~]# docker service ls
 ID             NAME                                MODE         REPLICAS   IMAGE                                          PORTS
 rq4xiw5consa   swarm_monitoring_alertmanager       replicated   1/1        stefanprodan/swarmprom-alertmanager:v0.14.0    
@@ -297,3 +299,115 @@ pptsr4jq939v   swarm_monitoring_prometheus         replicated   1/1        stefa
 l1i3ydfwi78q   swarm_monitoring_unsee              replicated   1/1        cloudflare/unsee:v0.8.0       
 ```
 [Скриншот с ответом](https://github.com/mikeMMmike/devops-netology/tree/main/05-virt-05-docker-swarm/src/screenshots/05-05-3_service_list.png)
+
+
+Задача 4 (*)
+=====
+
+Выполнить на лидере Docker Swarm кластера команду (указанную ниже) и дать письменное описание её функционала, что она делает и зачем она нужна:
+
+```bash
+#см.документацию: https://docs.docker.com/engine/swarm/swarm_manager_locking/
+docker swarm update --autolock=true
+```
+
+Ответ
+-----
+Docker может защитить общий ключ шифрования TLS и ключ, используемый для шифрования и расшифровки журналов Raft в состоянии покоя, позволяя требовать ручной разблокировки менеджеров. Эта функция называется автоблокировкой.
+
+Установим блокировку ключа docker swarm. Пароль необходимо сохранить, т.к. он будет использовться для разблокировки в дальнейшем:
+```bash
+[root@node01 ~]# docker swarm update --autolock=true
+Swarm updated.
+To unlock a swarm manager after it restarts, run the `docker swarm unlock`
+command and provide the following key:
+
+    SWMKEY-1-5mkMKJ0KSr5jduL05vvRkwU+dRPw3aWusdPnFWK0Mx0
+
+Please remember to store this key in a password manager, since without it you
+will not be able to restart the manager.
+```
+
+Перезапустим сервис и попробуем просмотреть список запущенных микросервисов.
+```bash
+[root@node01 ~]# service docker restart
+Redirecting to /bin/systemctl restart docker.service
+[root@node01 ~]# docker service ls
+Error response from daemon: Swarm is encrypted and needs to be unlocked before it can be used. Please use "docker swarm unlock" to unlock it.
+
+```
+
+ Этого не получится сделать, т.к. предварительно необходимо разблокировать ключ командой docker swarm unlock и введя ключ, предоставленный при включении автоблокировки: 
+ ```bash
+ [root@node01 ~]# docker swarm unlock
+Please enter unlock key: 
+[root@node01 ~]# docker service ls
+ID             NAME                                MODE         REPLICAS   IMAGE                                          PORTS
+rq4xiw5consa   swarm_monitoring_alertmanager       replicated   2/1        stefanprodan/swarmprom-alertmanager:v0.14.0    
+jz11d1ys4yof   swarm_monitoring_caddy              replicated   1/1        stefanprodan/caddy:latest                      *:3000->3000/tcp, *:9090->9090/tcp, *:9093-9094->9093-9094/tcp
+p7nq5cx5o98u   swarm_monitoring_cadvisor           global       6/6        google/cadvisor:latest                         
+cpwbdsk74da0   swarm_monitoring_dockerd-exporter   global       6/6        stefanprodan/caddy:latest                      
+keskvd2dimo2   swarm_monitoring_grafana            replicated   1/1        stefanprodan/swarmprom-grafana:5.3.4           
+bf1uf6g9swwv   swarm_monitoring_node-exporter      global       6/6        stefanprodan/swarmprom-node-exporter:v0.16.0   
+pptsr4jq939v   swarm_monitoring_prometheus         replicated   2/1        stefanprodan/swarmprom-prometheus:v2.5.0       
+l1i3ydfwi78q   swarm_monitoring_unsee              replicated   1/1        cloudflare/unsee:v0.8.0 
+ ```
+Работает.
+
+
+Теперь для экономии ресурсов удалим ВМ, сети и образ ВМ, использованный для развертывания кластера:
+
+```bash
+mike@make-lptp:~/PycharmProjects/devops-netology/05-virt-05-docker-swarm/src/terraform$ terraform destroy -auto-approve
+
+......................
+//////////////////////
+сокращение stdout-многабукаф
+//////////////////////
+......................
+
+
+Changes to Outputs:
+  - external_ip_address_node01 = "62.84.117.113" -> null
+  - external_ip_address_node02 = "62.84.127.60" -> null
+  - external_ip_address_node03 = "51.250.8.221" -> null
+  - external_ip_address_node04 = "62.84.115.243" -> null
+  - external_ip_address_node05 = "51.250.15.164" -> null
+  - external_ip_address_node06 = "62.84.126.21" -> null
+  - internal_ip_address_node01 = "192.168.101.11" -> null
+  - internal_ip_address_node02 = "192.168.101.12" -> null
+  - internal_ip_address_node03 = "192.168.101.13" -> null
+  - internal_ip_address_node04 = "192.168.101.14" -> null
+  - internal_ip_address_node05 = "192.168.101.15" -> null
+  - internal_ip_address_node06 = "192.168.101.16" -> null
+
+......................
+//////////////////////
+сокращение stdout-многабукаф
+//////////////////////
+......................
+
+yandex_compute_instance.node04: Destruction complete after 12s
+yandex_compute_instance.node05: Destruction complete after 13s
+yandex_compute_instance.node02: Destruction complete after 13s
+yandex_compute_instance.node01: Destruction complete after 13s
+yandex_compute_instance.node06: Destruction complete after 15s
+yandex_compute_instance.node03: Destruction complete after 16s
+yandex_vpc_subnet.default: Destroying... [id=e9bkhnht7k5js1iqdqbn]
+yandex_vpc_subnet.default: Destruction complete after 7s
+yandex_vpc_network.default: Destroying... [id=enpqca5h5ij7uvmll5o4]
+yandex_vpc_network.default: Destruction complete after 1s
+
+Destroy complete! Resources: 13 destroyed.
+
+mike@make-lptp:~/PycharmProjects/devops-netology/05-virt-05-docker-swarm/src/terraform$ yc compute image list
++----------------------+---------------+--------+----------------------+--------+
+|          ID          |     NAME      | FAMILY |     PRODUCT IDS      | STATUS |
++----------------------+---------------+--------+----------------------+--------+
+| fd85r4ppkktfdr7i9ma5 | centos-7-base | centos | f2e40ohi7d1hori8m71b | READY  |
++----------------------+---------------+--------+----------------------+--------+
+
+mike@make-lptp:~/PycharmProjects/devops-netology/05-virt-05-docker-swarm/src/terraform$ yc compute image delete fd85r4ppkktfdr7i9ma5
+done (28s)
+```
+
