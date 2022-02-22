@@ -10,6 +10,11 @@
 
 Ответ: 
 -----
+```bash
+root@make-lptp:/home/mike/PycharmProjects/devops-netology/06-db-02-sql# docker pull postgres:12-alpine
+root@make-lptp:/home/mike/PycharmProjects/devops-netology/06-db-02-sql# docker pull postgres:12-alpine
+```
+
 
 
 
