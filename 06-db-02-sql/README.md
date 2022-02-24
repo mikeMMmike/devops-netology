@@ -393,14 +393,74 @@ width. Ожидаемый средний размер строк в байтах
 
 Ответ: 
 -----
+Сделаем backup:
 ```bash
+pg_dump -U test test_db > /backup/test_db.bkp
+```
+Запустим новый контейнер:
+```bash
+root@mike-VirtualBox:/home/mike/devops/06db02sql# docker run --name testbkp -e POSTGRES_PASSWORD=test -v /home/mike/devops/06-db-02-sql/backup:/media/database/backup -d -p 5432:5432 postgres:12
+```
+Восстановление БД:
+```bash
+root@a9d9d78e33f4:/# psql -U postgres  < /media/database/backup/test_db.bkp
+SET
+SET
+SET
+SET
+SET
+ set_config
+------------
 
+(1 row)
+
+SET
+SET
+SET
+SET
+SET
+SET
+CREATE TABLE
+ERROR:  role "test" does not exist
+CREATE SEQUENCE
+ERROR:  role "test" does not exist
+ALTER SEQUENCE
+CREATE SEQUENCE
+ERROR:  role "test" does not exist
+ALTER SEQUENCE
+CREATE TABLE
+ERROR:  role "test" does not exist
+CREATE SEQUENCE
+ERROR:  role "test" does not exist
+ALTER SEQUENCE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+COPY 5
+COPY 5
+ setval
+--------
+     10
+(1 row)
+
+ setval
+--------
+      9
+(1 row)
+
+ setval
+--------
+      6
+(1 row)
+
+ALTER TABLE
+ALTER TABLE
+CREATE INDEX
+ALTER TABLE
+ERROR:  role "test_admin_user" does not exist
+ERROR:  role "test_simple_user" does not exist
+ERROR:  role "test_admin_user" does not exist
+ERROR:  role "test_simple_user" does not exist
 ```
 
-```bash
-
-```
-
-```bash
-
-```
+Готово. БД восстановлена, исключая роли пользователей
