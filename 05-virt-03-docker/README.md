@@ -247,7 +247,7 @@ this message from centos container
 -----
 Благодарю за подсказки:)
 
-На хостовой машине создали файл example.html
+На хостовой машине создал файл example.html
 
 ```bash
 root@mike-VirtualBox:/home/mike/devops/05-virt-03-docker/docker# nano ./example.html
