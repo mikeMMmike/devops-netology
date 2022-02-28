@@ -213,24 +213,199 @@ mysql> select * from INFORMATION_SCHEMA.USER_ATTRIBUTES where user='test';
 
 Установите профилирование `SET profiling = 1`.
 ```bash
-
+mysql> set profiling=1;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
 ```
 
 Изучите вывод профилирования команд `SHOW PROFILES;`.
 ```bash
-
+mysql> show profiles;
+Empty set, 1 warning (0.00 sec)
 ```
 
-Исследуйте, какой `engine` используется в таблице БД `test_db` и **приведите в ответе**.
+Исследуйте, какой `engine` используется в таблице БД `test_db` и **приведите в ответе**:
+Engine: InnoDB
+
 ```bash
+mysql> SHOW TABLE STATUS \G;
+*************************** 1. row ***************************
+           Name: orders
+         Engine: InnoDB
+        Version: 10
+     Row_format: Dynamic
+           Rows: 5
+ Avg_row_length: 3276
+    Data_length: 16384
+Max_data_length: 0
+   Index_length: 0
+      Data_free: 0
+ Auto_increment: 6
+    Create_time: 2022-02-28 21:05:29
+    Update_time: 2022-02-28 21:05:29
+     Check_time: NULL
+      Collation: utf8mb4_0900_ai_ci
+       Checksum: NULL
+ Create_options: 
+        Comment: 
+1 row in set (0.00 sec)
+
+ERROR: 
+No query specified
 
 ```
 
 Измените `engine` и **приведите время выполнения и запрос на изменения из профайлера в ответе**:
 - на `MyISAM`
+
+```bash
+mysql> ALTER TABLE orders ENGINE=MyISAM;
+Query OK, 5 rows affected (0.10 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> SHOW TABLE STATUS \G;
+*************************** 1. row ***************************
+           Name: orders
+         Engine: MyISAM
+        Version: 10
+     Row_format: Dynamic
+           Rows: 5
+ Avg_row_length: 3276
+    Data_length: 16384
+Max_data_length: 0
+   Index_length: 0
+      Data_free: 0
+ Auto_increment: 6
+    Create_time: 2022-02-28 22:28:17
+    Update_time: 2022-02-28 21:05:29
+     Check_time: NULL
+      Collation: utf8mb4_0900_ai_ci
+       Checksum: NULL
+ Create_options: 
+        Comment: 
+1 row in set (0.00 sec)
+
+
+```
+
 - на `InnoDB`
 ```bash
+mysql> ALTER TABLE orders ENGINE=InnoDB;
+Query OK, 5 rows affected (0.10 sec)
+Records: 5  Duplicates: 0  Warnings: 0
 
+mysql> SHOW TABLE STATUS \G;
+*************************** 1. row ***************************
+           Name: orders
+         Engine: InnoDB
+        Version: 10
+     Row_format: Dynamic
+           Rows: 5
+ Avg_row_length: 3276
+    Data_length: 16384
+Max_data_length: 0
+   Index_length: 0
+      Data_free: 0
+ Auto_increment: 6
+    Create_time: 2022-02-28 22:29:04
+    Update_time: 2022-02-28 21:05:29
+     Check_time: NULL
+      Collation: utf8mb4_0900_ai_ci
+       Checksum: NULL
+ Create_options: 
+        Comment: 
+1 row in set (0.01 sec)
+
+
+
+```
+
+Время выполнения и запрос на изменения из профайлера:
+```bash
+mysql> SHOW PROFILES;
++----------+------------+----------------------------------------------+
+| Query_ID | Duration   | Query                                        |
++----------+------------+----------------------------------------------+
+|        1 | 0.00016675 | SHOW TABLE STATUS like orders                |
+|        2 | 0.00010400 | SHOW TABLE STATUS from test_db like orders   |
+|        3 | 0.00499600 | SHOW TABLE STATUS from test_db like 'orders' |
+|        4 | 0.00673625 | SHOW TABLE STATUS                            |
+|        5 | 0.09952625 | ALTER TABLE orders ENGINE=MyISAM             |
+|        6 | 0.00335975 | SHOW TABLE STATUS                            |
+|        7 | 0.09707575 | ALTER TABLE orders ENGINE=InnoDB             |
+|        8 | 0.00433825 | SHOW TABLE STATUS                            |
++----------+------------+----------------------------------------------+
+
+mysql> SHOW PROFILE FOR QUERY 5;
++--------------------------------+----------+
+| Status                         | Duration |
++--------------------------------+----------+
+| starting                       | 0.000113 |
+| Executing hook on transaction  | 0.000004 |
+| starting                       | 0.000034 |
+| checking permissions           | 0.000006 |
+| checking permissions           | 0.000004 |
+| init                           | 0.000023 |
+| Opening tables                 | 0.000625 |
+| setup                          | 0.000221 |
+| creating table                 | 0.001602 |
+| waiting for handler commit     | 0.000036 |
+| waiting for handler commit     | 0.027382 |
+| After create                   | 0.015403 |
+| System lock                    | 0.000274 |
+| copy to tmp table              | 0.000824 |
+| waiting for handler commit     | 0.000044 |
+| waiting for handler commit     | 0.000034 |
+| waiting for handler commit     | 0.000075 |
+| rename result table            | 0.000216 |
+| waiting for handler commit     | 0.015031 |
+| waiting for handler commit     | 0.000092 |
+| waiting for handler commit     | 0.004691 |
+| waiting for handler commit     | 0.000050 |
+| waiting for handler commit     | 0.017804 |
+| waiting for handler commit     | 0.000039 |
+| waiting for handler commit     | 0.002222 |
+| end                            | 0.007335 |
+| query end                      | 0.004954 |
+| closing tables                 | 0.000051 |
+| waiting for handler commit     | 0.000120 |
+| freeing items                  | 0.000090 |
+| cleaning up                    | 0.000131 |
++--------------------------------+----------+
+31 rows in set, 1 warning (0.00 sec)
+
+mysql> SHOW PROFILE FOR QUERY 7;
++--------------------------------+----------+
+| Status                         | Duration |
++--------------------------------+----------+
+| starting                       | 0.000140 |
+| Executing hook on transaction  | 0.000012 |
+| starting                       | 0.000037 |
+| checking permissions           | 0.000010 |
+| checking permissions           | 0.000009 |
+| init                           | 0.000023 |
+| Opening tables                 | 0.000432 |
+| setup                          | 0.000233 |
+| creating table                 | 0.000156 |
+| After create                   | 0.043237 |
+| System lock                    | 0.000055 |
+| copy to tmp table              | 0.000731 |
+| rename result table            | 0.006976 |
+| waiting for handler commit     | 0.000051 |
+| waiting for handler commit     | 0.008487 |
+| waiting for handler commit     | 0.000060 |
+| waiting for handler commit     | 0.019489 |
+| waiting for handler commit     | 0.000045 |
+| waiting for handler commit     | 0.006228 |
+| waiting for handler commit     | 0.000062 |
+| waiting for handler commit     | 0.004057 |
+| end                            | 0.001397 |
+| query end                      | 0.002194 |
+| closing tables                 | 0.000047 |
+| waiting for handler commit     | 0.000085 |
+| freeing items                  | 0.000065 |
+| cleaning up                    | 0.002762 |
++--------------------------------+----------+
+27 rows in set, 1 warning (0.01 sec)
 ```
 
 
@@ -252,25 +427,36 @@ mysql> select * from INFORMATION_SCHEMA.USER_ATTRIBUTES where user='test';
 Ответ
 -----
 
-
-
+Изучите файл `my.cnf` в директории /etc/mysql.
 ```bash
+root@cab391767585:/# cat /etc/mysql/my.cnf
+[mysqld]
+pid-file        = /var/run/mysqld/mysqld.pid
+socket          = /var/run/mysqld/mysqld.sock
+datadir         = /var/lib/mysql
+secure-file-priv= NULL
+
+# Custom config should go here
+!includedir /etc/mysql/conf.d/
 
 ```
-
-
-```bash
-
-```
+Содержание согласно ТЗ:
 
 ```bash
+[mysqld]
+pid-file        = /var/run/mysqld/mysqld.pid
+socket          = /var/run/mysqld/mysqld.sock
+datadir         = /var/lib/mysql
+secure-file-priv= NULL
 
+# Custom config should go here
+!includedir /etc/mysql/conf.d/
+innodb_log_buffer_size = 1M
+innodb_log_file_size = 100M
+innodb_buffer_pool_size = 570M
+innodb_file_per_table = ON
+innodb_flush_log_at_trx_commit = 2
 ```
-
-```bash
-
-```
-
 
 ### Как оформить ДЗ?
 
