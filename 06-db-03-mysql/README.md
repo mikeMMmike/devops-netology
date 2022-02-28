@@ -9,7 +9,7 @@
 
 Используя docker поднимите инстанс MySQL (версию 8). Данные БД сохраните в volume.
 
-Изучите [бэкап БД](https://github.com/netology-code/virt-homeworks/tree/master/06-db-03-mysql/test_data) и 
+Изучите [бэкап БД](https://github.com/mikeMMmike/devops-netology/tree/main/06-db-03-mysql/test_data) и 
 восстановитесь из него.
 
 Перейдите в управляющую консоль `mysql` внутри контейнера.
