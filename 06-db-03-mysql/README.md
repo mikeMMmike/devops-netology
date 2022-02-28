@@ -156,24 +156,45 @@ mysql> select * from orders where price>300;
 
 Ответ
 -----
-
+Создайте пользователя test в БД c паролем test-pass, используя:
+- плагин авторизации mysql_native_password
+- срок истечения пароля - 180 дней 
+- количество попыток авторизации - 3 
+- максимальное количество запросов в час - 100
+- аттрибуты пользователя:
+    - Фамилия "Pretty"
+    - Имя "James"
 
 ```bash
+mysql> create user 'test'@'localhost'
+    -> IDENTIFIED WITH mysql_native_password BY 'test-pass'
+    -> WITH MAX_QUERIES_PER_HOUR 100
+    -> PASSWORD EXPIRE INTERVAL 180 DAY
+    -> FAILED_LOGIN_ATTEMPTS 3
+    -> ATTRIBUTE '{"fname": "James", "lname": "Pretty"}';
+Query OK, 0 rows affected (0.08 sec)
 
 ```
 
-
+Предоставьте привелегии пользователю `test` на операции SELECT базы `test_db`.
 ```bash
+mysql> grant select on *.*  to test@localhost;
+Query OK, 0 rows affected, 1 warning (0.02 sec)
+
+```
+Используя таблицу INFORMATION_SCHEMA.USER_ATTRIBUTES получите данные по пользователю `test` и 
+**приведите в ответе к задаче**.
+```bash
+mysql> select * from INFORMATION_SCHEMA.USER_ATTRIBUTES where user='test';
++------+-----------+---------------------------------------+
+| USER | HOST      | ATTRIBUTE                             |
++------+-----------+---------------------------------------+
+| test | localhost | {"fname": "James", "lname": "Pretty"} |
++------+-----------+---------------------------------------+
+1 row in set (0.03 sec)
 
 ```
 
-```bash
-
-```
-
-```bash
-
-```
 
 
 ## Задача 3
@@ -190,20 +211,24 @@ mysql> select * from orders where price>300;
 Ответ
 -----
 
-
+Установите профилирование `SET profiling = 1`.
 ```bash
 
 ```
 
-
+Изучите вывод профилирования команд `SHOW PROFILES;`.
 ```bash
 
 ```
 
+Исследуйте, какой `engine` используется в таблице БД `test_db` и **приведите в ответе**.
 ```bash
 
 ```
 
+Измените `engine` и **приведите время выполнения и запрос на изменения из профайлера в ответе**:
+- на `MyISAM`
+- на `InnoDB`
 ```bash
 
 ```
