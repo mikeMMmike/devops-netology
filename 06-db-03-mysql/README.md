@@ -27,9 +27,116 @@
 
 Ответ
 -----
+
+Используя docker поднимите инстанс MySQL (версию 8). Данные БД сохраните в volume.
 ```bash
+root@mike-VirtualBox:/home/mike# docker pull mysql:8.0-debian
+mike@mike-VirtualBox:~/devops/06-db-03-mysql$ docker run --name devops1 -v /home/mike/devops/06-db-03-mysql/src/db1:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=devops -d mysql:8.0-debian
+```
+Изучите [бэкап БД](https://github.com/mikeMMmike/devops-netology/tree/main/06-db-03-mysql/test_data) и 
+восстановитесь из него.
+```bash
+mike@mike-VirtualBox:~/devops/06-db-03-mysql$ docker exec -it devops1 bash
+root@cab391767585:/# mysql -u root --password="devops"                               
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 13
+Server version: 8.0.28 MySQL Community Server - GPL
+***********************
+
+
+mysql> CREATE DATABASE test_db;
+Query OK, 1 row affected (0.01 sec)
+mysql> exit
+Bye
+root@cab391767585:/# mysql test_db -u root --password="devops" < var/lib/mysql/test_dump.sql
+```
+
+Перейдите в управляющую консоль `mysql` внутри контейнера.
+```bash
+root@cab391767585:/# mysql -u root --password="devops"  
+```
+Используя команду `\h` получите список управляющих команд.
+```bash
+mysql> \h
+
+For information about MySQL products and services, visit:
+   http://www.mysql.com/
+For developer information, including the MySQL Reference Manual, visit:
+   http://dev.mysql.com/
+To buy MySQL Enterprise support, training, or other products, visit:
+   https://shop.mysql.com/
+
+List of all MySQL commands:
+Note that all text commands must be first on line and end with ';'
+?         (\?) Synonym for `help'.
+clear     (\c) Clear the current input statement.
+connect   (\r) Reconnect to the server. Optional arguments are db and host.
+delimiter (\d) Set statement delimiter.
+edit      (\e) Edit command with $EDITOR.
+ego       (\G) Send command to mysql server, display result vertically.
+exit      (\q) Exit mysql. Same as quit.
+go        (\g) Send command to mysql server.
+help      (\h) Display this help.
+nopager   (\n) Disable pager, print to stdout.
+notee     (\t) Don't write into outfile.
+pager     (\P) Set PAGER [to_pager]. Print the query results via PAGER.
+print     (\p) Print current command.
+prompt    (\R) Change your mysql prompt.
+quit      (\q) Quit mysql.
+rehash    (\#) Rebuild completion hash.
+source    (\.) Execute an SQL script file. Takes a file name as an argument.
+status    (\s) Get status information from the server.
+system    (\!) Execute a system shell command.
+tee       (\T) Set outfile [to_outfile]. Append everything into given outfile.
+use       (\u) Use another database. Takes database name as argument.
+charset   (\C) Switch to another charset. Might be needed for processing binlog with multi-byte charsets.
+warnings  (\W) Show warnings after every statement.
+nowarning (\w) Don't show warnings after every statement.
+resetconnection(\x) Clean session context.
+query_attributes Sets string parameters (name1 value1 name2 value2 ...) for the next query to pick up.
+
+For server side help, type 'help contents'
 
 ```
+Найдите команду для выдачи статуса БД и **приведите в ответе** из ее вывода версию сервера БД.
+```bash
+mysql> \s
+--------------
+mysql  Ver 8.0.28 for Linux on x86_64 (MySQL Community Server - GPL)
+
+Server version:		8.0.28 MySQL Community Server - GPL
+
+```
+Подключитесь к восстановленной БД и получите список таблиц из этой БД.
+```bash
+mysql> \u test_db
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> show tables;
++-------------------+
+| Tables_in_test_db |
++-------------------+
+| orders            |
++-------------------+
+1 row in set (0.00 sec)
+
+
+```
+**Приведите в ответе** количество записей с `price` > 300.
+```bash
+mysql> select * from orders where price>300;
++----+----------------+-------+
+| id | title          | price |
++----+----------------+-------+
+|  2 | My little pony |   500 |
++----+----------------+-------+
+1 row in set (0.00 sec)
+
+```
+
 
 ## Задача 2
 
@@ -49,9 +156,25 @@
 
 Ответ
 -----
+
+
 ```bash
 
 ```
+
+
+```bash
+
+```
+
+```bash
+
+```
+
+```bash
+
+```
+
 
 ## Задача 3
 
@@ -66,9 +189,25 @@
 
 Ответ
 -----
+
+
 ```bash
 
 ```
+
+
+```bash
+
+```
+
+```bash
+
+```
+
+```bash
+
+```
+
 
 ## Задача 4 
 
@@ -88,9 +227,25 @@
 Ответ
 -----
 
+
+
 ```bash
 
 ```
+
+
+```bash
+
+```
+
+```bash
+
+```
+
+```bash
+
+```
+
 
 ### Как оформить ДЗ?
 
