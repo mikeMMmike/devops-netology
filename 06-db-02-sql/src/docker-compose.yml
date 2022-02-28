@@ -1,0 +1,20 @@
+version: '3.1'
+
+volumes:
+ database:
+ backup:
+#  /var/lib/postgresql:
+
+services:
+  pg_db:
+    image: postgres:12
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_USER=test
+    volumes:
+      - database:/home/mike/devops/06db02sql/database
+      - backup:/home/mike/devops/06db02sql/backup
+#      - /var/lib/postgresql:/home/mike/devops/06db02sql/db
+    ports:
+      - ${POSTGRES_PORT:-5432}:5432
