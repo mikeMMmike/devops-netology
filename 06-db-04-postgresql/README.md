@@ -179,22 +179,22 @@ test_database=# select avg_width,attname from pg_stats where tablename = 'orders
 Создаем копию таблицы orders:
 ```bash
 CREATE table new_orders (                                                     
-      id integer NOT NULL,
-      title character varying(80) NOT NULL,
-      price integer DEFAULT 0
+      id integer not null,
+      title character varying(80) not null,
+      price integer default 0
     );
 CREATE TABLE
-test_database=# INSERT into new_orders (id, price, title) select id, price, title from orders;
+test_database=# insert into new_orders (id, price, title) select id, price, title from orders;
 INSERT 0 8
 test_database=# drop table orders;                                                     
 DROP TABLE
 ```
 Создаем партиционную таблицу orders:
 ```bash
-test_database=# CREATE table orders (                                                     
-      id integer NOT NULL,
-      title character varying(80) NOT NULL,
-      price integer DEFAULT 0
+test_database=# create table orders (                                                     
+      id integer not null,
+      title character varying(80) not null,
+      price integer default 0
     ) partition by range ( price);
 CREATE TABLE
 ```
@@ -218,7 +218,7 @@ Partitions: orders_1 FOR VALUES FROM (500) TO (2147483647),
 ```
 Копируем данные из временной таблицы new_orders в целевую orders:
 ```bash
-test_database=# INSERT into orders (id, price, title) select id, price, title from new_orders;
+test_database=# insert into orders (id, price, title) select id, price, title from new_orders;
 INSERT 0 8
 test_database=# drop table new_orders;
 DROP TABLE
@@ -270,20 +270,25 @@ test_database=# select * from orders;
 
 Ответ
 -----
-
+Используя утилиту `pg_dump` создайте бекап БД `test_database`.
 ```bash
+root@cfd6a5ee0f36:/# pg_dump -U postgres -d test_database > var/lib/postgresql/data/db_backup.sql
+```
+Как бы вы доработали бэкап-файл, чтобы добавить уникальность значения столбца `title` для таблиц `test_database`?
 
+Для решения задачи достаточно в секции создания таблицы orders заменить условие not null на unique для колонки `title`:  
+```bash
+-- Name: orders; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.orders (
+    id integer NOT NULL,
+    title character varying(80) UNIQUE,
+    price integer DEFAULT 0
+)
+PARTITION BY RANGE (price);
 ```
 
-```bash
-
-```
-
-```bash
-
-```
-
----
 
 ### Как cдавать задание
 
