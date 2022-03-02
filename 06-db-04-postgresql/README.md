@@ -200,7 +200,7 @@ test_database=# create table orders (
 CREATE TABLE
 ```
 
-Создаем шадры orders_1 и orders_2 для таблицы orders, проверяем таблицу:
+Создаем шарды orders_1 и orders_2 для таблицы orders, проверяем таблицу:
 ```bash
 test_database=# create table orders_1 partition of orders for values from (500) to (2147483647);
 CREATE TABLE
@@ -224,7 +224,7 @@ INSERT 0 8
 test_database=# drop table new_orders;
 DROP TABLE
 ```
-Проверяем данные в шадрах и самой таблице orders:
+Проверяем данные в шардах и самой таблице orders:
 ```bash
 test_database=# select * from orders_1;
  id |       title        | price 
@@ -261,7 +261,7 @@ test_database=# select * from orders;
 
 * Можно ли было изначально исключить "ручное" разбиение при проектировании таблицы orders?
 
-```Да, конечно можно было при проектированиии БД учесть необходимость шадрировани таблиц и создавать таблицы с шадрированием по необходимым по задаче условиям```
+```Да, конечно можно было при проектированиии БД учесть необходимость шардировани таблиц и создавать таблицы с шардированием по необходимым по задаче условиям```
 
 ## Задача 4
 
