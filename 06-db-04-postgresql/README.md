@@ -153,6 +153,7 @@ test_database=# select avg_width,attname from pg_stats where tablename = 'orders
 
 
 **Приведите в ответе** команду, которую вы использовали для вычисления и полученный результат.
+
 Команда ниже выбирает данные из столбцов avg_width (среднее значение размера элементов в байтах) и attname (Имя столбца, описываемого этой строкой) таблицы pg_stats с сортировкой по убыванию и отображению только одного результата из всех найденных по таблице orders, анализированной ранее. 
 ```bash
 test_database=# select avg_width,attname from pg_stats where tablename = 'orders' order by attname desc limit 1;
