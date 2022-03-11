@@ -33,21 +33,114 @@
 
 Ответ.
 -----
+Текст Dockerfile манифеста
 
 ```bash
+FROM centos:7
+MAINTAINER Mike Sinica <kish_forever@bk.ru>
+
+RUN yum update -y && \
+      yum install wget -y && \
+      yum install perl-Digest-SHA -y && \
+      yum install java-1.8.0-openjdk.x86_64 -y
+
+WORKDIR /usr/elastic/
+
+RUN wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.0.1-linux-x86_64.tar.gz && \
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.0.1-linux-x86_64.tar.gz.sha512
+
+RUN shasum -a 512 -c elasticsearch-8.0.1-linux-x86_64.tar.gz.sha512 && \
+tar -xzf elasticsearch-8.0.1-linux-x86_64.tar.gz
+
+RUN groupadd -g 3000 elasticsearch && \
+    adduser -u 3000 -g elasticsearch -s /bin/sh elasticsearch && \
+    chmod 777 -R /var/lib/ && \
+    chmod 777 -R /usr/elastic/elasticsearch-8.0.1/
+
+USER 3000
+EXPOSE 9200
+EXPOSE 9300
+
+WORKDIR /usr/elastic/elasticsearch-8.0.1/bin/
+CMD ["./elasticsearch", "-Enode.name=netology_test", "-Epath.data=/var/lib/data", "-Epath.logs=/var/lib/logs", "-Enetwork.host=0.0.0.0", "-Ediscovery.type=single-node"]
+```
+
+Ссылка на образ в репозитории dockerhub:
+https://hub.docker.com/repository/docker/mikemmmike/elsticksearch
+
+
+Процесс создания образа и отправки в dockerhub:
+```bash
+mike@mike-VirtualBox:~/devops/06-db-05-elasticsearch$ docker build -t mikemmmike/elsticksearch:netology .
+Sending build context to Docker daemon  3.584kB
+Step 1/12 : FROM centos:7
+ ---> eeb6ee3f44bd
+Step 2/12 : MAINTAINER Mike Sinica <kish_forever@bk.ru>
+ ---> Using cache
+ ---> 29c0584be916
+Step 3/12 : RUN yum update -y &&       yum install wget -y &&       yum install perl-Digest-SHA -y &&       yum install java-1.8.0-openjdk.x86_64 -y
+ ---> Using cache
+ ---> 9af86abd2a12
+Step 4/12 : WORKDIR /usr/elastic/
+ ---> Using cache
+ ---> 34ac23ad7847
+Step 5/12 : RUN wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.0.1-linux-x86_64.tar.gz && wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.0.1-linux-x86_64.tar.gz.sha512
+ ---> Using cache
+ ---> b37f2cc3f09a
+Step 6/12 : RUN shasum -a 512 -c elasticsearch-8.0.1-linux-x86_64.tar.gz.sha512 && tar -xzf elasticsearch-8.0.1-linux-x86_64.tar.gz
+ ---> Using cache
+ ---> d4bb647dd8c5
+Step 7/12 : RUN groupadd -g 3000 elasticsearch &&     adduser -u 3000 -g elasticsearch -s /bin/sh elasticsearch &&     chmod 777 -R /var/lib/ &&     chmod 777 -R /usr/elastic/elasticsearch-8.0.1/
+ ---> Using cache
+ ---> aea863c8a902
+Step 8/12 : USER 3000
+ ---> Using cache
+ ---> b3c70f916104
+Step 9/12 : EXPOSE 9200
+ ---> Using cache
+ ---> 2f6db0f5eff9
+Step 10/12 : EXPOSE 9300
+ ---> Using cache
+ ---> 9008c07c3cbc
+Step 11/12 : WORKDIR /usr/elastic/elasticsearch-8.0.1/bin/
+ ---> Running in 61e773be7c18
+Removing intermediate container 61e773be7c18
+ ---> cd5460b5e66a
+Step 12/12 : CMD ["./elasticsearch", "-Enode.name=netology_test", "-Epath.data=/var/lib/data", "-Epath.logs=/var/lib/logs", "-Enetwork.host=0.0.0.0", "-Ediscovery.type=single-node"]
+ ---> Running in 4c709be31f4b
+Removing intermediate container 4c709be31f4b
+ ---> 50d341d4b96d
+Successfully built 50d341d4b96d
+Successfully tagged mikemmmike/elsticksearch:netology
+mike@mike-VirtualBox:~/devops/06-db-05-elasticsearch$ docker push mikemmmike/elsticksearch:netology
+The push refers to repository [docker.io/mikemmmike/elsticksearch]
+e31e31c240d9: Pushed 
+c7f27cbd20e1: Pushed 
+c0d0e90198bd: Pushed 
+b10898396870: Pushed 
+16b325e5c9c1: Layer already exists 
+6073f594a2b6: Pushed 
+174f56854903: Layer already exists 
+netology: digest: sha256:85c29578c818c6b230005d19a9ff153d008cc95c60609f286f3540d4d272fd7e size: 1795
+
+
+mike@mike-VirtualBox:~/devops/06-db-05-elasticsearch$ docker ps
+CONTAINER ID   IMAGE                               COMMAND                  CREATED          STATUS          PORTS                                                 NAMES
+51c611bbd051   mikemmmike/elsticksearch:netology   "./elasticsearch -En…"   51 seconds ago   Up 46 seconds   0.0.0.0:9200->9200/tcp, :::9200->9200/tcp, 9300/tcp   elastic_test1
 
 ```
 
+Ответ `elasticsearch` на запрос пути `/` в json виде:
+
+
+Установка ограничения по памяти и запуск docker:
 ```bash
+mike@mike-VirtualBox:~/devops/06-db-05-elasticsearch$ sudo sysctl -w vm.max_map_count=262144
+[sudo] пароль для mike: 
+vm.max_map_count = 262144
 
-```
-
-```bash
-
-```
-
-```bash
-
+mike@mike-VirtualBox:~/devops/06-db-05-elasticsearch$ docker run -p 9200:9200 --name elastic_test1 --memory="1g" -d mikemmmike/elsticksearch:netology
+51c611bbd051b7d2b536be51e063d7e9ce7ed13b45eb32d4428b0c811287ef0f
 ```
 
 
