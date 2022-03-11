@@ -54,6 +54,7 @@ tar -xzf elasticsearch-8.0.1-linux-x86_64.tar.gz
 
 RUN groupadd -g 3000 elasticsearch && \
     adduser -u 3000 -g elasticsearch -s /bin/sh elasticsearch && \
+    echo -e "devops123\ndevops123\n" | passwd elasticsearch &&\
     chmod 777 -R /var/lib/ && \
     chmod 777 -R /usr/elastic/elasticsearch-8.0.1/
 
@@ -62,11 +63,10 @@ EXPOSE 9200
 EXPOSE 9300
 
 WORKDIR /usr/elastic/elasticsearch-8.0.1/bin/
-CMD ["./elasticsearch", "-Enode.name=netology_test", "-Epath.data=/var/lib/data", "-Epath.logs=/var/lib/logs", "-Enetwork.host=0.0.0.0", "-Ediscovery.type=single-node"]
+CMD ["./elasticsearch", "-Enode.name=netology_test", "-Epath.data=/var/lib/data", "-Epath.logs=/var/lib/logs", "-Enetwork.host=0.0.0.0", "-Ediscovery.type=single-node"]2
 ```
 
-Ссылка на образ в репозитории dockerhub:
-https://hub.docker.com/repository/docker/mikemmmike/elsticksearch
+
 
 
 Процесс создания образа и отправки в dockerhub:
@@ -130,8 +130,6 @@ CONTAINER ID   IMAGE                               COMMAND                  CREA
 
 ```
 
-Ответ `elasticsearch` на запрос пути `/` в json виде:
-
 
 Установка ограничения по памяти и запуск docker:
 ```bash
@@ -139,11 +137,50 @@ mike@mike-VirtualBox:~/devops/06-db-05-elasticsearch$ sudo sysctl -w vm.max_map_
 [sudo] пароль для mike: 
 vm.max_map_count = 262144
 
-mike@mike-VirtualBox:~/devops/06-db-05-elasticsearch$ docker run -p 9200:9200 --name elastic_test1 --memory="1g" -d mikemmmike/elsticksearch:netology
-51c611bbd051b7d2b536be51e063d7e9ce7ed13b45eb32d4428b0c811287ef0f
+mike@mike-VirtualBox:~/devops/06-db-05-elasticsearch$ docker run -p 9200:9200 --name elastic --memory="1g" -d mikemmmike/elsticksearch:netology_pass1
+2625acc602c38ccb6b1e8748922ba462c01bf4cb7747ca0970f07dbed41dbb2d
+
 ```
 
 
+Ответ `elasticsearch` на запрос пути `/` в json виде:
+
+```bash
+mike@mike-VirtualBox:~/devops/06-db-05-elasticsearch$ curl -u elasticsearch:devops123 -X GET "localhost:9200/?pretty"
+{
+  "error" : {
+    "root_cause" : [
+      {
+        "type" : "security_exception",
+        "reason" : "unable to authenticate user [elasticsearch] for REST request [/?pretty]",
+        "header" : {
+          "WWW-Authenticate" : [
+            "Basic realm=\"security\" charset=\"UTF-8\"",
+            "ApiKey"
+          ]
+        }
+      }
+    ],
+    "type" : "security_exception",
+    "reason" : "unable to authenticate user [elasticsearch] for REST request [/?pretty]",
+    "header" : {
+      "WWW-Authenticate" : [
+        "Basic realm=\"security\" charset=\"UTF-8\"",
+        "ApiKey"
+      ]
+    }
+  },
+  "status" : 401
+}
+```
+
+Застрял на данном этапе. Ранее в докер-файле отсутствовала строка смены пароля (да, так делать нельзя и это небезопасно) `echo -e "devops123\ndevops123\n" | passwd elasticsearch &&\`, и при неавторизованном запросе `curl -X GET "localhost:9200/?pretty"` я также получал ошибку 401. Установка пароля для пользователя elasticsearch не помогла мне решить проблему авторизации при запросе.
+
+Задачу решал в рамках поставленной цели. Из вариантов у меня осталось - копия elasticsearch.yml в контейнер вместо передачи переменных окружения в CMD и запуск докер-контейнера из образа elasticksearch. 
+Но я считаю, что ни 1 ни 2 вариант не помогут в данной ситуации, поэтому прошу помочь.
+
+Ссылка на образ в репозитории dockerhub:
+https://hub.docker.com/repository/docker/mikemmmike/elsticksearch
 
 ## Задача 2
 
