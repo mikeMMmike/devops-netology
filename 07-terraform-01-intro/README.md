@@ -57,16 +57,33 @@
 
 Ответ.
 -----
-
+Время выполнения задания пришлось на нестабильную обстановку в мире. в связи с санкциями и решениями, применяемыми компаниями и странами по отношению к России, в частности, терраформ недоступен для установки менеджером пакетов, но доступен с [зеркала Яндекс](https://hashicorp-releases.website.yandexcloud.net/terraform/)
+Скачаем архив терраформ последней доступной версии с зеркала:
 ```bash
+/home/mike/devops/terraform# curl https://hashicorp-releases.website.yandexcloud.net/terraform/1.1.6/terraform_1.1.6_linux_amd64.zip --output ./terraform_1.1.6.zip
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 17.8M  100 17.8M    0     0  7419k      0  0:00:02  0:00:02 --:--:-- 7419k
 
 ```
-
+Распакуем его
 ```bash
-
+mike@mike-VirtualBox:~/devops/terraform$ gunzip ./terraform_1.1.6.zip.gz ~/devops/terraform && unzip ./terraform_1.1.6.zip -d ~/devops/terraform/terraform_1.1.6
 ```
 
+Экспортируем переменную:
 ```bash
+mike@mike-VirtualBox:~/devops/terraform$ echo export PATH=$TERRAFORM:/home/mike/devops/terraform/terraform_1.1.6 >> ~/.bashrc
+```
+
+Перезагрузимся и проверим версию:
+```bash
+mike@mike-VirtualBox:~/devops/terraform$ terraform --version
+Terraform v1.1.6
+on linux_amd64
+
+Your version of Terraform is out of date! The latest version
+is 1.1.7. You can update by downloading from https://www.terraform.io/downloads.html
 
 ```
 
@@ -85,20 +102,47 @@
 
 Ответ.
 -----
+Для решения задачи предлагаю скачать и распаковать устаревшую 0.12 версию в директорию `terraform_0.12.31`
 
 ```bash
+mike@mike-VirtualBox:~/devops/terraform$ mkdir terraform_0.12.31
+mike@mike-VirtualBox:~/devops/terraform$ curl https://hashicorp-releases.website.yandexcloud.net/terraform/0.12.31/terraform_0.12.31_linux_amd64.zip --output ./terraform_0.12.31.zip
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 27.1M  100 27.1M    0     0  6649k      0  0:00:04  0:00:04 --:--:-- 6649k
+mike@mike-VirtualBox:~/devops/terraform$ unzip ./terraform_0.12.31.zip -d ./terraform_0.12.31
+Archive:  ./terraform_0.12.31.zip
+  inflating: ./terraform_0.12.31/terraform 
+```
+
+Экспортируем переменную для 12 версии:
+```bash
+mike@mike-VirtualBox:~/devops/terraform$ export PATH=$TERRAFORM12:/home/mike/devops/terraform/terraform_0.12.31
+```
+Проверяем версию:
+```bash
+mike@mike-VirtualBox:~$ terraform --version
+Terraform v0.12.31
+
+Your version of Terraform is out of date! The latest version
+is 1.1.7. You can update by downloading from https://www.terraform.io/downloads.html
 
 ```
 
+Экспортируем переменную для 1.1.6 версии:
 ```bash
-
+mike@mike-VirtualBox:~/devops/terraform$ export PATH=$TERRAFORM:/home/mike/devops/terraform/terraform_1.1.6
 ```
-
+Проверяем версию:
 ```bash
+mike@mike-VirtualBox:~$ terraform --version
+Terraform v1.1.6
+on linux_amd64
 
+Your version of Terraform is out of date! The latest version
+is 1.1.7. You can update by downloading from https://www.terraform.io/downloads.html
 ```
-
-
+Для запуска терраформ требуемой версии достаточно написать скрипт переключения, либо воспользоваться для этого готовой утилитой - [tfswitch](https://raw.githubusercontent.com/warrensbox/terraform-switcher/release/install.sh) например  
 
 ---
 
