@@ -78,6 +78,7 @@
 Ответ.
 -----
 Время выполнения задания пришлось на нестабильную обстановку в мире. В связи с санкциями и решениями, применяемыми компаниями и странами по отношению к России, в частности, терраформ недоступен для установки менеджером пакетов, но доступен с [зеркала Яндекс](https://hashicorp-releases.website.yandexcloud.net/terraform/)
+
 Скачаем архив терраформ последней доступной версии с зеркала:
 ```bash
 /home/mike/devops/terraform# curl https://hashicorp-releases.website.yandexcloud.net/terraform/1.1.6/terraform_1.1.6_linux_amd64.zip --output ./terraform_1.1.6.zip
