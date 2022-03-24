@@ -138,7 +138,6 @@ Elasticsearch.yml:
 #
 #
 # ---------------------------------- Cluster -----------------------------------
-
 #
 # ------------------------------------ Node ------------------------------------
 #
@@ -165,13 +164,9 @@ path.logs: /var/lib/logs
 network.host: 0.0.0.0
 http.port: 9200
 # --------------------------------- Discovery ----------------------------------
-
 discovery.type: single-node
-
 # ---------------------------------- Various -----------------------------------
-
 xpack.security.enabled: false
-
 ```
 
 Установка ограничения по памяти и запуск docker:
@@ -179,10 +174,8 @@ xpack.security.enabled: false
 mike@mike-VirtualBox:~/devops/06-db-05-elasticsearch$ sudo sysctl -w vm.max_map_count=262144
 [sudo] пароль для mike: 
 vm.max_map_count = 262144
-
 mike@mike-VirtualBox:~/devops/06-db-05-elasticsearch$ docker run -p 9200:9200 --name elastic --memory="1g" -d mikemmmike/elsticksearch:netology_pass1
 2625acc602c38ccb6b1e8748922ba462c01bf4cb7747ca0970f07dbed41dbb2d
-
 ```
 
 
@@ -207,7 +200,6 @@ mike@mike-VirtualBox:~$ curl -X GET "localhost:9200/?pretty"
   },
   "tagline" : "You Know, for Search"
 }
-
 ```
 
 Ссылка на образ в репозитории dockerhub:
@@ -223,7 +215,7 @@ https://hub.docker.com/repository/docker/mikemmmike/elasticksearch_conf
 - изучать состояние кластера
 - обосновывать причину деградации доступности данных
 
-Ознакомтесь с [документацией](https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-create-index.html) 
+Ознакомьтесь с [документацией](https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-create-index.html) 
 и добавьте в `elasticsearch` 3 индекса, в соответствии с таблицей:
 
 | Имя | Количество реплик | Количество шард |
@@ -248,20 +240,144 @@ https://hub.docker.com/repository/docker/mikemmmike/elasticksearch_conf
 
 Ответ.
 -----
+Создание индексов. 
 
+ind-1
 ```bash
+mike@mike-VirtualBox:~$ curl -X PUT "localhost:9200/ind-1?pretty" -H 'Content-Type: application/json' -d'
+> {
+>   "settings":{
+>    "number_of_shards": 1,
+>    "number_of_replicas": 0
+>   }
+>  }
+>  '
+{
+  "acknowledged" : true,
+  "shards_acknowledged" : true,
+  "index" : "ind-1"
+}
+```
+
+ind-2
+```bash
+mike@mike-VirtualBox:~$ curl -X PUT "localhost:9200/ind-2?pretty" -H 'Content-Type: application/json' -d'
+> {
+>  "settings":{
+>   "number_of_shards": 2,
+>   "number_of_replicas": 1
+>  }
+> }
+> '
+{
+  "acknowledged" : true,
+  "shards_acknowledged" : true,
+  "index" : "ind-2"
+}
+```
+
+ind-3
+```bash
+mike@mike-VirtualBox:~$ curl -X PUT "localhost:9200/ind-3?pretty" -H 'Content-Type: application/json' -d'
+> {
+>  "settings":{
+>   "number_of_shards": 4,
+>   "number_of_replicas": 2
+>  }
+> }
+> '
+{
+  "acknowledged" : true,
+  "shards_acknowledged" : true,
+  "index" : "ind-3"
+}
+```
+
+Состояние шард:
+```bash
+mike@mike-VirtualBox:~$ curl -X GET "localhost:9200/_cat/shards?pretty&v=true"
+index            shard prirep state      docs store ip         node
+ind-3            3     p      STARTED       0  225b 172.17.0.2 netology_test
+ind-3            3     r      UNASSIGNED                       
+ind-3            3     r      UNASSIGNED                       
+ind-3            1     p      STARTED       0  225b 172.17.0.2 netology_test
+ind-3            1     r      UNASSIGNED                       
+ind-3            1     r      UNASSIGNED                       
+ind-3            2     p      STARTED       0  225b 172.17.0.2 netology_test
+ind-3            2     r      UNASSIGNED                       
+ind-3            2     r      UNASSIGNED                       
+ind-3            0     p      STARTED       0  225b 172.17.0.2 netology_test
+ind-3            0     r      UNASSIGNED                       
+ind-3            0     r      UNASSIGNED                       
+ind-1            0     p      STARTED       0  225b 172.17.0.2 netology_test
+ind-2            1     p      STARTED       0  225b 172.17.0.2 netology_test
+ind-2            1     r      UNASSIGNED                       
+ind-2            0     p      STARTED       0  225b 172.17.0.2 netology_test
+ind-2            0     r      UNASSIGNED                       
+.geoip_databases 0     p      STARTED               172.17.0.2 netology_test
+```
+Видно, что шарды индексов находятся в состоянии "Не назначено", т.к. при создании не были указаны в назначении шард. Наш сервис находится в single-mode режиме. Выходит, что в данном режиме нет смысла создавать шарды.
+
+Проверим состояние кластера:
+```bash
+mike@mike-VirtualBox:~$ curl -X GET "localhost:9200/_cluster/health?pretty"
+{
+  "cluster_name" : "elasticsearch",
+  "status" : "yellow",
+  "timed_out" : false,
+  "number_of_nodes" : 1,
+  "number_of_data_nodes" : 1,
+  "active_primary_shards" : 8,
+  "active_shards" : 8,
+  "relocating_shards" : 0,
+  "initializing_shards" : 0,
+  "unassigned_shards" : 10,
+  "delayed_unassigned_shards" : 0,
+  "number_of_pending_tasks" : 0,
+  "number_of_in_flight_fetch" : 0,
+  "task_max_waiting_in_queue_millis" : 0,
+  "active_shards_percent_as_number" : 44.44444444444444
+}
+```
+Кластер в данный момент находится в Yellow статусе. Это означает, что данные доступны, но есть проблемы с репликами. Количество активных шард 44,4%
+
+Удалим индексы:
+```bash
+mike@mike-VirtualBox:~$ curl -X DELETE "localhost:9200/ind-1?pretty"
+{
+  "acknowledged" : true
+}
+mike@mike-VirtualBox:~$ curl -X DELETE "localhost:9200/ind-2?pretty"
+{
+  "acknowledged" : true
+}
+mike@mike-VirtualBox:~$ curl -X DELETE "localhost:9200/ind-3?pretty"
+{
+  "acknowledged" : true
+}
 
 ```
 
+После удаления индексов статус кластера сменился на Зеленый, т.к. количество активных шард теперь 100%: 
 ```bash
-
-```
-
-```bash
-
-```
-
-```bash
+mike@mike-VirtualBox:~$ curl -X GET "localhost:9200/_cluster/health?pretty"
+{
+  "cluster_name" : "elasticsearch",
+  "status" : "green",
+  "timed_out" : false,
+  "number_of_nodes" : 1,
+  "number_of_data_nodes" : 1,
+  "active_primary_shards" : 1,
+  "active_shards" : 1,
+  "relocating_shards" : 0,
+  "initializing_shards" : 0,
+  "unassigned_shards" : 0,
+  "delayed_unassigned_shards" : 0,
+  "number_of_pending_tasks" : 0,
+  "number_of_in_flight_fetch" : 0,
+  "task_max_waiting_in_queue_millis" : 0,
+  "active_shards_percent_as_number" : 100.0
+}
 
 ```
 
