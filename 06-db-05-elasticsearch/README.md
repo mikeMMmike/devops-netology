@@ -174,13 +174,54 @@ mike@mike-VirtualBox:~/devops/06-db-05-elasticsearch$ curl -u elasticsearch:devo
 }
 ```
 
-Застрял на данном этапе. Ранее в докер-файле отсутствовала строка смены пароля (да, так делать нельзя и это небезопасно) `echo -e "devops123\ndevops123\n" | passwd elasticsearch &&\`, и при неавторизованном запросе `curl -X GET "localhost:9200/?pretty"` я также получал ошибку 401. Установка пароля для пользователя elasticsearch не помогла мне решить проблему авторизации при запросе.
-
+PS. Застрял на данном этапе. Ранее в докер-файле отсутствовала строка смены пароля (да, так делать нельзя и это небезопасно) `echo -e "devops123\ndevops123\n" | passwd elasticsearch &&\`, и при неавторизованном запросе `curl -X GET "localhost:9200/?pretty"` я также получал ошибку 401. Установка пароля для пользователя elasticsearch не помогла мне решить проблему авторизации при запросе.
 Задачу решал в рамках поставленной цели. Из вариантов у меня осталось - копия elasticsearch.yml в контейнер вместо передачи переменных окружения в CMD и запуск докер-контейнера из образа elasticksearch. 
 Но я считаю, что ни 1 ни 2 вариант не помогут в данной ситуации, поэтому прошу помочь.
 
 Ссылка на образ в репозитории dockerhub:
 https://hub.docker.com/repository/docker/mikemmmike/elsticksearch
+
+
+Сменил пароль в контейнере:
+
+```bash
+[elasticsearch@d1402bb559d4 config]$ cd /usr/elastic/elasticsearch-8.0.1/bin/
+[elasticsearch@d1402bb559d4 bin]$ ./elasticsearch-reset-password -a -b -s -u elastic
+WARNING: Owner of file [/usr/elastic/elasticsearch-8.0.1/config/users] used to be [root], but now is [elasticsearch]
+WARNING: Group of file [/usr/elastic/elasticsearch-8.0.1/config/users] used to be [root], but now is [elasticsearch]
+WARNING: Owner of file [/usr/elastic/elasticsearch-8.0.1/config/users_roles] used to be [root], but now is [elasticsearch]
+WARNING: Group of file [/usr/elastic/elasticsearch-8.0.1/config/users_roles] used to be [root], but now is [elasticsearch]
+--Em-dDwVFYVHb9le2dj
+```
+После получения теперь можно смотреть вывод команды:
+
+```bash
+mike@mike-VirtualBox:~$ curl -u elastic:--Em-dDwVFYVHb9le2dj -X GET "localhost:9200/?pretty"
+{
+  "name" : "netology_test",
+  "cluster_name" : "elasticsearch",
+  "cluster_uuid" : "Uz-KqoPvSse1fkrlWig9PA",
+  "version" : {
+    "number" : "8.0.1",
+    "build_flavor" : "default",
+    "build_type" : "tar",
+    "build_hash" : "801d9ccc7c2ee0f2cb121bbe22ab5af77a902372",
+    "build_date" : "2022-02-24T13:55:40.601285296Z",
+    "build_snapshot" : false,
+    "lucene_version" : "9.0.0",
+    "minimum_wire_compatibility_version" : "7.17.0",
+    "minimum_index_compatibility_version" : "7.0.0"
+  },
+  "tagline" : "You Know, for Search"
+}
+
+```
+
+
+```bash
+
+```
+
 
 ## Задача 2
 
