@@ -52,9 +52,10 @@ wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.0.1-li
 RUN shasum -a 512 -c elasticsearch-8.0.1-linux-x86_64.tar.gz.sha512 && \
 tar -xzf elasticsearch-8.0.1-linux-x86_64.tar.gz
 
+COPY ./elasticsearch.yml /usr/elastic/elasticsearch-8.0.1/config/elasticsearch.yml
+
 RUN groupadd -g 3000 elasticsearch && \
     adduser -u 3000 -g elasticsearch -s /bin/sh elasticsearch && \
-    echo -e "devops123\ndevops123\n" | passwd elasticsearch &&\
     chmod 777 -R /var/lib/ && \
     chmod 777 -R /usr/elastic/elasticsearch-8.0.1/
 
@@ -63,7 +64,7 @@ EXPOSE 9200
 EXPOSE 9300
 
 WORKDIR /usr/elastic/elasticsearch-8.0.1/bin/
-CMD ["./elasticsearch", "-Enode.name=netology_test", "-Epath.data=/var/lib/data", "-Epath.logs=/var/lib/logs", "-Enetwork.host=0.0.0.0", "-Ediscovery.type=single-node"]2
+CMD ["./elasticsearch"]2
 ```
 
 
@@ -71,65 +72,107 @@ CMD ["./elasticsearch", "-Enode.name=netology_test", "-Epath.data=/var/lib/data"
 
 Процесс создания образа и отправки в dockerhub:
 ```bash
-mike@mike-VirtualBox:~/devops/06-db-05-elasticsearch$ docker build -t mikemmmike/elsticksearch:netology .
-Sending build context to Docker daemon  3.584kB
-Step 1/12 : FROM centos:7
+mike@mike-VirtualBox:~/devops/06-db-05-elasticsearch$ docker build -t mikemmmike/elasticksearch_conf:netology .
+Sending build context to Docker daemon  13.82kB
+Step 1/13 : FROM centos:7
  ---> eeb6ee3f44bd
-Step 2/12 : MAINTAINER Mike Sinica <kish_forever@bk.ru>
+Step 2/13 : MAINTAINER Mike Sinica <kish_forever@bk.ru>
  ---> Using cache
  ---> 29c0584be916
-Step 3/12 : RUN yum update -y &&       yum install wget -y &&       yum install perl-Digest-SHA -y &&       yum install java-1.8.0-openjdk.x86_64 -y
+Step 3/13 : RUN yum update -y &&       yum install wget -y &&       yum install perl-Digest-SHA -y &&       yum install java-1.8.0-openjdk.x86_64 -y
  ---> Using cache
  ---> 9af86abd2a12
-Step 4/12 : WORKDIR /usr/elastic/
+Step 4/13 : WORKDIR /usr/elastic/
  ---> Using cache
  ---> 34ac23ad7847
-Step 5/12 : RUN wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.0.1-linux-x86_64.tar.gz && wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.0.1-linux-x86_64.tar.gz.sha512
+Step 5/13 : RUN wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.0.1-linux-x86_64.tar.gz && wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.0.1-linux-x86_64.tar.gz.sha512
  ---> Using cache
  ---> b37f2cc3f09a
-Step 6/12 : RUN shasum -a 512 -c elasticsearch-8.0.1-linux-x86_64.tar.gz.sha512 && tar -xzf elasticsearch-8.0.1-linux-x86_64.tar.gz
+Step 6/13 : RUN shasum -a 512 -c elasticsearch-8.0.1-linux-x86_64.tar.gz.sha512 && tar -xzf elasticsearch-8.0.1-linux-x86_64.tar.gz
  ---> Using cache
  ---> d4bb647dd8c5
-Step 7/12 : RUN groupadd -g 3000 elasticsearch &&     adduser -u 3000 -g elasticsearch -s /bin/sh elasticsearch &&     chmod 777 -R /var/lib/ &&     chmod 777 -R /usr/elastic/elasticsearch-8.0.1/
+Step 7/13 : COPY ./elasticsearch.yml /usr/elastic/elasticsearch-8.0.1/config/elasticsearch.yml
  ---> Using cache
- ---> aea863c8a902
-Step 8/12 : USER 3000
+ ---> 32924372f058
+Step 8/13 : RUN groupadd -g 3000 elasticsearch &&     adduser -u 3000 -g elasticsearch -s /bin/sh elasticsearch &&     chmod 777 -R /var/lib/ &&     chmod 777 -R /usr/elastic/elasticsearch-8.0.1/
  ---> Using cache
- ---> b3c70f916104
-Step 9/12 : EXPOSE 9200
+ ---> 5f3aaa8e7cc2
+Step 9/13 : USER 3000
  ---> Using cache
- ---> 2f6db0f5eff9
-Step 10/12 : EXPOSE 9300
- ---> Using cache
- ---> 9008c07c3cbc
-Step 11/12 : WORKDIR /usr/elastic/elasticsearch-8.0.1/bin/
- ---> Running in 61e773be7c18
-Removing intermediate container 61e773be7c18
- ---> cd5460b5e66a
-Step 12/12 : CMD ["./elasticsearch", "-Enode.name=netology_test", "-Epath.data=/var/lib/data", "-Epath.logs=/var/lib/logs", "-Enetwork.host=0.0.0.0", "-Ediscovery.type=single-node"]
- ---> Running in 4c709be31f4b
-Removing intermediate container 4c709be31f4b
- ---> 50d341d4b96d
-Successfully built 50d341d4b96d
-Successfully tagged mikemmmike/elsticksearch:netology
-mike@mike-VirtualBox:~/devops/06-db-05-elasticsearch$ docker push mikemmmike/elsticksearch:netology
-The push refers to repository [docker.io/mikemmmike/elsticksearch]
-e31e31c240d9: Pushed 
-c7f27cbd20e1: Pushed 
-c0d0e90198bd: Pushed 
-b10898396870: Pushed 
-16b325e5c9c1: Layer already exists 
-6073f594a2b6: Pushed 
-174f56854903: Layer already exists 
-netology: digest: sha256:85c29578c818c6b230005d19a9ff153d008cc95c60609f286f3540d4d272fd7e size: 1795
+ ---> 2e8806344497
+Step 10/13 : EXPOSE 9200
+ ---> Running in 51d7e14626a6
+Removing intermediate container 51d7e14626a6
+ ---> 4f350d6e6952
+Step 11/13 : EXPOSE 9300
+ ---> Running in 7e082407931e
+Removing intermediate container 7e082407931e
+ ---> 7a791af832de
+Step 12/13 : WORKDIR /usr/elastic/elasticsearch-8.0.1/bin/
+ ---> Running in 58e411272879
+Removing intermediate container 58e411272879
+ ---> 5d4d446f78a9
+Step 13/13 : CMD ["./elasticsearch"]2
+ ---> Running in 7661ff28b723
+Removing intermediate container 7661ff28b723
+ ---> e66ee14c7b8e
+Successfully built e66ee14c7b8e
+Successfully tagged mikemmmike/elasticksearch_conf:netology
 
-
-mike@mike-VirtualBox:~/devops/06-db-05-elasticsearch$ docker ps
-CONTAINER ID   IMAGE                               COMMAND                  CREATED          STATUS          PORTS                                                 NAMES
-51c611bbd051   mikemmmike/elsticksearch:netology   "./elasticsearch -En…"   51 seconds ago   Up 46 seconds   0.0.0.0:9200->9200/tcp, :::9200->9200/tcp, 9300/tcp   elastic_test1
+mike@mike-VirtualBox:~$ docker push mikemmmike/elasticksearch_conf:netology
+The push refers to repository [docker.io/mikemmmike/elasticksearch_conf]
+846b5001fdbb: Pushed 
+50c7dcb92bef: Pushed 
+c0d0e90198bd: Mounted from mikemmmike/elsticksearch 
+b10898396870: Mounted from mikemmmike/elsticksearch 
+16b325e5c9c1: Mounted from mikemmmike/elsticksearch 
+6073f594a2b6: Mounted from mikemmmike/elsticksearch 
+174f56854903: Mounted from mikemmmike/elsticksearch 
+netology: digest: sha256:a5bd1196415fb60ced65b3e3868b65fad3782c457faffa1910bc37ea7aad2aa7 size: 1796
 
 ```
 
+Elasticsearch.yml:
+```bash
+# ======================== Elasticsearch Configuration =========================
+#
+#
+# ---------------------------------- Cluster -----------------------------------
+
+#
+# ------------------------------------ Node ------------------------------------
+#
+# Use a descriptive name for the node:
+#
+node.name: netology_test
+#
+# ----------------------------------- Paths ------------------------------------
+#
+# Path to directory where to store the data
+#
+path.data: /var/lib/data
+#
+# Path to log files:
+#
+path.logs: /var/lib/logs
+#
+# ----------------------------------- Memory -----------------------------------
+#
+# ---------------------------------- Network -----------------------------------
+#
+# Set the bind address to a specific IP (IPv4 or IPv6):
+#
+network.host: 0.0.0.0
+http.port: 9200
+# --------------------------------- Discovery ----------------------------------
+
+discovery.type: single-node
+
+# ---------------------------------- Various -----------------------------------
+
+xpack.security.enabled: false
+
+```
 
 Установка ограничения по памяти и запуск docker:
 ```bash
@@ -146,61 +189,11 @@ mike@mike-VirtualBox:~/devops/06-db-05-elasticsearch$ docker run -p 9200:9200 --
 Ответ `elasticsearch` на запрос пути `/` в json виде:
 
 ```bash
-mike@mike-VirtualBox:~/devops/06-db-05-elasticsearch$ curl -u elasticsearch:devops123 -X GET "localhost:9200/?pretty"
-{
-  "error" : {
-    "root_cause" : [
-      {
-        "type" : "security_exception",
-        "reason" : "unable to authenticate user [elasticsearch] for REST request [/?pretty]",
-        "header" : {
-          "WWW-Authenticate" : [
-            "Basic realm=\"security\" charset=\"UTF-8\"",
-            "ApiKey"
-          ]
-        }
-      }
-    ],
-    "type" : "security_exception",
-    "reason" : "unable to authenticate user [elasticsearch] for REST request [/?pretty]",
-    "header" : {
-      "WWW-Authenticate" : [
-        "Basic realm=\"security\" charset=\"UTF-8\"",
-        "ApiKey"
-      ]
-    }
-  },
-  "status" : 401
-}
-```
-
-PS. Застрял на данном этапе. Ранее в докер-файле отсутствовала строка смены пароля (да, так делать нельзя и это небезопасно) `echo -e "devops123\ndevops123\n" | passwd elasticsearch &&\`, и при неавторизованном запросе `curl -X GET "localhost:9200/?pretty"` я также получал ошибку 401. Установка пароля для пользователя elasticsearch не помогла мне решить проблему авторизации при запросе.
-Задачу решал в рамках поставленной цели. Из вариантов у меня осталось - копия elasticsearch.yml в контейнер вместо передачи переменных окружения в CMD и запуск докер-контейнера из образа elasticksearch. 
-Но я считаю, что ни 1 ни 2 вариант не помогут в данной ситуации, поэтому прошу помочь.
-
-Ссылка на образ в репозитории dockerhub:
-https://hub.docker.com/repository/docker/mikemmmike/elsticksearch
-
-
-Сменил пароль в контейнере:
-
-```bash
-[elasticsearch@d1402bb559d4 config]$ cd /usr/elastic/elasticsearch-8.0.1/bin/
-[elasticsearch@d1402bb559d4 bin]$ ./elasticsearch-reset-password -a -b -s -u elastic
-WARNING: Owner of file [/usr/elastic/elasticsearch-8.0.1/config/users] used to be [root], but now is [elasticsearch]
-WARNING: Group of file [/usr/elastic/elasticsearch-8.0.1/config/users] used to be [root], but now is [elasticsearch]
-WARNING: Owner of file [/usr/elastic/elasticsearch-8.0.1/config/users_roles] used to be [root], but now is [elasticsearch]
-WARNING: Group of file [/usr/elastic/elasticsearch-8.0.1/config/users_roles] used to be [root], but now is [elasticsearch]
---Em-dDwVFYVHb9le2dj
-```
-После получения теперь можно смотреть вывод команды:
-
-```bash
-mike@mike-VirtualBox:~$ curl -u elastic:--Em-dDwVFYVHb9le2dj -X GET "localhost:9200/?pretty"
+mike@mike-VirtualBox:~$ curl -X GET "localhost:9200/?pretty"
 {
   "name" : "netology_test",
   "cluster_name" : "elasticsearch",
-  "cluster_uuid" : "Uz-KqoPvSse1fkrlWig9PA",
+  "cluster_uuid" : "Jjk0DCPxQXqUZJd5FWjkTw",
   "version" : {
     "number" : "8.0.1",
     "build_flavor" : "default",
@@ -217,10 +210,10 @@ mike@mike-VirtualBox:~$ curl -u elastic:--Em-dDwVFYVHb9le2dj -X GET "localhost:9
 
 ```
 
+Ссылка на образ в репозитории dockerhub:
+https://hub.docker.com/repository/docker/mikemmmike/elasticksearch_conf
 
-```bash
 
-```
 
 
 ## Задача 2
@@ -231,7 +224,7 @@ mike@mike-VirtualBox:~$ curl -u elastic:--Em-dDwVFYVHb9le2dj -X GET "localhost:9
 - обосновывать причину деградации доступности данных
 
 Ознакомтесь с [документацией](https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-create-index.html) 
-и добавьте в `elasticsearch` 3 индекса, в соответствии со таблицей:
+и добавьте в `elasticsearch` 3 индекса, в соответствии с таблицей:
 
 | Имя | Количество реплик | Количество шард |
 |-----|-------------------|-----------------|
