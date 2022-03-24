@@ -415,20 +415,166 @@ mike@mike-VirtualBox:~$ curl -X GET "localhost:9200/_cluster/health?pretty"
 Ответ.
 -----
 
+Создадим директорию:
 ```bash
-
+[elasticsearch@e69fc84918e5 bin]$ mkdir /usr/elastic/elasticsearch-8.0.1/snapshots
+```
+Внесем изменения в elasticsearch.yml 
+```bash
+[elasticsearch@e69fc84918e5 bin]$ echo 'path.repo: /usr/elastic/elasticsearch-8.0.1/snapshots' >> /usr/elastic/elasticsearch-8.0.1/config/elasticsearch.yml
+```
+Перезапустим контейнер:
+```bash
+[elasticsearch@e69fc84918e5 bin]$ exit
+exit
+mike@mike-VirtualBox:~/devops/06-db-05-elasticsearch$ docker ps
+CONTAINER ID   IMAGE                                     COMMAND             CREATED       STATUS       PORTS                                                 NAMES
+e69fc84918e5   mikemmmike/elasticksearch_conf:netology   "./elasticsearch"   2 hours ago   Up 2 hours   0.0.0.0:9200->9200/tcp, :::9200->9200/tcp, 9300/tcp   elastic_sudo
+mike@mike-VirtualBox:~/devops/06-db-05-elasticsearch$ docker restart e69fc84918e5
+e69fc84918e5
 ```
 
+Зарегистрируем директорию с типом "файловая система", используя API:
 ```bash
-
+mike@mike-VirtualBox:~$ curl -X PUT "localhost:9200/_snapshot/netology_backup?pretty" -H 'Content-Type: application/json' -d'
+> {
+>   "type": "fs",
+>   "settings": {
+>       "location": "netology_backup_location"
+>   }
+> }
+> '
+{
+  "acknowledged" : true
+}
+```
+Проверим информацию о репозитории бекапов:
+```bash
+mike@mike-VirtualBox:~$ curl -X GET "localhost:9200/_snapshot/netology_backup?pretty"
+{
+  "netology_backup" : {
+    "type" : "fs",
+    "settings" : {
+      "location" : "netology_backup_location"
+    }
+  }
+}
 ```
 
+Создадим индекс **test**
 ```bash
+mike@mike-VirtualBox:~$ curl -X PUT "localhost:9200/test?pretty" -H 'Content-Type: application/json' -d'
+>  {
+>   "settings":{
+>    "number_of_shards": 1,
+>    "number_of_replicas": 0
+>   }
+>  }
+>  '
+{
+  "acknowledged" : true,
+  "shards_acknowledged" : true,
+  "index" : "test"
+}
+```
+Список индексов
+```bash
+mike@mike-VirtualBox:~$ curl -X GET "localhost:9200/_cat/indices?pretty&v=true"
+health status index uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   test  8-NKly2yTA-1yFB5EGCMRw   1   0          0            0       225b           225b
+```
+Сделаем snapshot:
+```bash
+mike@mike-VirtualBox:~$ curl -X PUT "localhost:9200/_snapshot/netology_backup/snapshot_test?wait_for_completion=true&pretty"
+{
+  "snapshot" : {
+    "snapshot" : "snapshot_test",
+    "uuid" : "S8KTP8TfSC6IvgpByeqvDg",
+    "repository" : "netology_backup",
+    "version_id" : 8000199,
+    "version" : "8.0.1",
+    "indices" : [
+      ".geoip_databases",
+      "test"
+    ],
+    "data_streams" : [ ],
+    "include_global_state" : true,
+    "state" : "SUCCESS",
+    "start_time" : "2022-03-24T23:43:35.657Z",
+    "start_time_in_millis" : 1648165415657,
+    "end_time" : "2022-03-24T23:43:38.279Z",
+    "end_time_in_millis" : 1648165418279,
+    "duration_in_millis" : 2622,
+    "failures" : [ ],
+    "shards" : {
+      "total" : 2,
+      "failed" : 0,
+      "successful" : 2
+    },
+    "feature_states" : [
+      {
+        "feature_name" : "geoip",
+        "indices" : [
+          ".geoip_databases"
+        ]
+      }
+    ]
+  }
+}
+```
+Список файлов в директории со snapshot`ами:
+```bash
+[elasticsearch@e69fc84918e5 snapshots]$ ls -l ./netology_backup_location/
+total 36
+-rw-r--r-- 1 elasticsearch elasticsearch   846 Mar 24 23:43 index-0
+-rw-r--r-- 1 elasticsearch elasticsearch     8 Mar 24 23:43 index.latest
+drwxr-xr-x 4 elasticsearch elasticsearch  4096 Mar 24 23:43 indices
+-rw-r--r-- 1 elasticsearch elasticsearch 17318 Mar 24 23:43 meta-S8KTP8TfSC6IvgpByeqvDg.dat
+-rw-r--r-- 1 elasticsearch elasticsearch   354 Mar 24 23:43 snap-S8KTP8TfSC6IvgpByeqvDg.dat
+```
+Удалим индекс `test`
+```bash
+mike@mike-VirtualBox:~$ curl -X DELETE "localhost:9200/test?pretty"
+{
+  "acknowledged" : true
+}
 
 ```
-
+Создадим индекс `test-2`
 ```bash
-
+mike@mike-VirtualBox:~$ curl -X PUT "localhost:9200/test-2?pretty" -H 'Content-Type: application/json' -d'
+> {
+> "settings":{
+>   "number_of_shards": 1,
+>   "number_of_replicas": 0
+>   }
+> }
+> '
+{
+  "acknowledged" : true,
+  "shards_acknowledged" : true,
+  "index" : "test-2"
+}
+```
+Индекс `test` теперь отсутствует, а индекс `test-2` имеется. Статус Green:
+```bash
+mike@mike-VirtualBox:~$ curl -X GET "localhost:9200/_cat/indices?pretty&v=true"
+health status index  uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   test-2 V046U9uqTvav6P2xgKjnRQ   1   0          0            0       225b           225b
+```
+Восстановим данные из snapshot'а:
+```bash
+mike@mike-VirtualBox:~$ curl -X POST "localhost:9200/_snapshot/netology_backup/snapshot_test/_restore?pretty"
+{
+  "accepted" : true
+}
+```
+Список индексов после восстановления:
+```bash
+mike@mike-VirtualBox:~$ curl -X GET "localhost:9200/_cat/indices?pretty&v=true"
+health status index  uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   test-2 V046U9uqTvav6P2xgKjnRQ   1   0          0            0       225b           225b
+green  open   test   QfoJgqbEQNS9Q6DXp4uuwQ   1   0          0            0       225b           225b
 ```
 
 
