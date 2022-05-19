@@ -293,6 +293,30 @@ INFO: ------------------------------------------------------------------------
 5. Узнаём пароль от admin через `docker exec -it nexus /bin/bash`
 6. Подключаемся под админом, меняем пароль, сохраняем анонимный доступ
 
+###Лог
+
+3. В логах все ок:
+```bash
+2022-05-19 16:38:12,927+0000 INFO  [jetty-main-1] *SYSTEM org.eclipse.jetty.server.Server - Started @53492ms
+2022-05-19 16:38:12,928+0000 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.bootstrap.jetty.JettyServer - 
+-------------------------------------------------
+
+Started Sonatype Nexus OSS 3.38.1-01
+
+-------------------------------------------------
+
+```
+
+4. [Проверили готовность сервиса через браузер](https://github.com/mikeMMmike/devops-netology/tree/main/09-ci-02-cicd/src/1.nexus.PNG)
+5. Получили пароль администратора: 
+```bash
+21:39:09 j0 mike@mike-VirtualBox:~
+$ docker exec -it nexus /bin/bash
+bash-4.4$ cat ./nexus-data/admin.password 
+c7e1070d-dd93-442d-841d-12ed32546bf8
+```
+6. [Подключились, сменили пароль и сохранили анонимный доступ](https://github.com/mikeMMmike/devops-netology/tree/main/09-ci-02-cicd/src/2.nexus.PNG)
+
 ### Основная часть
 
 1. В репозиторий `maven-public` загружаем артефакт с GAV параметрами:
