@@ -13,7 +13,7 @@
 В целом, в [этой статье](https://docs.sonarqube.org/latest/setup/install-server/) описаны все варианты установки, включая и docker, но так как нам он нужен разово, то достаточно того набора действий, который я указал выше.
 
 
-###Лог подготовки:
+### Лог подготовки:
 
 
 ```bash
@@ -53,7 +53,7 @@ mike@mike-VirtualBox:~/devops/09-ci-02-cicd$ docker logs -f sonarqube
 9. Делаем скриншот успешного прохождения анализа, прикладываем к решению ДЗ
 
 
-###Лог основной части:
+### Лог основной части:
 ```bash
 ike@mike-VirtualBox:~$ export PATH=$PATH:/home/mike/devops/09-ci-02-cicd/sonar-scanner-4.7.0.2747-linux/bin
 mike@mike-VirtualBox:~$ sonar-scanner -v
@@ -293,7 +293,7 @@ INFO: ------------------------------------------------------------------------
 5. Узнаём пароль от admin через `docker exec -it nexus /bin/bash`
 6. Подключаемся под админом, меняем пароль, сохраняем анонимный доступ
 
-###Лог
+### Лог
 
 3. В логах все ок:
 ```bash
@@ -341,7 +341,7 @@ c7e1070d-dd93-442d-841d-12ed32546bf8
 3. Проверяем `mvn --version`
 4. Забираем директорию [mvn](./mvn) с pom
 
-###Лог
+### Лог
 2. Разархивируем, делаем так, чтобы binary был доступен:
 ```bash
 02:44:23 j0 mike@mike-VirtualBox:~/devops/09-ci-02-cicd
@@ -371,7 +371,7 @@ OS name: "linux", version: "5.13.0-41-generic", arch: "amd64", family: "unix"
 3. Проверяем директорию `~/.m2/repository/`, находим наш артефакт
 4. В ответе присылаем исправленный файл `pom.xml`
 
-###Лог
+### Лог
 1. Меняем в `pom.xml` блок с зависимостями под наш артефакт из первого пункта задания для Nexus (java с версией 8_282)
 ```xml
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
