@@ -329,6 +329,9 @@ c7e1070d-dd93-442d-841d-12ed32546bf8
 3. Проверяем, что все файлы загрузились успешно
 4. В ответе присылаем файл `maven-metadata.xml` для этого артефекта
 
+Ответ: [maven-metadata.xml](https://github.com/mikeMMmike/devops-netology/tree/main/09-ci-02-cicd/src/maven-metadata.xml) для этого артефекта
+
+ 
 ### Знакомство с Maven
 
 ### Подготовка к выполнению
@@ -338,6 +341,29 @@ c7e1070d-dd93-442d-841d-12ed32546bf8
 3. Проверяем `mvn --version`
 4. Забираем директорию [mvn](./mvn) с pom
 
+###Лог
+2. Разархивируем, делаем так, чтобы binary был доступен:
+```bash
+02:44:23 j0 mike@mike-VirtualBox:~/devops/09-ci-02-cicd
+$ export PATH=$PATH:/home/mike/devops/09-ci-02-cicd/apache-maven-3.8.5-bin/bin/mvn
+```
+Установили JDK:
+```bash
+03:09:10 j0 mike@mike-VirtualBox:~
+$ sudo apt install default-jdk
+```
+
+3. Првоеряем версию:
+```bash
+03:09:10 j0 mike@mike-VirtualBox:~
+$ mvn -v
+Apache Maven 3.8.5 (3599d3414f046de2324203b78ddcf9b5e4388aa0)
+Maven home: /home/mike/devops/09-ci-02-cicd/apache-maven-3.8.5-bin
+Java version: 11.0.15, vendor: Private Build, runtime: /usr/lib/jvm/java-11-openjdk-amd64
+Default locale: ru_RU, platform encoding: UTF-8
+OS name: "linux", version: "5.13.0-41-generic", arch: "amd64", family: "unix"
+```
+
 ### Основная часть
 
 1. Меняем в `pom.xml` блок с зависимостями под наш артефакт из первого пункта задания для Nexus (java с версией 8_282)
@@ -345,6 +371,83 @@ c7e1070d-dd93-442d-841d-12ed32546bf8
 3. Проверяем директорию `~/.m2/repository/`, находим наш артефакт
 4. В ответе присылаем исправленный файл `pom.xml`
 
+###Лог
+1. Меняем в `pom.xml` блок с зависимостями под наш артефакт из первого пункта задания для Nexus (java с версией 8_282)
+```xml
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<modelVersion>4.0.0</modelVersion>
+<groupId>netology</groupId>
+<artifactId>java</artifactId>
+<version>8_282</version>
+<repositories>
+<repository>
+<id>my-repo</id>
+<name>maven-public</name>
+<url>http://localhost:8081/repository/maven-public/</url>
+</repository>
+</repositories>
+<dependencies>
+<!--      <dependency>
+      <groupId>somegroup</groupId>
+      <artifactId>someart</artifactId>
+      <version>somevers</version>
+      <classifier>someclass</classifier>
+      <type>sometype</type>
+    </dependency>  -->
+</dependencies>
+</project>
+```
+2. Запускаем команду `mvn package` в директории с `pom.xml`, ожидаем успешного окончания
+```bash
+03:25:48 j0 mike@mike-VirtualBox:~/devops/09-ci-02-cicd/mvn
+$ mvn package
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------------< netology:java >----------------------------
+[INFO] Building java 8_282
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-resources-plugin/2.6/maven-resources-plugin-2.6.pom
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-resources-plugin/2.6/maven-resources-plugin-2.6.pom (8.1 kB at 10.0 kB/s)
+
+
+---------------
+сокращено
+---------------
+
+
+
+Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus-utils/3.0/plexus-utils-3.0.jar (226 kB at 637 kB/s)
+Downloaded from central: https://repo.maven.apache.org/maven2/commons-lang/commons-lang/2.1/commons-lang-2.1.jar (208 kB at 575 kB/s)
+[WARNING] JAR will be empty - no content was marked for inclusion!
+[INFO] Building jar: /home/mike/devops/09-ci-02-cicd/mvn/target/java-8_282.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  29.511 s
+[INFO] Finished at: 2022-05-20T03:26:40+05:00
+[INFO] ------------------------------------------------------------------------
+
+
+```
+
+3. Проверяем директорию `~/.m2/repository/`, находим наш артефакт
+```bash
+$ ls -la ~/.m2/repository/
+итого 44
+drwxrwxr-x 11 mike mike 4096 мая 20 03:26 .
+drwxrwxr-x  3 mike mike 4096 мая 20 03:26 ..
+drwxrwxr-x  3 mike mike 4096 мая 20 03:26 backport-util-concurrent
+drwxrwxr-x  3 mike mike 4096 мая 20 03:26 classworlds
+drwxrwxr-x  3 mike mike 4096 мая 20 03:26 com
+drwxrwxr-x  3 mike mike 4096 мая 20 03:26 commons-cli
+drwxrwxr-x  3 mike mike 4096 мая 20 03:26 commons-lang
+drwxrwxr-x  3 mike mike 4096 мая 20 03:26 commons-logging
+drwxrwxr-x  3 mike mike 4096 мая 20 03:26 junit
+drwxrwxr-x  3 mike mike 4096 мая 20 03:26 log4j
+drwxrwxr-x  6 mike mike 4096 мая 20 03:26 org
+
+```
+4. [Исправленный файл `pom.xml`](https://github.com/mikeMMmike/devops-netology/tree/main/09-ci-02-cicd/src/pom.xml)
 ---
 
 ### Как оформить ДЗ?
