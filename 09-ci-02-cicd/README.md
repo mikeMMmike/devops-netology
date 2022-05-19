@@ -329,7 +329,7 @@ c7e1070d-dd93-442d-841d-12ed32546bf8
 3. Проверяем, что все файлы загрузились успешно
 4. В ответе присылаем файл `maven-metadata.xml` для этого артефекта
 
-Ответ: [maven-metadata.xml](https://github.com/mikeMMmike/devops-netology/tree/main/09-ci-02-cicd/src/maven-metadata.xml) для этого артефекта
+### Ответ: [maven-metadata.xml](https://github.com/mikeMMmike/devops-netology/tree/main/09-ci-02-cicd/src/maven-metadata.xml) для этого артефекта
 
  
 ### Знакомство с Maven
@@ -447,7 +447,7 @@ drwxrwxr-x  3 mike mike 4096 мая 20 03:26 log4j
 drwxrwxr-x  6 mike mike 4096 мая 20 03:26 org
 
 ```
-4. [Исправленный файл `pom.xml`](https://github.com/mikeMMmike/devops-netology/tree/main/09-ci-02-cicd/src/pom.xml)
+### Ответ: [Исправленный файл `pom.xml`](https://github.com/mikeMMmike/devops-netology/tree/main/09-ci-02-cicd/src/pom.xml)
 ---
 
 ### Как оформить ДЗ?
