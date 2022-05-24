@@ -165,6 +165,53 @@ teamcity_1        | Startup confirmation is required. Open TeamCity web page in 
 ## Лог выполнения
 1. [Создали проект](./src/project.png)
 2. [Autodetect](./src/buildStep.png)
+3. [Первая сборка](./src/3_firstBuild.png)
+4. [Условия изменили](./src/Test&Clean.png):
+
+```xml
+
+ package _Self.buildTypes
+
+import jetbrains.buildServer.configs.kotlin.*
+import jetbrains.buildServer.configs.kotlin.buildSteps.maven
+import jetbrains.buildServer.configs.kotlin.triggers.vcs
+
+object Build : BuildType({
+    name = "Build"
+
+    vcs {
+        root(HttpsGithubComMikeMMmikeExampleTeamcityGitRefsHeadsMaster)
+    }
+steps {
+    maven {
+        name = "first_step_test"
+
+        conditions {
+            doesNotContain("teamcity.build.branch", "master")
+        }
+        goals = "clean test"
+        runnerArgs = "-Dmaven.test.failure.ignore=true"
+    }
+    maven {
+        name = "second_step_clean"
+
+        conditions {
+            contains("teamcity.build.branch", "master")
+        }
+        goals = "clean package"
+        runnerArgs = "-Dmaven.test.failure.ignore=true"
+    }
+}
+    triggers {
+        vcs {
+        }
+    }
+})
+```
+5. Мигрируйте `build configuration` в репозиторий.
+
+
+
 ---
 
 ### Как оформить ДЗ?
