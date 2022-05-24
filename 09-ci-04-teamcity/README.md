@@ -160,6 +160,11 @@ teamcity_1        | Startup confirmation is required. Open TeamCity web page in 
 15. Проверьте, что конфигурация в репозитории содержит все настройки конфигурации из teamcity
 16. В ответ предоставьте ссылку на репозиторий
 
+
+
+## Лог выполнения
+1. [Создали проект](./src/project.png)
+2. [Autodetect](./src/buildStep.png)
 ---
 
 ### Как оформить ДЗ?
