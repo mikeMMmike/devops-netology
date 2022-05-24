@@ -166,7 +166,7 @@ teamcity_1        | Startup confirmation is required. Open TeamCity web page in 
 1. [Создали проект](./src/project.png)
 2. [Autodetect](./src/buildStep.png)
 3. [Первая сборка](./src/3_firstBuild.png)
-4. [Условия изменили](./src/Test&Clean.png):
+4. [Условия изменили](./src/4.Test&Clean.png):
 
 ```xml
 
@@ -208,7 +208,8 @@ steps {
     }
 })
 ```
-5. Мигрируйте `build configuration` в репозиторий.
+5. [Настройка миграции `build configuration` в репозиторий](./src/5.ExportSettings.PNG): Настройки проекта "Versioned Settings" > Выбираем "Synchronization enabled" > Выбираем единственный на данный момент проект "VCS Root" > Apply
+
 
 
 
