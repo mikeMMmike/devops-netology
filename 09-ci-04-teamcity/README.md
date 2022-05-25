@@ -228,7 +228,7 @@ public class Welcomer{
 }
 ```
 8. Дополните тест для нового метода на поиск слова `hunter` в новой реплике в [файл](https://github.com/mikeMMmike/example-teamcity/blob/feature/add_reply/src/test/java/plaindoll/WelcomerTest.java): 
-```json
+```
 @Test
 	public void welcomersayReplica() {
 		assertThat(welcomer.sayReplica(), containsString("hunter"));
