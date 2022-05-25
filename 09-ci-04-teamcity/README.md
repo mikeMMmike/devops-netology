@@ -168,7 +168,7 @@ teamcity_1        | Startup confirmation is required. Open TeamCity web page in 
 3. [Первая сборка](./src/3_firstBuild.png)
 4. [Условия изменили](./src/4.Test&Clean.png):
 
-```xml
+```
 
  package _Self.buildTypes
 
@@ -212,7 +212,7 @@ steps {
 6. Создали отдельную ветку `feature/add_reply` [в репозитории](https://github.com/mikeMMmike/example-teamcity/tree/feature/add_reply)
 7. Добавим новый метод для класса Welcomer: метод должен возвращать произвольную реплику, содержащую слово `hunter` в [файл](https://github.com/mikeMMmike/example-teamcity/blob/feature/add_reply/src/main/java/plaindoll/Welcomer.java)  
 
-```json
+```
 package plaindoll;
 
 public class Welcomer{
@@ -237,7 +237,7 @@ public class Welcomer{
 9. Заpushили изменения в новую ветку в репозиторий
 10. Сборка самостоятельно запустилась, [тесты прошли успешно](./src/10.test_feature.PNG):
 
-```bash
+```
 [23:32:35]The build is removed from the queue to be prepared for the start
 [23:32:35]Collecting changes in 1 VCS root
 [23:32:35]Starting the build on the agent "09-ci-04-teamcity_teamcity-agent_1"
@@ -255,12 +255,59 @@ public class Welcomer{
 [23:33:32]Publishing internal artifacts
 [23:33:33]Build finished
 ```
-11. [Внесите изменения из произвольной ветки](./src/11.merge.PNG) `feature/add_reply` в `master` через `Merge`
-12. Убедитесь, что нет собранного артефакта в сборке по ветке `master`
-13. Настройте конфигурацию так, чтобы она собирала `.jar` в артефакты сборки
-14. Проведите повторную сборку мастера, убедитесь, что сбора прошла успешно и артефакты собраны
+11. [Внесли изменения из произвольной ветки](./src/11.merge.PNG) `feature/add_reply` в `master` через `Merge`
+12. [Убедились](./src/12.build_master.PNG), что нет собранного артефакта в сборке по ветке `master`:
+```
+[23:58:16]The build is removed from the queue to be prepared for the start
+[23:58:16]Collecting changes in 1 VCS root
+[23:58:16]Starting the build on the agent "09-ci-04-teamcity_teamcity-agent_1"
+[23:58:19]Free disk space requirement (2s)
+[23:58:22]Updating tools for build
+[23:58:22]Clearing temporary directory: /opt/buildagent/temp/buildTmp
+[23:58:22]Publishing internal artifacts
+[23:58:22]Using vcs information from agent file: 5bf4f477376a0e1a.xml
+[23:58:22]Checkout directory: /opt/buildagent/work/5bf4f477376a0e1a
+[23:58:22]Updating sources: auto checkout (on agent) (1s)
+[23:58:24]Free disk space requirement (2s)
+[23:58:27]Free disk space requirement (2s)
+[23:58:30]Step 1/2: first_step_test (Maven)
+[23:58:30]Step 2/2: second_step_clean (Maven) (1m:02s)
+[23:59:32]Publishing internal artifacts
+
+[23:59:32]Build finished
+```
+13. [Настройка конфигурации](./src/13.jar_arts.PNG), чтобы она собирала `.jar` в артефакты сборки: 
+
+Сборка Build. в General Settings добавить: 
+
+Publish artifacts - `Only if build status is successful` 
+Artifact paths - `+:target/*.jar`
+
+14. Повторная сборка мастера прошла успешно и [артефакты собраны](./src/14.reBuild_jarArts.PNG):
+
+```
+[00:20:43]The build is removed from the queue to be prepared for the start
+[00:20:43]Collecting changes in 1 VCS root (1s)
+[00:20:44]Starting the build on the agent "09-ci-04-teamcity_teamcity-agent_1"
+[00:20:47]Free disk space requirement (2s)
+[00:20:49]Updating tools for build
+[00:20:50]Clearing temporary directory: /opt/buildagent/temp/buildTmp
+[00:20:50]Publishing internal artifacts
+[00:20:50]Using vcs information from agent file: 5bf4f477376a0e1a.xml
+[00:20:50]Checkout directory: /opt/buildagent/work/5bf4f477376a0e1a
+[00:20:50]Updating sources: auto checkout (on agent) (1s)
+[00:20:51]Free disk space requirement (2s)
+[00:20:54]Free disk space requirement (3s)
+[00:20:58]Step 1/2: first_step_test (Maven)
+[00:20:58]Step 2/2: second_step_clean (Maven) (1m:04s)
+[00:22:02]Publishing internal artifacts
+
+[00:22:08]Publishing artifacts (5s)
+
+[00:22:13]Build finished
+```
 15. Проверьте, что конфигурация в репозитории содержит все настройки конфигурации из teamcity
-16. В ответ предоставьте ссылку на репозиторий
+16. Ссылка на репозиторий: https://github.com/mikeMMmike/example-teamcity
 
 ---
 
