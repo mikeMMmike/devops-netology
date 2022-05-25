@@ -306,7 +306,18 @@ Artifact paths - `+:target/*.jar`
 
 [00:22:13]Build finished
 ```
-15. Проверьте, что конфигурация в репозитории содержит все настройки конфигурации из teamcity
+15. [Конфигурация в репозитории](https://github.com/mikeMMmike/example-teamcity/blob/master/.teamcity/TeamcityNetology/buildTypes/TeamcityNetology_Build.xml) содержит измененные на предыдущем этапе настройки конфигурации в teamcity: 
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<build-type xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" uuid="d8b7eae8-5758-4469-ad7d-4bf4c71b7495" xsi:noNamespaceSchemaLocation="https://www.jetbrains.com/teamcity/schemas/2021.1/project-config.xsd">
+  <name>Build</name>
+  <description />
+  <settings>
+    <options>
+      <option name="artifactRules" value="+:target/*.jar" /> 
+```
+      
 16. Ссылка на репозиторий: https://github.com/mikeMMmike/example-teamcity
 
 ---
