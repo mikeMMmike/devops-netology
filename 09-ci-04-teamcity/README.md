@@ -208,10 +208,59 @@ steps {
     }
 })
 ```
-5. [Настройка миграции `build configuration` в репозиторий](./src/5.ExportSettings.PNG): Настройки проекта "Versioned Settings" > Выбираем "Synchronization enabled" > Выбираем единственный на данный момент проект "VCS Root" > Apply
+5. [Настройка миграции `build configuration` в репозиторий](./src/5.ExportSettings.PNG): Настройки проекта "Versioned Settings" > Выбираем "Synchronization enabled" > Выбираем единственный на данный момент проект "VCS Root" > Apply. Когда экспорт будет завершен, нажимаем "Commit current project settings"
+6. Создали отдельную ветку `feature/add_reply` [в репозитории](https://github.com/mikeMMmike/example-teamcity/tree/feature/add_reply)
+7. Добавим новый метод для класса Welcomer: метод должен возвращать произвольную реплику, содержащую слово `hunter` в [файл](https://github.com/mikeMMmike/example-teamcity/blob/feature/add_reply/src/main/java/plaindoll/Welcomer.java)  
 
+```json
+package plaindoll;
 
+public class Welcomer{
+	public String sayWelcome() {
+		return "Welcome home, good hunter. What is it your desire?";
+	}
+	public String sayFarewell() {
+		return "Farewell, good hunter. May you find your worth in waking world.";
+	}
+	public String sayReplica() {
+		return "Oh my hunter";
+    }
+}
+```
+8. Дополните тест для нового метода на поиск слова `hunter` в новой реплике в [файл](https://github.com/mikeMMmike/example-teamcity/blob/feature/add_reply/src/test/java/plaindoll/WelcomerTest.java): 
+```json
+@Test
+	public void welcomersayReplica() {
+		assertThat(welcomer.sayReplica(), containsString("hunter"));
+	}
+```
+9. Заpushили изменения в новую ветку в репозиторий
+10. Сборка самостоятельно запустилась, [тесты прошли успешно](./src/10.test_feature.PNG):
 
+```bash
+[23:32:35]The build is removed from the queue to be prepared for the start
+[23:32:35]Collecting changes in 1 VCS root
+[23:32:35]Starting the build on the agent "09-ci-04-teamcity_teamcity-agent_1"
+[23:32:36]Free disk space requirement (3s)
+[23:32:39]Updating tools for build
+[23:32:39]Clearing temporary directory: /opt/buildagent/temp/buildTmp
+[23:32:39]Publishing internal artifacts
+[23:32:39]Using vcs information from agent file: 5bf4f477376a0e1a.xml
+[23:32:39]Checkout directory: /opt/buildagent/work/5bf4f477376a0e1a
+[23:32:39]Updating sources: auto checkout (on agent) (1s)
+[23:32:41]Free disk space requirement (3s)
+[23:32:44]Free disk space requirement (2s)
+[23:32:47]Step 1/2: first_step_test (Maven) (45s)
+[23:33:32]Step 2/2: second_step_clean (Maven)
+[23:33:32]Publishing internal artifacts
+[23:33:33]Build finished
+```
+11. [Внесите изменения из произвольной ветки](./src/11.merge.PNG) `feature/add_reply` в `master` через `Merge`
+12. Убедитесь, что нет собранного артефакта в сборке по ветке `master`
+13. Настройте конфигурацию так, чтобы она собирала `.jar` в артефакты сборки
+14. Проведите повторную сборку мастера, убедитесь, что сбора прошла успешно и артефакты собраны
+15. Проверьте, что конфигурация в репозитории содержит все настройки конфигурации из teamcity
+16. В ответ предоставьте ссылку на репозиторий
 
 ---
 
