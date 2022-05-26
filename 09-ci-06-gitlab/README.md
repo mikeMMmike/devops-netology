@@ -7,6 +7,14 @@
 3. Создайте новый репозиторий в gitlab, наполните его [файлами](./repository)
 4. Проект должен быть публичным, остальные настройки по желанию
 
+## Лог
+
+1. Зарегистрировались
+2. Создайте проект: https://gitlab.com/mikeMMmike/devops-netology/
+3. Создали репозиторий https://gitlab.com/mikeMMmike/devops-netology/-/tree/main/09-ci-06-gitlab с файлом https://gitlab.com/mikeMMmike/devops-netology/-/blob/main/09-ci-06-gitlab/repository/python-api.py
+4. Проект публичный
+
+
 ## Основная часть
 
 ### DevOps
