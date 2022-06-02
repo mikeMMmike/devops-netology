@@ -10,8 +10,8 @@
 ## Лог
 
 1. Зарегистрировались
-2. Создайте проект: https://gitlab.com/mikezzzz/devops-netology
-3. Создали репозиторий https://gitlab.com/mikezzzz/devops-netology/-/tree/main/09-ci-06-gitlab с файлом https://gitlab.com/mikezzzz/devops-netology/-/tree/main/09-ci-06-gitlab/repository/python-api.py
+2. Создайте проект: https://gitlab.com/mikeMMmike/devops-netology/
+3. Создали репозиторий https://gitlab.com/mikeMMmike/devops-netology/-/tree/main/09-ci-06-gitlab с файлом https://gitlab.com/mikeMMmike/devops-netology/-/tree/main/09-ci-06-gitlab/repository/python-api.py
 4. Проект публичный
 
 
@@ -47,34 +47,28 @@ ENTRYPOINT ["python3", "/python_api/python-api.py"]
 image: docker:latest
 variables:
   DOCKER_TLS_CERTDIR: ''
-  DOCKER_HOST: tcp://192.168.200.12:2375
+  DOCKER_HOST: tcp://192.168.200.130:2375
   DOCKER_DRIVER: overlay2
 services:
     - docker:dind
+before_script:
+   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 stage_build:
     stage: build
     script:
-        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-        - docker build -t $CI_REGISTRY/mikeMMmike/devops-netology/-/tree/main/09-ci-06-gitlab/image:latest .
+        - docker build -t $CI_REGISTRY/mikemmmike/devops-netology/image:latest .
     except:
         - main
 stage_deploy:
     stage: deploy
     script:
-        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-        - docker build -t $CI_REGISTRY//mikeMMmike/devops-netology/-/tree/main/09-ci-06-gitlab/repository/python-api.py:latest .
-        - docker push $CI_REGISTRY//mikeMMmike/devops-netology/-/tree/main/09-ci-06-gitlab/repository/python-api.py:latest
+        - docker build -t $CI_REGISTRY/mikemmmike/devops-netology/repository/python-api.py:latest .
+        - docker push $CI_REGISTRY/mikemmmike/devops-netology/repository/python-api.py:latest
     only:
         - main
 ```
 Но при попытке запустить pipeline на исполнение была получена [ошибка](./src/1-7-error-validate.PNG), т.к. требуется подтвердить аккаунт кредитной картой. Gitlab предлагает использовать локальный раннер: https://docs.gitlab.com/runner/install/
-UPD. После добавления раннера возникла ошибка подключения по [инструкции](https://sysadm.ru/devops/gitops/cvs/gitlab/errors/) добавил в .gitlab-ci.yml:
-```bash
-variables:
-  DOCKER_TLS_CERTDIR: ''
-  DOCKER_HOST: tcp://192.168.200.12:2375
-  DOCKER_DRIVER: overlay2
-```
+
 
 ## Итак, переходим к установке.
 ```bash
@@ -116,16 +110,16 @@ https://gitlab.com/
 Enter the registration token:
 ********************
 Enter a description for the runner:
-[mike-VirtualBox]: Ubuntu-VBox
+[mike-VirtualBox]: gitlab-runner
 Enter tags for the runner (comma-separated):
-ubuntu2020
+gitlab-runner
 Enter optional maintenance note for the runner:
 
 Registering runner... succeeded                     runner=***************
 Enter an executor: virtualbox, docker+machine, parallels, shell, ssh, docker-ssh+machine, kubernetes, custom, docker, docker-ssh:
-docker+machine
+docker
 Enter the default Docker image (for example, ruby:2.7):
-centos:7
+docker:latest
 Runner registered successfully. Feel free to start it, but if it's running already the config should be automatically reloaded! 
 root@mike-VirtualBox:/home/mike/devops/09-ci-06-gitlab# gitlab-runner verify
 Runtime platform                                    arch=amd64 os=linux pid=49626
@@ -134,38 +128,85 @@ Running in system-mode.
 Verifying runner... is alive                        runner=*****
 ```
 
-При выполнении пайплайна возникла ошибка:
-```bash
-$ docker build -t $CI_REGISTRY/mikeMMmike/devops-netology/09-ci-06-gitlab/repository/python-api.py:latest .
-invalid argument "registry.gitlab.com/mikeMMmike/devops-netology/09-ci-06-gitlab/repository/python-api.py:latest" for "-t, --tag" flag: invalid reference format: repository name must be lowercase
-See 'docker build --help'.
-```
-Насколько смог разобраться, проблема в символах верхнего регистра, в моем случае в логине. Для решения проблемы завел новый аккаунт. Соответственно, файл .gitlab-ci.yml имеет теперь такое содержимое: 
-```bash
-image: docker:latest
-variables:
-  DOCKER_TLS_CERTDIR: ''
-  DOCKER_HOST: tcp://192.168.200.130:2375
-  DOCKER_DRIVER: overlay2
+Результат работы раннера:
 
-services:
-    - docker:dind
-stage_build:
-    stage: build
-    script:
-        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-        - docker build -t $CI_REGISTRY/mikezzzz/devops-netology/09-ci-06-gitlab/image:latest .
-    except:
-        - main
-stage_deploy:
-    stage: deploy
-    script:
-        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-        - docker build -t $CI_REGISTRY/mikezzzz/devops-netology/09-ci-06-gitlab/repository/python-api.py:latest .
-        - docker push $CI_REGISTRY/mikezzzz/devops-netology/09-ci-06-gitlab/repository/python-api.py:latest
-    only:
-        - main
-
+```bash
+Running with gitlab-runner 15.0.0 (febb2a09)
+  on docker-run ******
+Resolving secrets
+00:00
+Preparing the "docker" executor
+Using Docker executor with image docker:latest ...
+Starting service docker:dind ...
+Authenticating with credentials from /root/.docker/config.json
+Pulling docker image docker:dind ...
+Using docker image sha256:1f6c0346b90562fa44a32011666df7a7f413ee260a0510b52ca974bef4d50f15 for docker:dind with digest docker@sha256:56ef400f08be1ca817d7e2cfdb43803786ab28d84c8167e8590622d9bab5b415 ...
+Waiting for services to be up and running (timeout 30 seconds)...
+*** WARNING: Service runner-qufa2qd7-project-30919229-concurrent-0-8bdf070031e2edc7-docker-0 probably didn't start properly.
+Health check error:
+service "runner-qufa2qd7-project-30919229-concurrent-0-8bdf070031e2edc7-docker-0-wait-for-service" timeout
+Health check container logs:
+Service container logs:
+2022-06-02T16:50:22.164250393Z ip: can't find device 'ip_tables'
+2022-06-02T16:50:22.168051902Z ip_tables              32768  2 iptable_filter,iptable_nat
+2022-06-02T16:50:22.168076579Z x_tables               49152  6 xt_conntrack,xt_MASQUERADE,xt_addrtype,iptable_filter,iptable_nat,ip_tables
+2022-06-02T16:50:22.168481970Z modprobe: can't change directory to '/lib/modules': No such file or directory
+2022-06-02T16:50:22.171026660Z mount: permission denied (are you root?)
+2022-06-02T16:50:22.171055385Z Could not mount /sys/kernel/security.
+2022-06-02T16:50:22.171059042Z AppArmor detection and --privileged mode might break.
+2022-06-02T16:50:22.183880598Z mount: permission denied (are you root?)
+*********
+Authenticating with credentials from /root/.docker/config.json
+Pulling docker image docker:latest ...
+Using docker image sha256:2a153cb5c7c52610ceb46876231f1c7ab8d2a0926aaeb5283994ef3d6f78def9 for docker:latest with digest docker@sha256:5bc07a93c9b28e57a58d57fbcf437d1551ff80ae33b4274fb60a1ade2d6c9da4 ...
+Preparing environment
+00:01
+Running on runner-qufa2qd7-project-30919229-concurrent-0 via mike-VirtualBox...
+Getting source from Git repository
+00:02
+Fetching changes with git depth set to 50...
+Reinitialized existing Git repository in /builds/mikeMMmike/devops-netology/.git/
+Checking out b395b0c8 as main...
+Skipping Git submodules setup
+Executing "step_script" stage of the job script
+Using docker image sha256:2a153cb5c7c52610ceb46876231f1c7ab8d2a0926aaeb5283994ef3d6f78def9 for docker:latest with digest docker@sha256:5bc07a93c9b28e57a58d57fbcf437d1551ff80ae33b4274fb60a1ade2d6c9da4 ...
+$ docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+WARNING! Using --password via the CLI is insecure. Use --password-stdin.
+Login Succeeded
+WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+$ docker build -t $CI_REGISTRY/mikemmmike/devops-netology/repository/python-api.py:latest .
+Step 1/5 : FROM centos:7
+ ---> eeb6ee3f44bd
+Step 2/5 : RUN yum update -y && yum install -y python3 python3-pip
+ ---> Using cache
+ ---> 4f80e8c82b7b
+Step 3/5 : RUN pip3 install flask flask_restful flask_jsonpify
+ ---> Using cache
+ ---> 8de21cce79bc
+Step 4/5 : ADD /09-ci-06-gitlab/repository/python-api.py /python_api/python-api.py
+ ---> Using cache
+ ---> a29207b7d38d
+Step 5/5 : ENTRYPOINT ["python3", "/python_api/python-api.py"]
+ ---> Using cache
+ ---> fc0852c372e2
+Successfully built fc0852c372e2
+Successfully tagged registry.gitlab.com/mikemmmike/devops-netology/repository/python-api.py:latest
+$ docker push $CI_REGISTRY/mikemmmike/devops-netology/repository/python-api.py:latest
+The push refers to repository [registry.gitlab.com/mikemmmike/devops-netology/repository/python-api.py]
+205f4fcbdb06: Preparing
+343bfea6a17d: Preparing
+10e96df63f6c: Preparing
+174f56854903: Preparing
+205f4fcbdb06: Layer already exists
+343bfea6a17d: Layer already exists
+174f56854903: Layer already exists
+10e96df63f6c: Pushed
+latest: digest: sha256:53a2b7b3062b4077a8bce1e6bf8f2e530a2dbb4a9e4438967c7b16d78f13898d size: 1160
+Cleaning up project directory and file based variables
+00:00
+Job succeeded
 ```
 
 
@@ -179,7 +220,7 @@ stage_deploy:
 
 
 ## Лог
-
+Создали [Issue](https://gitlab.com/mikeMMmike/devops-netology/-/issues/1) с темой `поменять JSON ответа на вызов метода GET` и описанием `необходимо исправить метод GET /rest/api/get_info, текст с { "message": "Already started" } на { "message": "Running"}`. Метка установлена feature  
 
 
 ### Developer
@@ -191,7 +232,28 @@ stage_deploy:
 
 
 ## Лог
+На основе полученного [Issue](https://gitlab.com/mikeMMmike/devops-netology/-/issues/1) проводим операцию `Create merge request`, ветка `1-json-get` с параметром по умолчанию `Delete source branch when merge request is accepted.`
 
+Переходим в созданную [ветку](https://gitlab.com/mikeMMmike/devops-netology/-/tree/1-json-get) и меняем текст с `{ "message": "Already started" }` на `{ "message": "Running"}` в файле python-api.py. 
+Выполняем коммит изменений в ветку `1-json-get`. [Процесс CI/CD](https://gitlab.com/mikeMMmike/devops-netology/-/jobs/2540736162) завершился успешно. 
+Выполняем merge request `From 1-json-get into main` с параметром `Delete source branch when merge request is accepted.` При выполнении случайно закрыл Issue, после чего открыл. 
+Изменения из ветки`1-json-get` попали в `main`. [Процесс CI/CD был выполнен автоматически успешно](https://gitlab.com/mikeMMmike/devops-netology/-/jobs/2540758362):
+```bash
+$ docker push $CI_REGISTRY/mikemmmike/devops-netology/repository/python-api.py:latest
+The push refers to repository [registry.gitlab.com/mikemmmike/devops-netology/repository/python-api.py]
+8e00af92e5c1: Preparing
+343bfea6a17d: Preparing
+10e96df63f6c: Preparing
+174f56854903: Preparing
+174f56854903: Layer already exists
+343bfea6a17d: Layer already exists
+10e96df63f6c: Layer already exists
+8e00af92e5c1: Pushed
+latest: digest: sha256:e17450da7eddfd81470e992509db0c54f8ee9be7f894216733d2c7a737ccb195 size: 1160
+Cleaning up project directory and file based variables
+00:00
+Job succeeded
+```
 
 
 ### Tester
@@ -199,6 +261,14 @@ stage_deploy:
 Разработчики выполнили новый Issue, необходимо проверить валидность изменений:
 1. Поднять докер-контейнер с образом `python-api:latest` и проверить возврат метода на корректность
 2. Закрыть Issue с комментарием об успешности прохождения, указав желаемый результат и фактически достигнутый
+
+
+## Лог
+1. Запуск докер-контейнера с образом `python-api:latest`, проверка возврата метода на корректность.
+```bash
+
+```
+
 
 ## Итог
 
