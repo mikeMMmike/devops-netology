@@ -11,7 +11,7 @@
 
 1. Зарегистрировались
 2. Создайте проект: https://gitlab.com/mikeMMmike/devops-netology/
-3. Создали репозиторий https://gitlab.com/mikeMMmike/devops-netology/-/tree/main/09-ci-06-gitlab с файлом https://gitlab.com/mikeMMmike/devops-netology/-/tree/main/09-ci-06-gitlab/repository/python-api.py
+3. Создали [репозиторий](https://gitlab.com/mikeMMmike/devops-netology/-/tree/main/09-ci-06-gitlab) с [файлом](https://gitlab.com/mikeMMmike/devops-netology/-/tree/main/09-ci-06-gitlab/repository/python-api.py)
 4. Проект публичный
 
 
@@ -26,7 +26,7 @@
 4. Создана директория `/python_api`
 5. Скрипт из репозитория размещён в /python_api
 6. Точка вызова: запуск скрипта
-7. Если сборка происходит на ветке `master`: Образ должен пушится в docker registry вашего gitlab `python-api:latest`, иначе этот шаг нужно пропустить
+7. Если сборка происходит на ветке `master`: Образ должен пушиться в docker registry вашего gitlab `python-api:latest`, иначе этот шаг нужно пропустить
 
 
 ## Лог
@@ -292,7 +292,11 @@ $ curl localhost:5290/get_info
 $ docker container stop 6e3638a18def6ac2fd42853cd8a3f32f2a69df8d9b21ac1da237696b8b5c6d94
 6e3638a18def6ac2fd42853cd8a3f32f2a69df8d9b21ac1da237696b8b5c6d94
 ```
-Вернулся корректный ответ, отражающий последние изменения. [Обращение](https://gitlab.com/mikeMMmike/devops-netology/-/issues/1) можно закрывать.
+
+2. Вернулся корректный ответ, отражающий последние изменения. [Обращение](https://gitlab.com/mikeMMmike/devops-netology/-/issues/1) закрыли с комментарием 
+`Провели тест. согласно последним изменениям возвращается корректный ответ:
+$ curl localhost:5290/get_info
+{"version": 3, "method": "GET", "message": "Running"}`.
 
 
 ## Итог
