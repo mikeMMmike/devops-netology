@@ -265,9 +265,34 @@ Job succeeded
 
 ## Лог
 1. Запуск докер-контейнера с образом `python-api:latest`, проверка возврата метода на корректность.
+* Запуск контейнера
 ```bash
-
+01:29:23 j0 mike@mike-VirtualBox:~
+$ docker pull registry.gitlab.com/mikemmmike/devops-netology/repository/python-api.py:latest
+latest: Pulling from mikemmmike/devops-netology/repository/python-api.py
+Digest: sha256:e17450da7eddfd81470e992509db0c54f8ee9be7f894216733d2c7a737ccb195
+Status: Image is up to date for registry.gitlab.com/mikemmmike/devops-netology/repository/python-api.py:latest
+registry.gitlab.com/mikemmmike/devops-netology/repository/python-api.py:latest
+01:29:26 j0 mike@mike-VirtualBox:~
+$ docker container run -p 5290:5290 -d registry.gitlab.com/mikemmmike/devops-netology/repository/python-api.py:latest
+6e3638a18def6ac2fd42853cd8a3f32f2a69df8d9b21ac1da237696b8b5c6d94
 ```
+* Проверка ответа
+```bash
+01:34:16 j0 mike@mike-VirtualBox:~
+$ curl localhost:5290
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+01:34:21 j0 mike@mike-VirtualBox:~
+$ curl localhost:5290/get_info
+{"version": 3, "method": "GET", "message": "Running"}
+01:34:42 j0 mike@mike-VirtualBox:~
+$ docker container stop 6e3638a18def6ac2fd42853cd8a3f32f2a69df8d9b21ac1da237696b8b5c6d94
+6e3638a18def6ac2fd42853cd8a3f32f2a69df8d9b21ac1da237696b8b5c6d94
+```
+Вернулся корректный ответ, отражающий последние изменения. [Обращение](https://gitlab.com/mikeMMmike/devops-netology/-/issues/1) можно закрывать.
 
 
 ## Итог
