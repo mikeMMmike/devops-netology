@@ -155,23 +155,87 @@ mike@make-lptp:~/PycharmProjects/devops-netology/07-terraform-05-golang/src$ go 
 7  м. равняется 2.1336 фт.
 ```
 
-2. Наименьший элемент будем искать, используя цикл.
+2. Наименьший элемент будем искать, [используя цикл for](./src/minimum.go):
 ```bash
- 
+ package main
+
+import "fmt"
+
+func main() {
+	x := []int{48, 96, 86, 68, 57, 82, 63, 70, 37, 34, 83, 27, 19, 97, 9, 17}
+	minimum := x[0]
+	for _, n := range x {
+		if n < minimum {
+			minimum = n
+		}
+	}
+	fmt.Println(minimum)
+}
+
 ```
 
 Результат:
 ```bash
- 
+ mike@make-lptp:~/PycharmProjects/devops-netology/07-terraform-05-golang/src$ go run ./minimum.go
+9
 ```
 
-3. Программа для вывода чисел от 0 до 100, которые целочисленно делятся на 3.
+3. [Программа для вывода чисел от 0 до 100](./src/0to100.go), которые целочисленно делятся на 3
+
+
 ```bash
- 
+  package main
+  
+  import "fmt"
+  
+  func main() {
+      end := 0
+      for n := 0; n<100; n++ {
+          end +=n
+          if n % 3 ==0 && n != 0 {
+          fmt.Println(n)
+          }
+      }
+  }
+
 ```
 Результат:
 ```bash
- 
+mike@make-lptp:~/PycharmProjects/devops-netology/07-terraform-05-golang/src$ go run ./0to100.go 
+3
+6
+9
+12
+15
+18
+21
+24
+27
+30
+33
+36
+39
+42
+45
+48
+51
+54
+57
+60
+63
+66
+69
+72
+75
+78
+81
+84
+87
+90
+93
+96
+99
+
 ```
 
 
