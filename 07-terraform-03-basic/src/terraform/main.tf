@@ -1,42 +1,74 @@
-resource "yandex_compute_instance" "vm-1" {
-  name = "terraform1"
-
-  resources {
-    cores  = 2
-    memory = 2
-  }
-
-  boot_disk {
-    initialize_params {
-      image_id = "fd81hgrcv6lsnkremf32"
-    }
-  }
-
-  network_interface {
-    subnet_id = yandex_vpc_subnet.subnet-1.id
-    nat       = true
-  }
-
-  metadata = {
-    ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
-  }
+module "vpc" {
+  source  = "hamnsk/vpc/yandex"
+  version = "0.5.0"
+  description = "managed by terraform"
+  create_folder = length(var.yc_folder_id) > 0 ? false : true
+  yc_folder_id = var.yc_folder_id
+  name = terraform.workspace
+  subnets = local.vpc_subnets[terraform.workspace]
 }
 
-resource "yandex_vpc_network" "network-1" {
-  name = "network1"
+
+module "news" {
+  source = "../modules/instance"
+  instance_count = local.news_instance_count[terraform.workspace]
+
+  subnet_id     = module.vpc.subnet_ids[0]
+  zone = var.yc_region
+  folder_id = module.vpc.folder_id
+  image         = "centos-7"
+  platform_id   = "standard-v2"
+  name          = "news"
+  description   = "News App Demo"
+  instance_role = "news,balancer"
+  users         = "centos"
+  cores         = local.news_cores[terraform.workspace]
+  boot_disk     = "network-ssd"
+  disk_size     = local.news_disk_size[terraform.workspace]
+  nat           = "true"
+  memory        = "2"
+  core_fraction = "100"
+  depends_on = [
+    module.vpc
+  ]
 }
 
-resource "yandex_vpc_subnet" "subnet-1" {
-  name           = "subnet1"
-  zone           = "ru-central1-b"
-  network_id     = yandex_vpc_network.network-1.id
-  v4_cidr_blocks = ["192.168.10.0/24"]
-}
 
-output "internal_ip_address_vm_1" {
-  value = yandex_compute_instance.vm-1.network_interface.0.ip_address
-}
-
-output "external_ip_address_vm_1" {
-  value = yandex_compute_instance.vm-1.network_interface.0.nat_ip_address
+locals {
+  news_cores = {
+    stage = 2
+    prod = 2
+  }
+  news_disk_size = {
+    stage = 20
+    prod = 40
+  }
+  news_instance_count = {
+    stage = 1
+    prod = 2
+  }
+  vpc_subnets = {
+    stage = [
+      {
+        "v4_cidr_blocks": [
+          "10.128.0.0/24"
+        ],
+        "zone": var.yc_region
+      }
+    ]
+    prod = [
+      {
+        zone           = "ru-central1-a"
+        v4_cidr_blocks = ["10.128.0.0/24"]
+      },
+      {
+        zone           = "ru-central1-b"
+        v4_cidr_blocks = ["10.129.0.0/24"]
+      },
+      {
+        zone           = "ru-central1-c"
+        v4_cidr_blocks = ["10.130.0.0/24"]
+      }
+    ]
+  }
 }
