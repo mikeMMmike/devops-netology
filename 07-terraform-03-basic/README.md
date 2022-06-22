@@ -11,7 +11,23 @@
 2. Зарегистрируйте бэкэнд в терраформ проекте как описано по ссылке выше. 
 
 ## Решение.
-1. [Инструкция по Я.Облаку](https://cloud.yandex.ru/docs/storage/quickstart).
+1. [Инструкция по Я.Облаку](https://cloud.yandex.ru/docs/storage/quickstart). Для обхода проблем с блокировкой ПО на территории РФ, воспользуемся рекомендациями от Яндекс:
+```bash
+mike@make-lptp:~$ nano ~/.terraformrc
+```
+и добавим конфигурацию: 
+
+`provider_installation {
+  network_mirror {
+    url = "https://terraform-mirror.yandexcloud.net/"
+    include = ["registry.terraform.io/*/*"]
+  }
+  direct {
+    exclude = ["registry.terraform.io/*/*"]
+  }
+}
+`
+2. ы
 
 
 ## Задача 2. Инициализируем проект и создаем воркспейсы. 
