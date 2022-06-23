@@ -11,7 +11,7 @@
 2. Зарегистрируйте бэкэнд в терраформ проекте как описано по ссылке выше. 
 
 ## Решение.
-1. [Инструкция по Я.Облаку](https://cloud.yandex.ru/docs/storage/quickstart). Для обхода проблем с блокировкой ПО на территории РФ, воспользуемся рекомендациями от Яндекс:
+1. [Инструкция по Я.Облаку](https://cloud.yandex.ru/docs/tutorials/infrastructure-management/terraform-state-storage). Для обхода проблем с блокировкой ПО на территории РФ, воспользуемся рекомендациями от Яндекс:
 ```bash
 mike@make-lptp:~$ nano ~/.terraformrc
 ```
