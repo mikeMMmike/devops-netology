@@ -17,7 +17,8 @@ mike@make-lptp:~$ nano ~/.terraformrc
 ```
 и добавим конфигурацию: 
 
-`provider_installation {
+```tf
+provider_installation {
   network_mirror {
     url = "https://terraform-mirror.yandexcloud.net/"
     include = ["registry.terraform.io/*/*"]
@@ -26,7 +27,67 @@ mike@make-lptp:~$ nano ~/.terraformrc
     exclude = ["registry.terraform.io/*/*"]
   }
 }
-`
+```
+Инициируем:
+```bash
+mike@make-lptp:~/PycharmProjects/devops-netology/07-terraform-03-basic/src/terraform$ terraform init
+
+Initializing the backend...
+
+Initializing provider plugins...
+- Finding yandex-cloud/yandex versions matching ">= 0.13.0"...
+- Installing yandex-cloud/yandex v0.75.0...
+- Installed yandex-cloud/yandex v0.75.0 (unauthenticated)
+
+Terraform has created a lock file .terraform.lock.hcl to record the provider
+selections it made above. Include this file in your version control repository
+so that Terraform can guarantee to make the same selections by default when
+you run "terraform init" in the future.
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+
+```
+Создаем сервис-аккаунт:
+```bash
+mike@make-lptp:~/PycharmProjects/devops-netology/07-terraform-03-basic/src/terraform$ yc iam service-account create --name terraform
+id: aje*********8
+folder_id: b1**********
+created_at: "2022-06-23T22:41:51.914518234Z"
+name: terraform
+```
+
+```bash
+
+```
+```bash
+
+```
+```bash
+
+```
+```bash
+
+```
+```bash
+
+```
+
+
+
+
+
+
+
+
+
 2. ы
 
 
