@@ -10,3 +10,6 @@
 /05-virt-05-docker-swarm/src/terraform/key.json
 /05-virt-05-docker-swarm/src/terraform/.terraform.lock.hcl
 /07-terraform-05-golang/src/.foot.go.swp
+**/.terraform.lock.hcl
+**/provider.tf
+**/.terraform/
