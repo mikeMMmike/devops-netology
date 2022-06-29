@@ -1,15 +1,9 @@
 #gitignore for parent directory of devops-netology project
 **.idea/*
-/05-virt-04-docker-compose/src/terraform/.terraform.lock.hcl
-/05-virt-04-docker-compose/src/terraform/key.json
-/05-virt-04-docker-compose/src/terraform/terraform.tfstate
-/05-virt-04-docker-compose/src/terraform/terraform.tfstate.backup
-/05-virt-04-docker-compose/src/terraform/.terraform/
-/05-virt-05-docker-swarm/src/terraform/terraform.tfstate.backup
-/05-virt-05-docker-swarm/src/terraform/terraform.tfstate
-/05-virt-05-docker-swarm/src/terraform/key.json
-/05-virt-05-docker-swarm/src/terraform/.terraform.lock.hcl
-/07-terraform-05-golang/src/.foot.go.swp
+**/key.json
+**/terraform.tfstate
+**/terraform.tfstate.backup
 **/.terraform.lock.hcl
+**/.foot.go.swp
 **/provider.tf
 **/.terraform/

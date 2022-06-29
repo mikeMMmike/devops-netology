@@ -379,7 +379,11 @@ for this configuration.
 использовались разные `instance_type`.
 
 ```bash
-
+locals {
+  yc_instance_type_map = {
+       stage = "standard-v1"
+       prod = "standard-v2"
+     }
 ```
 4. Добавим `count`. Для `stage` должен создаться один экземпляр `ec2`, а для `prod` два.
 ```bash
