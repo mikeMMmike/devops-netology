@@ -39,6 +39,50 @@
 
 В качестве результата приложите ссылку на файлы `server.yaml` и `atlantis.yaml`.
 
+
+## Решение
+
+* `server.yaml`
+1. Репозиторий:
+```yml
+  repos:
+  - id: gitlab.com/mikezzzz/dev-test-private
+    apply_requirements: [approved]
+    workflow: default
+```
+2. Изменение workflow на стороне клиентского конфига, строка `allowed_overrides: [workflow]`:
+```yaml
+repos:
+  - id: github.com/AlexDies/homework
+    apply_requirements: [approved]
+    workflow: default
+    allowed_overrides: [workflow]
+```
+3. Отключение `lock` состояния workflow по-умолчанию:
+```yaml
+# atlantis.yaml or repos.yaml
+workflows:
+  myworkflow:
+    plan:
+      steps:
+      - init:
+          extra_args: ["-lock=false"]
+      - plan:
+          extra_args: ["-lock=false"]
+    apply:
+      steps:
+      - apply:
+          extra_args: ["-lock=false"]
+```
+
+
+* `atlantis.yaml`
+1. Plan&Apply для stage и prod:
+```yaml
+
+```
+
+
 ## Задача 3. Знакомство с каталогом модулей. 
 
 1. В [каталоге модулей](https://registry.terraform.io/browse/modules) найдите официальный модуль от aws для создания
