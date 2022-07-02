@@ -130,9 +130,6 @@ commands will detect it and remind you to do so if necessary.
 ```
 И построим план
 ```bash
-
-```
-```bash
 mike@make-lptp:~/PycharmProjects/devops-netology/07-terraform-03-basic/src/terraform$ terraform plan
 
 Terraform used the selected providers to generate the following execution plan.
