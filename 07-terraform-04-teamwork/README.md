@@ -75,12 +75,57 @@ workflows:
           extra_args: ["-lock=false"]
 ```
 
-
 * `atlantis.yaml`
 1. Plan&Apply для stage и prod:
 ```yaml
-
+version: 3
+  projects:
+  - dir: .
+    workspace: stage
+    terraform_version: v0.13.0
+    workflow: default
+  - dir: .
+    workspace: prod
+    terraform_version: v0.13.0  
+    workflow: default
+    
+  workflows:
+     default:
+        plan:
+           steps:
+              - init: 
+                 extra_args: ["-lock=false"]
+              - plan:
+                 extra_args: ["-lock=false"]
+        apply:
+           steps: 
+              - apply:
+                 extra_args: ["-lock=false"]
 ```
+2. Автопланирование при изменении любых файлов *.tf - `autoplan: when_modified: ["*.tf*"]`:
+```yaml
+version: 3
+  projects:
+  - dir: .
+    workspace: stage
+    terraform_version: v0.13.0
+    workflow: default
+    autoplan:
+      when_modified: ["*.tf*"]
+  - dir: .
+    workspace: prod
+    terraform_version: v0.13.0  
+    workflow: default
+    autoplan:
+      when_modified: ["*.tf*"]
+    
+```
+Cсылки на файлы:
+
+* [server.yaml](./src/server.yaml)
+
+* [atlantis.yaml](./src/atlantis.yaml)
+
 
 
 ## Задача 3. Знакомство с каталогом модулей. 
