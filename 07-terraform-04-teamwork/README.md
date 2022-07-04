@@ -147,7 +147,128 @@ Cсылки на файлы:
 2. Данный модуль подойдет для решения своих задач. При помощи yandex_compute_instance_group можно создать требуемое количество инстансов, указав количество в параметрах модуля. Также при помощи модуля 
 можно настроить аторазвертывание инстансов при росте нагрузки на сервис\падении сервиса. В общем, модуль имеет смысл использовать, когда требуется решить задачу развертывания большого количества однотипных ВМ. 
 Когда требуется создать пару ВМ, необходимости использовать `yandex_compute_instance_group` нет, т.к. настройки модуля `yandex_compute_instance` более гибкие. в общем, ответ на этот вопрос зависит от задачи.
-3. 
+3. [Ссылка на директорию с конфигурацией](./src/terraform).
+
+Terraform plan:
+
+```bash
+mike@make-lptp:~/PycharmProjects/devops-netology/07-terraform-04-teamwork/src/terraform$ terraform plan
+
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # yandex_compute_instance_group.group1 will be created
+  + resource "yandex_compute_instance_group" "group1" {
+      + created_at          = (known after apply)
+      + deletion_protection = true
+      + folder_id           = "b1g3bh3ss0hbu8t6droq"
+      + id                  = (known after apply)
+      + instances           = (known after apply)
+      + name                = "test-ig"
+      + service_account_id  = "aje8iqrf6ehlvjnm2t66"
+      + status              = (known after apply)
+
+      + allocation_policy {
+          + zones = [
+              + "ru-central1-a",
+            ]
+        }
+
+      + deploy_policy {
+          + max_creating     = 2
+          + max_deleting     = 2
+          + max_expansion    = 2
+          + max_unavailable  = 2
+          + startup_duration = 0
+          + strategy         = (known after apply)
+        }
+
+      + instance_template {
+          + labels      = (known after apply)
+          + metadata    = {
+              + "foo"      = "bar"
+              + "ssh-keys" = <<-EOT
+                    ubuntu:ssh-ed25519 ******@******.ru
+                EOT
+            }
+          + platform_id = "standard-v1"
+
+          + boot_disk {
+              + device_name = (known after apply)
+              + mode        = "READ_WRITE"
+
+              + initialize_params {
+                  + image_id    = "fd81hgrcv6lsnkremf32"
+                  + size        = 4
+                  + snapshot_id = (known after apply)
+                  + type        = "network-hdd"
+                }
+            }
+
+          + network_interface {
+              + ip_address   = (known after apply)
+              + ipv4         = true
+              + ipv6         = (known after apply)
+              + ipv6_address = (known after apply)
+              + nat          = (known after apply)
+              + network_id   = (known after apply)
+              + subnet_ids   = (known after apply)
+            }
+
+          + network_settings {
+              + type = "STANDARD"
+            }
+
+          + resources {
+              + core_fraction = 100
+              + cores         = 2
+              + memory        = 2
+            }
+
+          + scheduling_policy {
+              + preemptible = (known after apply)
+            }
+        }
+
+      + scale_policy {
+
+          + fixed_scale {
+              + size = 3
+            }
+        }
+    }
+
+  # yandex_vpc_network.default will be created
+  + resource "yandex_vpc_network" "default" {
+      + created_at                = (known after apply)
+      + default_security_group_id = (known after apply)
+      + folder_id                 = (known after apply)
+      + id                        = (known after apply)
+      + labels                    = (known after apply)
+      + name                      = "net"
+      + subnet_ids                = (known after apply)
+    }
+
+  # yandex_vpc_subnet.default will be created
+  + resource "yandex_vpc_subnet" "default" {
+      + created_at     = (known after apply)
+      + folder_id      = (known after apply)
+      + id             = (known after apply)
+      + labels         = (known after apply)
+      + name           = "subnet"
+      + network_id     = (known after apply)
+      + v4_cidr_blocks = [
+          + "192.168.101.0/24",
+        ]
+      + v6_cidr_blocks = (known after apply)
+      + zone           = "ru-central1-a"
+    }
+
+Plan: 3 to add, 0 to change, 0 to destroy.
+```
+
 
 
 

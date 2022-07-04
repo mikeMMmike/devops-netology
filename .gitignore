@@ -8,3 +8,4 @@
 #**/provider.tf
 **/.terraform/
 **/variables.tf
+**/.terraform.tfstate.lock.info

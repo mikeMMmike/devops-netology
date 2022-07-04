@@ -1,8 +1,8 @@
 resource "yandex_compute_instance_group" "group1" {
-  name                = "test-ig"
-  folder_id           = "${data.yandex_resourcemanager_folder.test_folder.id}"
-  service_account_id  = "${yandex_iam_service_account.test_account.id}"
-  deletion_protection = true
+  name                = "test_yc_ig"
+  folder_id           = "${var.yandex_folder_id}"
+  service_account_id  = "${var.yandex_cloud_id}"
+  deletion_protection = false
   instance_template {
     platform_id = "standard-v1"
     resources {
@@ -17,13 +17,9 @@ resource "yandex_compute_instance_group" "group1" {
       }
     }
     network_interface {
-      network_id = "${yandex_vpc_network.my-inst-group-network.id}"
-      subnet_ids = ["${yandex_vpc_subnet.my-inst-group-subnet.id}"]
+      network_id = "${yandex_vpc_network.default.id}"
+      subnet_ids = ["${yandex_vpc_subnet.default.id}"]
     }
-#    labels = {
-#      label1 = "label1-value"
-#      label2 = "label2-value"
-#    }
     metadata = {
       foo      = "bar"
       ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
@@ -32,11 +28,6 @@ resource "yandex_compute_instance_group" "group1" {
       type = "STANDARD"
     }
   }
-
-#  variables = {
-#    test_key1 = "test_value1"
-#    test_key2 = "test_value2"
-#  }
 
   scale_policy {
     fixed_scale {
