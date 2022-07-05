@@ -10,7 +10,7 @@ module "vpc" {
 */
 
 
-module "news" {
+/*module "news" {
   source = "./modules/instance"
   instance_count = local.news_instance_count[terraform.workspace]
 
@@ -32,44 +32,21 @@ module "news" {
   depends_on = [
     module.vpc
   ]
-}
+}*/
 
 
-locals {
-  news_cores = {
-    stage = 2
-    prod = 2
-  }
-  news_disk_size = {
-    stage = 20
-    prod = 40
-  }
-  news_instance_count = {
-    stage = 1
-    prod = 2
-  }
-  vpc_subnets = {
-    stage = [
-      {
-        "v4_cidr_blocks": [
-          "10.128.0.0/24"
-        ],
-        "zone": var.yc_region
-      }
-    ]
-    prod = [
-      {
-        zone           = "ru-central1-a"
-        v4_cidr_blocks = ["10.128.0.0/24"]
-      },
-      {
-        zone           = "ru-central1-b"
-        v4_cidr_blocks = ["10.129.0.0/24"]
-      },
-      {
-        zone           = "ru-central1-c"
-        v4_cidr_blocks = ["10.130.0.0/24"]
-      }
-    ]
-  }
-}
+#locals {
+#/*  news_cores = {
+#    stage = 2
+#    prod = 2
+#  }
+#  news_disk_size = {
+#    stage = 20
+#    prod = 40
+#  }
+#  news_instance_count = {
+#    stage = 1
+#    prod = 2
+#  }*/
+#
+#}

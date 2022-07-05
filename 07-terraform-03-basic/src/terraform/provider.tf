@@ -10,8 +10,8 @@ backend "s3" {
     bucket     = "netology-bkt"
     region     = "ru-central1-a"
     key        = "./state.tfstate"
-    access_key = "${var.yandex_access_key}"
-    secret_key = "${var.yandex_secret_key}"
+    access_key = "YCAJE1iVY7uFFmlmV6pYvSnmM"
+    secret_key = "YCMGusqDVuEiHlJE5ow5bmu-dq-qyD36eHX46M5s"
 
     skip_region_validation      = true
     skip_credentials_validation = true

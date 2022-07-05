@@ -147,7 +147,7 @@ Terraform will perform the following actions:
       + id                        = (known after apply)
       + metadata                  = {
           + "ssh-keys" = <<-EOT
-                ubuntu:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMMr/15yM5M5sBDbcJkZ/YWnZ4ET3xtnLiG7hmHAi8Mx kish_forever@bk.ru
+                ubuntu:ssh-ed25519 A**** ***@****.ru
             EOT
         }
       + name                      = "terraform1"
@@ -375,16 +375,29 @@ for this configuration.
 3. В уже созданный `aws_instance` добавьте зависимость типа инстанса от воркспейса, чтобы в разных ворскспейсах 
 использовались разные `instance_type`.
 
-```bash
-locals {
-  yc_instance_type_map = {
-       stage = "standard-v1"
-       prod = "standard-v2"
-     }
+```tf
+resource "yandex_compute_instance" "vm-1" {
+  platform_id = local.yc_instance_type_map[terraform.workspace]
+}
+  locals {
+    yc_instance_type_map = {
+      stage = "standard-v1"
+      prod  = "standard-v2"
+    }
+  }
 ```
 4. Добавим `count`. Для `stage` должен создаться один экземпляр `ec2`, а для `prod` два.
-```bash
-
+```tf
+resource "yandex_compute_instance" "vm-1" {
+  instance_count = local.yc_instance_count[terraform.workspace]
+  }
+  locals {
+      yc_instance_count = {
+    stage = 1
+    prod = 2
+  }
+  }
+  
 ```
 5. Создайте рядом еще один `aws_instance`, но теперь определите их количество при помощи `for_each`, а не `count`.
 
@@ -394,9 +407,8 @@ locals {
 6. Что бы при изменении типа инстанса не возникло ситуации, когда не будет ни одного инстанса добавьте параметр
 жизненного цикла `create_before_destroy = true` в один из ресурсов `aws_instance`.
 
-```bash
+Если я верно понял, в YC compute instance отсутствует такой параметр. информацию почерпнул из описнаия модуля на [сайте Я.облака](https://cloud.yandex.ru/docs/compute/concepts/vm) и на [tfpla.net](https://registry.tfpla.net/providers/yandex-cloud/yandex/latest/docs/resources/compute_instance)
 
-```
 7. При желании поэкспериментируйте с другими параметрами и ресурсами.
 
 

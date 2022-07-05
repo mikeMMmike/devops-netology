@@ -5,7 +5,7 @@
 **/terraform.tfstate.backup
 **/.terraform.lock.hcl
 **/.foot.go.swp
-#**/provider.tf
+**/provider.tf
 **/.terraform/
 **/variables.tf
 **/.terraform.tfstate.lock.info
