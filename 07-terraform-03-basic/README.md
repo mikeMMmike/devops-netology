@@ -407,7 +407,7 @@ resource "yandex_compute_instance" "vm-1" {
 6. Что бы при изменении типа инстанса не возникло ситуации, когда не будет ни одного инстанса добавьте параметр
 жизненного цикла `create_before_destroy = true` в один из ресурсов `aws_instance`.
 
-Если я верно понял, в YC compute instance отсутствует такой параметр. информацию почерпнул из описнаия модуля на [сайте Я.облака](https://cloud.yandex.ru/docs/compute/concepts/vm) и на [tfpla.net](https://registry.tfpla.net/providers/yandex-cloud/yandex/latest/docs/resources/compute_instance)
+Если я верно понял, в YC compute instance отсутствует такой параметр. информацию почерпнул из описнаия модуля на [сайте Я.облака](https://cloud.yandex.ru/docs/compute/concepts/vm) и на [tfpla.net](https://registry.tfpla.net/providers/yandex-cloud/yandex/latest/docs/resources/compute_instance) 
 
 7. При желании поэкспериментируйте с другими параметрами и ресурсами.
 
