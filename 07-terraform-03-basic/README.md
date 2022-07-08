@@ -401,7 +401,73 @@ resource "yandex_compute_instance" "vm-1" {
 ```
 5. Создайте рядом еще один `aws_instance`, но теперь определите их количество при помощи `for_each`, а не `count`.
 
+
+Проводил проверку работоспособности функционала бакета по ману на Я.Облаке. Затем конфигурацию удалил и сделал заново по задаче. теперь 
+`Столкнулся с проблемой создания workspace. После команды создания воркспейсов пробую переключиться на другой созданный ранее и получаю ошибку, что воркспейс не создан`. 
+файл tfstate от предыдущего проекта удалил как в бакете, так и в локальной директории. потратил больше недели на решение этой проблемы, но так и не разобрался.
+Очень нужна помощь. ниже демонстрация последовательного выполнения команд в директории с конфигурацией терраформа:
+
+
 ```bash
+mike@make-lptp:~/PycharmProjects/devops-netology/07-terraform-03-basic/src/terraform$ terraform workspace new prod
+Created and switched to workspace "prod"!
+
+You're now on a new, empty workspace. Workspaces isolate their state,
+so if you run "terraform plan" Terraform will not see any existing state
+for this configuration.
+mike@make-lptp:~/PycharmProjects/devops-netology/07-terraform-03-basic/src/terraform$ terraform init
+
+Initializing the backend...
+
+Initializing provider plugins...
+- Reusing previous version of yandex-cloud/yandex from the dependency lock file
+- Using previously-installed yandex-cloud/yandex v0.75.0
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+mike@make-lptp:~/PycharmProjects/devops-netology/07-terraform-03-basic/src/terraform$ terraform workspace new stage
+Created and switched to workspace "stage"!
+
+You're now on a new, empty workspace. Workspaces isolate their state,
+so if you run "terraform plan" Terraform will not see any existing state
+for this configuration.
+mike@make-lptp:~/PycharmProjects/devops-netology/07-terraform-03-basic/src/terraform$ terraform init
+
+Initializing the backend...
+
+Initializing provider plugins...
+- Reusing previous version of yandex-cloud/yandex from the dependency lock file
+- Using previously-installed yandex-cloud/yandex v0.75.0
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+mike@make-lptp:~/PycharmProjects/devops-netology/07-terraform-03-basic/src/terraform$ terraform workspace list
+* default
+
+mike@make-lptp:~/PycharmProjects/devops-netology/07-terraform-03-basic/src/terraform$ terraform workspace select prod
+
+Workspace "prod" doesn't exist.
+
+You can create this workspace with the "new" subcommand.
+mike@make-lptp:~/PycharmProjects/devops-netology/07-terraform-03-basic/src/terraform$ terraform workspace select stage
+
+Workspace "stage" doesn't exist.
+
+You can create this workspace with the "new" subcommand.
 
 ```
 6. Что бы при изменении типа инстанса не возникло ситуации, когда не будет ни одного инстанса добавьте параметр
