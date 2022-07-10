@@ -244,12 +244,48 @@ ___
 
 1. [Создайте сервисный аккаунт](https://cloud.yandex.ru/docs/iam/operations/sa/create), который будет в дальнейшем использоваться Terraform для работы с инфраструктурой с необходимыми и достаточными правами. Не стоит использовать права суперпользователя
 
-```bash 
+Создаем сервис-аккаунт:
+```bash
+mike@make-lptp:~/PycharmProjects/devops-netology/devops-diplom-yandexcloud/src/terraform$ yc iam service-account create --name netology-diplom
+id: aje
+folder_id: b1g
+created_at: "2022-07-10T23:25:39.773508008Z"
+name: netology-diplom
 
+```
+Назначим роль editor
+```bash
+mike@make-lptp:~/PycharmProjects/devops-netology/devops-diplom-yandexcloud/src/terraform$ yc resource-manager folder add-access-binding b1g3**** --role editor --subject serviceAccount:aje****
+done (1s)
+```
+Создадим статический ключ доступа
+```bash
+mike@make-lptp:~/PycharmProjects/devops-netology/devops-diplom-yandexcloud/src/terraform$ yc iam access-key create --service-account-name netology-diplom
+access_key:
+  id: aje****
+  service_account_id: aje****
+  created_at: "2022-07-10T23:32:28.323165040Z"
+  key_id: YCA****
+secret: YCM****
 ```
 
 2. Подготовьте [backend](https://www.terraform.io/docs/language/settings/backends/index.html) для Terraform. Остановим выбор на альтернативном варианте:  [S3 bucket в созданном YC аккаунте](https://cloud.yandex.ru/docs/storage/operations/buckets/create).
+Создали бакет в YC:
+![img.png](./src/screenshots/2022-07-112004-43-17.png)
 
+Конфигурация содержится в файле [provider.tf](./src/terraform/provider.tf):
+
+```terraform
+backend "s3" {
+  endpoint = "storage.yandexcloud.net"
+  bucket   = "netology-diplom-devops"
+  region   = "ru-central1"
+  key      = "stage/terraform-stage.tfstate"
+
+  skip_region_validation      = true
+  skip_credentials_validation = true
+}
+```
 
 3. Настройте [workspaces](https://www.terraform.io/docs/language/state/workspaces.html)
    а. Рекомендуемый вариант: создайте два workspace: *stage* и *prod*. В случае выбора этого варианта все последующие шаги должны учитывать факт существования нескольких workspace.  
