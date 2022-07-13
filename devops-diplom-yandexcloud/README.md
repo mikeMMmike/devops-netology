@@ -142,7 +142,7 @@ ___
 
 Ожидаемые результаты:
 
-1. Виртуальная машина на которой установлен WordPress и Nginx/Apache (на ваше усмотрение).
+1. Виртуальная машина, на которой установлен WordPress и Nginx/Apache (на ваше усмотрение).
 2. В вашей доменной зоне настроена A-запись на внешний адрес reverse proxy:
     - `https://www.you.domain` (WordPress)
 3. На сервере `you.domain` отредактирован upstream для выше указанного URL и он смотрит на виртуальную машину на которой установлен WordPress.
@@ -159,7 +159,7 @@ ___
 Цель:
 1. Построить pipeline доставки кода в среду эксплуатации, то есть настроить автоматический деплой на сервер `app.you.domain` при коммите в репозиторий с WordPress.
 
-Подробнее об [Gitlab CI](https://about.gitlab.com/stages-devops-lifecycle/continuous-integration/)
+Подробнее о [Gitlab CI](https://about.gitlab.com/stages-devops-lifecycle/continuous-integration/)
 
 Ожидаемый результат:
 
@@ -291,6 +291,31 @@ backend "s3" {
    а. Рекомендуемый вариант: создайте два workspace: *stage* и *prod*. В случае выбора этого варианта все последующие шаги должны учитывать факт существования нескольких workspace.  
    б. Альтернативный вариант: используйте один workspace, назвав его *stage*. Пожалуйста, не используйте workspace, создаваемый Terraform-ом по-умолчанию (*default*).
 
+
+Создаем workspaces `prod` и `stage`:
+
+```bash 
+mike@make-lptp:~/PycharmProjects/devops-netology/devops-diplom-yandexcloud/src/terraform$ terraform workspace new prod
+Created and switched to workspace "prod"!
+
+You're now on a new, empty workspace. Workspaces isolate their state,
+so if you run "terraform plan" Terraform will not see any existing state
+for this configuration.
+mike@make-lptp:~/PycharmProjects/devops-netology/devops-diplom-yandexcloud/src/terraform$ terraform workspace new stage
+Created and switched to workspace "stage"!
+
+You're now on a new, empty workspace. Workspaces isolate their state,
+so if you run "terraform plan" Terraform will not see any existing state
+for this configuration.
+```
+
+Проверяем наличие созданных workspace. Присутствуют:
+```bash
+mike@make-lptp:~/PycharmProjects/devops-netology/devops-diplom-yandexcloud/src/terraform$ terraform workspace list
+  default
+  prod
+* stage
+```
 
 4. Создайте VPC с подсетями в разных зонах доступности.
 
