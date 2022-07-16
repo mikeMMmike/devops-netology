@@ -271,7 +271,7 @@ secret: YCM****
 
 2. Подготовьте [backend](https://www.terraform.io/docs/language/settings/backends/index.html) для Terraform. Остановим выбор на альтернативном варианте:  [S3 bucket в созданном YC аккаунте](https://cloud.yandex.ru/docs/storage/operations/buckets/create).
 Создали бакет в YC:
-![img.png](./src/screenshots/2022-07-112004-43-17.png)
+![](src/screenshots/2022-07-1104-43-17.png)
 
 Конфигурация содержится в файле [provider.tf](./src/terraform/provider.tf):
 
