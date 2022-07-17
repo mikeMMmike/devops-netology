@@ -1,11 +1,13 @@
 resource "yandex_compute_instance" "nginx" {
-  name = "mycompanyname.ru"
+  /*name = "mycompanyname.ru"*/
+  name = "web-server"
+  hostname = "mycompanyname.ru"
   platform_id = local.yc_instance_type_map[terraform.workspace]
   count = local.yc_instance_count[terraform.workspace]
   zone = local.vpc_zone[terraform.workspace]
     resources {
-    cores  = local.yc_cores[terraform.workspace]
-    memory = local.yc_mem[terraform.workspace]
+    cores  = 2
+    memory = 2
       }
   boot_disk {
     initialize_params {
@@ -20,6 +22,7 @@ resource "yandex_compute_instance" "nginx" {
   metadata = {
     ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
   }
+}
   resource "null_resource" "ansible-install" {
 
   triggers = {
@@ -27,8 +30,8 @@ resource "yandex_compute_instance" "nginx" {
   }
 
   provisioner "local-exec" {
-    command = format("ansible-playbook -D -i %s, -u ${var.data["account"]} ../ansible/nginx/provision.yml",
+    command = format("ansible-playbook -D -i %s, -u ubuntu ../ansible/nginx/provision.yml",
     join("\",\"", yandex_compute_instance.nginx[*].network_interface.0.nat_ip_address)
     )
   }
-}
+  }

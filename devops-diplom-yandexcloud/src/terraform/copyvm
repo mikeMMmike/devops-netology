@@ -1,0 +1,152 @@
+###### NODE01 ТЕСТОВАЯ ВМ
+resource "yandex_compute_instance" "test-server" {
+  name = "testserver"
+  # вот уж не знаю,почему, но при count >= 2 появляется ошибка. YC ругается на не верное имя:
+#  rpc error: code = InvalidArgument desc = Request validation error: Name: invalid resource name
+#поэтому все варианты, что ниже,закомменчены, имя захардкожено и count в locals равняется 1. решения на 17.07.22 не нашел
+  /*name = "${var.name}-${format(var.count_format, var.count_offset+count.index+1)}"*/
+  /*name = "test-server-[${count.index+1}]"*/
+  platform_id = local.yc_instance_type_map[terraform.workspace]
+  count = local.yc_instance_count[terraform.workspace]
+  zone = local.vpc_zone[terraform.workspace]
+  /*hostname = "test-server-[${count.index+1}]"*/
+  resources {
+    cores  = local.yc_cores[terraform.workspace]
+    memory = local.yc_mem[terraform.workspace]
+      }
+  boot_disk {
+    initialize_params {
+      image_id = "fd8f1tik9a7ap9ik2dg1"
+      size = local.yc_disk_size[terraform.workspace]
+    }
+  }
+  network_interface {
+    subnet_id = yandex_vpc_subnet.yc_subnet.id
+    /*yandex_vpc_network.yc_network.id*/
+    nat       = true
+  }
+  metadata = {
+    ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
+  }
+}
+
+##### LOCALS!!!
+locals {
+  yc_instance_type_map = {
+    stage = "standard-v1"
+    prod  = "standard-v2"
+  }
+  yc_cores = {
+    stage = 2
+    prod  = 4
+  }
+  yc_disk_size = {
+    stage = 10
+    prod  = 20
+  }
+  yc_instance_count = {
+    stage = 1
+    prod  = 1
+  }
+  yc_mem = {
+    stage = 4
+    prod  = 8
+  }
+  vpc_zone = {
+    stage = "ru-central1-b"
+    prod  = "ru-central1-a"
+  }
+  vpc_subnets_v4-cidr = {
+    stage = ["10.127.0.0/24"]
+    prod  = ["10.128.0.0/24"]
+  }
+}
+    /* копия предыдущего конфига
+    vpc_subnets = {
+    stage = [
+      {
+        zone           = "ru-central1-a"
+        v4_cidr_blocks = ["10.128.0.0/24"]
+      }
+    ]
+    prod = [
+      {
+        zone           = "ru-central1-a"
+        v4_cidr_blocks = ["10.128.1.0/24"]
+      },
+      {
+        zone           = "ru-central1-b"
+        v4_cidr_blocks = ["10.129.0.0/24"]
+      }*/
+      /*
+      #В лекциях советовали вовсе не использовать эту зону, т.к. с ней часто возникают проблемы. по слухам, в YC того же мнения.
+      {
+        zone           = "ru-central1-c"
+        v4_cidr_blocks = ["10.130.0.0/24"]
+      }*/
+
+
+##### NETWORK!!!!
+resource "yandex_vpc_network" "yc_network" {
+
+  #1 из попыток автоматизировать присвоениe имен. но вообще - это ерунда, т.к. берется значение yc_instance_count. т.е. если это 2 - то,если 3 - то 3.
+  # и никак не меняется. если сетей несколько, добавляется [номер с 0]. Посему отменю эту затею. в данном случае ничего не изменится, имя так же статичное.
+  /*name = "vpc-network-${local.yc_instance_count[terraform.workspace]}"*/
+  #для изменения идентификации сети в Stage и Prod добавил ${terraform.workspace} в имя
+  name = "vpc-network-${terraform.workspace}"
+  }
+
+resource "yandex_vpc_subnet" "yc_subnet" {
+  /*абсолютно не понимаю значение этого блока из документации Яндекс. Блок адаптировал под применение воркспейс.
+  count          = "${local.yc_instance_count[terraform.workspace] > length(var.yandex_region_id)}"
+  Решил удалить вот это вот  > length(var.yandex_region_id)}. вроде, получилось.
+  */
+/*  т.к. не вышло использовать yandex_vpc_subnet.yc_subnet[count.index] в yc instance in NODE01, пришлось отказаться от использования параметра count
+count          = local.yc_instance_count[terraform.workspace]*/
+  name           = "yc_subnet"
+  zone           = local.vpc_zone[terraform.workspace]
+  /*
+  Vyacheslav Sukharev, [16.07.2022 22:37]
+[В ответ на Синица Михаил]
+local.vpc_subnets[terraform.workspace].zone и v4_cidr_blocks соответственно. А network_id так вообще определять нельзя, его надо брать из созданного выше обьекта
+  network_id     = "${local.vpc_subnets[terraform.workspace]}"*/
+  network_id     = yandex_vpc_network.yc_network.id
+  v4_cidr_blocks = local.vpc_subnets_v4-cidr[terraform.workspace]
+}
+
+
+
+
+
+
+
+
+
+
+
+/*
+# Оригинальные параметры из документации Яндекс. Необходимо использовать лишь 1 из конфигураций
+output "internal_ip_address_vm_2" {
+  value = yandex_compute_instance.vm-2.network_interface.0.ip_address
+}
+*/
+#/*
+#output "external_ip_address_vm_2" {
+#  value = yandex_compute_instance.vm-2.network_interface.0.nat_ip_address
+#}
+#*/
+#
+
+/*
+#Еще оригинальные параметры из документации Яндекс.
+# Network
+resource "yandex_vpc_network" "default" {
+  name = "net"
+}
+
+resource "yandex_vpc_subnet" "default" {
+  name = "subnet"
+  zone           = "ru-central1-a"
+  network_id     = "${yandex_vpc_network.default.id}"
+  v4_cidr_blocks = ["192.168.101.0/24"]
+}*/
