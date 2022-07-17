@@ -1,8 +1,14 @@
 resource "yandex_compute_instance" "test-server" {
-  name = "test-server"
+  name = "testserver"
+  # вот уж не знаю,почему, но при count >= 2 появляется ошибка. YC ругается на не верное имя:
+#  rpc error: code = InvalidArgument desc = Request validation error: Name: invalid resource name
+#поэтому все варианты, что ниже,закомменчены, имя захардкожено и count в locals равняется 1. решения на 17.07.22 не нашел
+  /*name = "${var.name}-${format(var.count_format, var.count_offset+count.index+1)}"*/
+  /*name = "test-server-[${count.index+1}]"*/
   platform_id = local.yc_instance_type_map[terraform.workspace]
   count = local.yc_instance_count[terraform.workspace]
   zone = local.vpc_zone[terraform.workspace]
+  /*hostname = "test-server-[${count.index+1}]"*/
   resources {
     cores  = local.yc_cores[terraform.workspace]
     memory = local.yc_mem[terraform.workspace]

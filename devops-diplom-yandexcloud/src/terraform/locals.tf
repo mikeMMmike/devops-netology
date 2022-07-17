@@ -13,7 +13,7 @@ locals {
   }
   yc_instance_count = {
     stage = 1
-    prod  = 2
+    prod  = 1
   }
   yc_mem = {
     stage = 4
