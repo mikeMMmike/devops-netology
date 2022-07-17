@@ -1,12 +1,11 @@
 resource "yandex_vpc_network" "yc_network" {
 
   #1 из попыток автоматизировать присвоениe имен. но вообще - это ерунда, т.к. берется значение yc_instance_count. т.е. если это 2 - то,если 3 - то 3.
-  # и никак не меняется. если сетей несколько, добавляется [номер с 0]
-  name = "vpc-network-${local.yc_instance_count[terraform.workspace]}"
-
-  #Это не работает, так как "The "count" object can only be used in "module", "resource", and "data" blocks, and only when the "count" argument is set"
-  /*name = "vpc-network-${count.index[terraform.workspace]}"*/
-}
+  # и никак не меняется. если сетей несколько, добавляется [номер с 0]. Посему отменю эту затею. в данном случае ничего не изменится, имя так же статичное.
+  /*name = "vpc-network-${local.yc_instance_count[terraform.workspace]}"*/
+  #для изменения идентификации сети в Stage и Prod добавил ${terraform.workspace} в имя
+  name = "vpc-network-${terraform.workspace}"
+  }
 
 resource "yandex_vpc_subnet" "yc_subnet" {
   /*абсолютно не понимаю значение этого блока из документации Яндекс. Блок адаптировал под применение воркспейс.
@@ -16,7 +15,7 @@ resource "yandex_vpc_subnet" "yc_subnet" {
 /*  т.к. не вышло использовать yandex_vpc_subnet.yc_subnet[count.index] в yc instance in NODE01, пришлось отказаться от использования параметра count
 count          = local.yc_instance_count[terraform.workspace]*/
   name           = "yc_subnet"
-  zone           = local.vpc_subnets_zone[terraform.workspace]
+  zone           = local.vpc_zone[terraform.workspace]
   /*
   Vyacheslav Sukharev, [16.07.2022 22:37]
 [В ответ на Синица Михаил]

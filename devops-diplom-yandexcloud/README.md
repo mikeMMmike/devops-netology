@@ -319,11 +319,95 @@ mike@make-lptp:~/PycharmProjects/devops-netology/devops-diplom-yandexcloud/src/t
 ```
 
 4. Создайте VPC с подсетями в разных зонах доступности.
-Подготовили файл network
+Подготовили tf. файлы: 
+* `node01.tf`
+```terraform
+resource "yandex_compute_instance" "test-server" {
+  name = "test-server"
+  platform_id = local.yc_instance_type_map[terraform.workspace]
+  count = local.yc_instance_count[terraform.workspace]
+  zone = local.vpc_zone[terraform.workspace]
+  resources {
+    cores  = local.yc_cores[terraform.workspace]
+    memory = local.yc_mem[terraform.workspace]
+      }
+  boot_disk {
+    initialize_params {
+      image_id = "fd8f1tik9a7ap9ik2dg1"
+      size = local.yc_disk_size[terraform.workspace]
+    }
+  }
+  network_interface {
+    subnet_id = yandex_vpc_subnet.yc_subnet.id
+    /*yandex_vpc_network.yc_network.id*/
+    nat       = true
+  }
+  metadata = {
+    ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
+  }
+}
+```
+* `locals.tf`
+```terraform
+locals {
+  yc_instance_type_map = {
+    stage = "standard-v1"
+    prod  = "standard-v2"
+  }
+  yc_cores = {
+    stage = 2
+    prod  = 4
+  }
+  yc_disk_size = {
+    stage = 10
+    prod  = 20
+  }
+  yc_instance_count = {
+    stage = 1
+    prod  = 2
+  }
+  yc_mem = {
+    stage = 4
+    prod  = 8
+  }
+  vpc_zone = {
+    stage = "ru-central1-a"
+    prod  = "ru-central1-b"
+  }
+  vpc_subnets_v4-cidr = {
+    stage = ["10.128.0.0/24"]
+    prod  = ["10.128.0.0/24", "10.129.0.0/24"]
+  }
+}
+```
+* `network.tf`
+```terraform
+resource "yandex_compute_instance" "test-server" {
+  name = "test-server"
+  platform_id = local.yc_instance_type_map[terraform.workspace]
+  count = local.yc_instance_count[terraform.workspace]
+  zone = local.vpc_zone[terraform.workspace]
+  resources {
+    cores  = local.yc_cores[terraform.workspace]
+    memory = local.yc_mem[terraform.workspace]
+      }
+  boot_disk {
+    initialize_params {
+      image_id = "fd8f1tik9a7ap9ik2dg1"
+      size = local.yc_disk_size[terraform.workspace]
+    }
+  }
+  network_interface {
+    subnet_id = yandex_vpc_subnet.yc_subnet.id
+    nat       = true
+  }
+  metadata = {
+    ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
+  }
+}
+```
 
 5. Убедитесь, что теперь вы можете выполнить команды `terraform destroy` и `terraform apply` без дополнительных ручных действий.
-
-
 ```bash 
 
 ```
