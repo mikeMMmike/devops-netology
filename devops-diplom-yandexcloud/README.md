@@ -271,6 +271,7 @@ secret: YCM****
 
 2. Подготовьте [backend](https://www.terraform.io/docs/language/settings/backends/index.html) для Terraform. Остановим выбор на альтернативном варианте:  [S3 bucket в созданном YC аккаунте](https://cloud.yandex.ru/docs/storage/operations/buckets/create).
 Создали бакет в YC:
+
 ![](src/screenshots/2022-07-1104-43-17.png)
 
 Конфигурация содержится в файле [provider.tf](./src/terraform/provider.tf):
@@ -288,8 +289,8 @@ backend "s3" {
 ```
 
 3. Настройте [workspaces](https://www.terraform.io/docs/language/state/workspaces.html)
-   а. Рекомендуемый вариант: создайте два workspace: *stage* и *prod*. В случае выбора этого варианта все последующие шаги должны учитывать факт существования нескольких workspace.  
-   б. Альтернативный вариант: используйте один workspace, назвав его *stage*. Пожалуйста, не используйте workspace, создаваемый Terraform-ом по-умолчанию (*default*).
+   * Рекомендуемый вариант: создайте два workspace: *stage* и *prod*. В случае выбора этого варианта все последующие шаги должны учитывать факт существования нескольких workspace.  
+   * Альтернативный вариант: используйте один workspace, назвав его *stage*. Пожалуйста, не используйте workspace, создаваемый Terraform-ом по-умолчанию (*default*).
 
 
 Создаем workspaces `prod` и `stage`:
@@ -318,7 +319,7 @@ mike@make-lptp:~/PycharmProjects/devops-netology/devops-diplom-yandexcloud/src/t
 ```
 
 4. Создайте VPC с подсетями в разных зонах доступности.
-
+Подготовили файл network
 
 5. Убедитесь, что теперь вы можете выполнить команды `terraform destroy` и `terraform apply` без дополнительных ручных действий.
 
