@@ -18,6 +18,7 @@ resource "yandex_compute_instance" "nginx" {
   network_interface {
     subnet_id = yandex_vpc_subnet.yc_subnet.id
     nat       = true
+    nat_ip_address = "51.250.20.5"
   }
   metadata = {
     ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
