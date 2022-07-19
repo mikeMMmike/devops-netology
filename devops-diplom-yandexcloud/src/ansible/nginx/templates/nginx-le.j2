@@ -26,10 +26,28 @@ server {
     ssl_dhparam /etc/nginx/dhparams.pem;
     ssl_prefer_server_ciphers on;
 
-    root /var/www/{{ domain_name }};
+#ориг. конфиг    root /var/www/{{ domain_name }};
+    root /var/www/html;
     index index.html index.htm;
 
     location / {
         try_files $uri $uri/ =404;
     }
+    # проксируем запрос gitlab/ на gitlab.mycompanyname.ru
+    location gitlab/ {
+                proxy_pass https://gitlab/html/index.nginx-debian.html;
+        }
+
+    # проксируем запрос gitlab/ на grafana.mycompanyname.ru
+    location grafana/ {
+                proxy_pass https://grafana/html/index.nginx-debian.html;
+        }
+    # проксируем запрос gitlab/ на prometheus.mycompanyname.ru
+    location prometheus/ {
+                proxy_pass https://prometheus/html/index.nginx-debian.html;
+        }
+    # проксируем запрос gitlab/ на alertmanager.mycompanyname.ru
+    location alertmanager/ {
+                proxy_pass https://alertmanager/html/index.nginx-debian.html;
+        }
 }
