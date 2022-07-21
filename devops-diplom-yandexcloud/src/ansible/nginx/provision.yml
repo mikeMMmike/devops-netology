@@ -1,9 +1,13 @@
 ---
-- hosts: 51.250.20.5
+- hosts: 62.84.118.229
   become: true
   gather_facts: no
   vars:
     domain_name: www.mycompanyname.ru
+    gitlab: gitlab.mycompanyname.ru
+    grafana: grafana.mycompanyname.ru
+    prometheus: prometheus.mycompanyname.ru
+    alertmanager: alertmanager.mycompanyname.ru
     letsencrypt_email: example@mycompanyname.ru
   tasks:
     - name: Install nginx
@@ -35,7 +39,7 @@
         name: nginx
         state: restarted
     - name: Create letsencrypt certificate
-      shell: letsencrypt certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ domain_name }}
+      shell: letsencrypt certonly -n --webroot --test-cert -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ domain_name }}, {{ gitlab }}, {{ grafana }}, {{ prometheus }}, {{ alertmanager }}
       args:
         creates: /etc/letsencrypt/live/{{ domain_name }}
     - name: Generate dhparams
@@ -52,4 +56,4 @@
       cron:
         name: letsencrypt_renewal
         special_time: weekly
-        job: letsencrypt --renew certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ domain_name }} && service nginx reload
+        job: letsencrypt --renew certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ domain_name }}, {{ gitlab }}, {{ grafana }}, {{ prometheus }}, {{ alertmanager }} && service nginx reload

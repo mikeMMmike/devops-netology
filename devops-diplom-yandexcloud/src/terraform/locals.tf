@@ -24,7 +24,7 @@ locals {
     prod  = "ru-central1-a"
   }
   vpc_subnets_v4-cidr = {
-    stage = ["10.127.0.0/24"]
-    prod  = ["10.128.0.0/24"]
+    stage = ["192.168.1.0/24"]
+    prod  = ["10.128.1.0/24"]
   }
 }
