@@ -1,5 +1,7 @@
+# сайтs для генерации сертификатов LetsEncrypt
 server_tokens off;
 
+# www.mycompanyname.ru
 server {
     listen 80 default_server;
     server_name {{ domain_name }};
@@ -14,3 +16,62 @@ server {
     }
 }
 
+# gitlab.mycompanyname.ru
+server {
+    listen 80 default_server;
+    server_name {{ gitlab }};
+
+    location /.well-known/acme-challenge {
+        root /var/www/letsencrypt;
+        try_files $uri $uri/ =404;
+    }
+
+    location / {
+        rewrite ^ https://{{ gitlab }}$request_uri? permanent;
+    }
+}
+
+# grafana.mycompanyname.ru
+server {
+    listen 80 default_server;
+    server_name {{ grafana }};
+
+    location /.well-known/acme-challenge {
+        root /var/www/letsencrypt;
+        try_files $uri $uri/ =404;
+    }
+
+    location / {
+        rewrite ^ https://{{ grafana }}$request_uri? permanent;
+    }
+}
+
+# prometheus.mycompanyname.ru
+server {
+    listen 80 default_server;
+    server_name {{ prometheus }};
+
+    location /.well-known/acme-challenge {
+        root /var/www/letsencrypt;
+        try_files $uri $uri/ =404;
+    }
+
+    location / {
+        rewrite ^ https://{{ prometheus }}$request_uri? permanent;
+    }
+}
+
+# alertmanager.mycompanyname.ru
+server {
+    listen 80 default_server;
+    server_name {{ alertmanager }};
+
+    location /.well-known/acme-challenge {
+        root /var/www/letsencrypt;
+        try_files $uri $uri/ =404;
+    }
+
+    location / {
+        rewrite ^ https://{{ alertmanager }}$request_uri? permanent;
+    }
+}
