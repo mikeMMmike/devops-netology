@@ -69,22 +69,22 @@
       template:
         src: templates/nginx-mycompanyname.j2
         dest: /etc/nginx/sites-enabled/mycompanyname
-#    - name: Install nginx site for GITLAB
-#      template:
-#        src: templates/nginx-gitlab.j2
-#        dest: /etc/nginx/sites-enabled/gitlab
-#    - name: Install nginx site for GRAFANA
-#      template:
-#        src: templates/nginx-grafana.j2
-#        dest: /etc/nginx/sites-enabled/grafana
-#    - name: Install nginx site for PROMETHEUS
-#      template:
-#        src: templates/nginx-prometheus.j2
-#        dest: /etc/nginx/sites-enabled/prometheus
-#    - name: Install nginx site for ALERTMANAGER
-#      template:
-#        src: templates/nginx-alertmanager.j2
-#        dest: /etc/nginx/sites-enabled/alertmanager
+    - name: Install nginx site for GITLAB
+      template:
+        src: templates/nginx-gitlab.j2
+        dest: /etc/nginx/sites-enabled/gitlab
+    - name: Install nginx site for GRAFANA
+      template:
+        src: templates/nginx-grafana.j2
+        dest: /etc/nginx/sites-enabled/grafana
+    - name: Install nginx site for PROMETHEUS
+      template:
+        src: templates/nginx-prometheus.j2
+        dest: /etc/nginx/sites-enabled/prometheus
+    - name: Install nginx site for ALERTMANAGER
+      template:
+        src: templates/nginx-alertmanager.j2
+        dest: /etc/nginx/sites-enabled/alertmanager
     - name: Reload nginx to activate specified site
       service: name=nginx state=restarted
     - name: Add letsencrypt cronjob for cert renewal
