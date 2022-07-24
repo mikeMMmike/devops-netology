@@ -1,6 +1,6 @@
 #скорее всего, это лишнее
-upstream {{ alertmanager }} {
-        server 192.168.1.6:80;
+upstream alertmanager {
+        server 192.168.1.16:80;
 }
 
 server {
@@ -31,11 +31,11 @@ server {
     ssl_dhparam /etc/nginx/dhparams.pem;
     ssl_prefer_server_ciphers on;
 
-    location /.well-known/acme-challenge/ {
-	root /var/www/{{ alertmanager }};
-    }
+#    location /.well-known/acme-challenge/ {
+#	root /var/www/{{ alertmanager }};
+#    }
     location / {
-	proxy_pass http://192.168.1.6;
+	proxy_pass http://192.168.1.16;
 	proxy_set_header Host $host;
 	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 	proxy_set_header X-Real-IP $remote_addr;

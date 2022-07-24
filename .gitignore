@@ -10,3 +10,4 @@
 **/variables.tf
 **/.terraform.tfstate.lock.info
 **/keys.tf
+**/inventory
