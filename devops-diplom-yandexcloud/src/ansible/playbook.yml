@@ -3,5 +3,5 @@
   become_user: root
   remote_user: ubuntu
   roles:
-  - nginx
-  - node-exporter
+  - nginx-proxy
+#  - node-exporter
