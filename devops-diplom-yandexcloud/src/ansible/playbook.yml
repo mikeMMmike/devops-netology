@@ -1,4 +1,4 @@
-- hosts: mycompanyname.ru
+- hosts: www.mycompanyname.ru
   become: yes
   become_user: root
   remote_user: ubuntu

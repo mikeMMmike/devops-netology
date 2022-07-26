@@ -4,6 +4,24 @@
       apt:
         name: nginx
         state: latest
+#Network settings
+    - name: Create Iptables NAT chain
+      iptables:
+      table: nat
+      chain: POSTROUTING
+      out_interface: 'eth0'
+      jump: MASQUERADE
+    - name: Enable IPv4 forwarding
+      sysctl:
+        name: net.ipv4.ip_forward
+        value: 1
+        state: present
+        reload: True
+    - name: Install IPtables-persistent
+      apt:
+        name=iptables-persistent
+        state=present        
+#LE install        
     - name: install letsencrypt
       apt:
         name: letsencrypt
@@ -12,6 +30,7 @@
       file:
         name: /var/www/letsencrypt
         state: directory
+#Nginx config
     - name: Remove default nginx config
       file:
         name: /etc/nginx/sites-enabled/default
