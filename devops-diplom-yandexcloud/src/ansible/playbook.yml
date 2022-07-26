@@ -1,0 +1,7 @@
+- hosts: mycompanyname.ru
+  become: yes
+  become_user: root
+  remote_user: ubuntu
+  roles:
+  - nginx
+  - node-exporter
