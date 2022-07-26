@@ -1,6 +1,6 @@
-resource "yandex_compute_instance" "db01" {
-  name = "db01"
-  hostname = "db01.mycompanyname.ru"
+resource "yandex_compute_instance" "db02" {
+  name = "db02"
+  hostname = "db02.mycompanyname.ru"
   platform_id = local.yc_instance_type_map[terraform.workspace]
   zone = local.vpc_zone[terraform.workspace]
     resources {
@@ -22,7 +22,7 @@ resource "yandex_compute_instance" "db01" {
   network_interface {
     subnet_id = yandex_vpc_subnet.yc_subnet.id
     nat       = false
-    ip_address = "192.168.1.16"
+    ip_address = "192.168.1.17"
   }
   metadata = {
     ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
