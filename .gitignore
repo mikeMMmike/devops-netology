@@ -11,3 +11,4 @@
 **/.terraform.tfstate.lock.info
 **/keys.tf
 **/inventory
+**/.travis.yml
