@@ -38,11 +38,12 @@ resource "yandex_compute_instance" "nginx" {
       always_run = "${timestamp()}"
     }
 
-  provisioner "local-exec" {
+/*  Вариант с запуском playbook. Позже переделал в роль. строку закомментил
+provisioner "local-exec" {
     command = format("sleep 40 && ssh-keyscan 62.84.118.229 >> ~/.ssh/known_hosts && ansible-playbook -D -i %s, -u ubuntu ../ansible/nginx/provision.yml",
     join("\",\"", yandex_compute_instance.nginx[*].network_interface.0.nat_ip_address)
     )
-  }
+  }*/
 /* Не удалось сформировать корректный inventory файл. посему отложил это решение
     provisioner "local-exec" {
       command = format(" sleep 30 && ANSIBLE_FORCE_COLOR=1 ansible-playbook -i ../ansible/inventory ../ansible/nginx/provision.yml" #, join("\",\"", yandex_compute_instance.nginx[*].network_interface.0.nat_ip_address)
