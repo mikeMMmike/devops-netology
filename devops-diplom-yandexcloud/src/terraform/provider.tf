@@ -16,17 +16,7 @@ terraform {
     skip_region_validation      = true
     skip_credentials_validation = true
   }
-  /*  backend "s3" {
-    endpoint   = "storage.yandexcloud.net"
-      bucket     = "netology-diplom-devops"
-      region     = "ru-central1-a"
-      key        = "stage/terraform-stage.tfstate"
-      access_key = "YCA"
-      secret_key = "YCM"
-      skip_region_validation      = true
-      skip_credentials_validation = true
-  }*/
-}
+ }
   # Provider
   provider "yandex" {
     token     = "${var.yandex_token}"
