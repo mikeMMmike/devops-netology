@@ -2,3 +2,8 @@
 Срок обучения 14 января — 10 мая
 
 ![](screenshots/reflection_2022-07-27_01-29-47.png)
+
+![](screenshots/reflexion_DEVOPS2_2022-07-27_01-42-52.png)
+
+
+
