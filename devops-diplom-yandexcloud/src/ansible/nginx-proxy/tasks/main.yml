@@ -7,10 +7,10 @@
 #Network settings
     - name: Create Iptables NAT chain
       iptables:
-      table: nat
-      chain: POSTROUTING
-      out_interface: 'eth0'
-      jump: MASQUERADE
+       table: nat
+       chain: POSTROUTING
+       out_interface: 'eth0'
+       jump: MASQUERADE
     - name: Enable IPv4 forwarding
       sysctl:
         name: net.ipv4.ip_forward

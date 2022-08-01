@@ -17,19 +17,13 @@ gitlab.mycompanyname.ru
 [runner]
 runner.mycompanyname.ru
 
-
-
-/*[all:vars]
-ansible_ssh_common_args= "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -J ubuntu@mycompanyname.ru"*/
-
-
-[active]
-nginx ansible_host=${yandex_compute_instance.nginx.network_interface.0.nat_ip_address}
+[all:vars]
+ansible_ssh_common_args= "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -J ubuntu@mycompanyname.ru"
 
     DOC
   filename = "../ansible/inventory"
 
-  depends_on = [yandex_compute_instance.nginx]
+/*  depends_on = [yandex_compute_instance.nginx]*/
 
 /*[
     yandex_compute_instance.node02,

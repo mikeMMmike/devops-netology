@@ -1,7 +1,7 @@
-- hosts: www.mycompanyname.ru
+- hosts: nginx
   become: yes
   become_user: root
   remote_user: ubuntu
   roles:
   - nginx-proxy
-#  - node-exporter
+# - node-exporter
