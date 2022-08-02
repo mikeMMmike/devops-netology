@@ -1,7 +1,20 @@
-- hosts: nginx
+- hosts: mycompanyname.ru
   become: yes
   become_user: root
   remote_user: ubuntu
   roles:
   - nginx-proxy
-# - node-exporter
+
+- hosts: db01.mycompanyname.ru
+  become: yes
+  become_user: root
+  remote_user: ubuntu
+  roles:
+  - mysql
+
+- hosts: db02.mycompanyname.ru
+  become: yes
+  become_user: root
+  remote_user: ubuntu
+  roles:
+  - mysql

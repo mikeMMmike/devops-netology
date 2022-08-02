@@ -5,11 +5,11 @@ resource "local_file" "inventory" {
 
 [nginx]
 mycompanyname.ru
-[wordpress]
-app.mycompanyname.ru
 [mysql]
 db01.mycompanyname.ru mysql_server_id=1 mysql_replication_role=master
 db02.mycompanyname.ru mysql_server_id=2 mysql_replication_role=slave
+[wordpress]
+app.mycompanyname.ru
 [monitoring]
 monitoring.mycompanyname.ru
 [gitlab]

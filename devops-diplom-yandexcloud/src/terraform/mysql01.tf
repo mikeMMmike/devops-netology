@@ -26,5 +26,7 @@ resource "yandex_compute_instance" "db01" {
   }
   metadata = {
     ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
+    serial-port-enable=1
   }
+
 }

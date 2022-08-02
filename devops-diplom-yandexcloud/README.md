@@ -499,4 +499,15 @@ ___
 2. В кластере автоматически создаётся база данных c именем `wordpress`.
 3. В кластере автоматически создаётся пользователь `wordpress` с полными правами на базу `wordpress` и паролем `wordpress`.
  
+
+Подготовили tf файлы конфигурации ВМ согласно рекомендаций:
+* [mysql01.tf](./src/terraform/mysql01.tf)
+* [mysql02.tf](./src/terraform/mysql02.tf)
+
+Подготовили ansible роль [mysql](./src/ansible/mysql)
+При подготовке ansible роли `mysql` использовали (готовую роль)[https://galaxy.ansible.com/geerlingguy/mysql], скорректировав переменные: добавили БД `wordpress` и пользователя `wordpress` с паролем `wordpress`   
+
+
+
 ___
+
