@@ -53,22 +53,22 @@
       shell: letsencrypt certonly -n --webroot --test-cert -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ domain_name }}
       args:
         creates: /etc/letsencrypt/live/{{ domain_name }}
-    - name: Create letsencrypt certificate {{ gitlab }}
-      shell: letsencrypt certonly -n --webroot --test-cert -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ gitlab }}
-      args:
-        creates: /etc/letsencrypt/live/{{ gitlab }}
-    - name: Create letsencrypt certificate {{ grafana }}
-      shell: letsencrypt certonly -n --webroot --test-cert -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ grafana }}
-      args:
-        creates: /etc/letsencrypt/live/{{ grafana }}
-    - name: Create letsencrypt certificate {{ prometheus }}
-      shell: letsencrypt certonly -n --webroot --test-cert -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ prometheus }}
-      args:
-        creates: /etc/letsencrypt/live/{{ prometheus }}
-    - name: Create letsencrypt certificate {{ alertmanager }}
-      shell: letsencrypt certonly -n --webroot --test-cert -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ alertmanager }}
-      args:
-        creates: /etc/letsencrypt/live/{{ alertmanager }}
+#    - name: Create letsencrypt certificate {{ gitlab }}
+#      shell: letsencrypt certonly -n --webroot --test-cert -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ gitlab }}
+#      args:
+#        creates: /etc/letsencrypt/live/{{ gitlab }}
+#    - name: Create letsencrypt certificate {{ grafana }}
+#      shell: letsencrypt certonly -n --webroot --test-cert -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ grafana }}
+#      args:
+#        creates: /etc/letsencrypt/live/{{ grafana }}
+#    - name: Create letsencrypt certificate {{ prometheus }}
+#      shell: letsencrypt certonly -n --webroot --test-cert -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ prometheus }}
+#      args:
+#        creates: /etc/letsencrypt/live/{{ prometheus }}
+#    - name: Create letsencrypt certificate {{ alertmanager }}
+#      shell: letsencrypt certonly -n --webroot --test-cert -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ alertmanager }}
+#      args:
+#        creates: /etc/letsencrypt/live/{{ alertmanager }}
     - name: Generate dhparams
       shell: openssl dhparam -out /etc/nginx/dhparams.pem 2048
       args:
@@ -100,5 +100,5 @@
       cron:
         name: letsencrypt_renewal
         special_time: weekly
-#        job: letsencrypt --renew certonly -n --webroot --test-cert -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ domain_name }} && service nginx reload
-        job: letsencrypt --renew certonly -n --webroot --test-cert -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ domain_name }}, {{ gitlab }}, {{ grafana }}, {{ prometheus }}, {{ alertmanager }} && service nginx reload
+        job: letsencrypt --renew certonly -n --webroot --test-cert -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ domain_name }} && service nginx reload
+#        job: letsencrypt --renew certonly -n --webroot --test-cert -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ domain_name }}, {{ gitlab }}, {{ grafana }}, {{ prometheus }}, {{ alertmanager }} && service nginx reload
