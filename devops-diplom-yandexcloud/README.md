@@ -507,7 +507,8 @@ ___
 Подготовили ansible роль [mysql](./src/ansible/mysql)
 При подготовке ansible роли `mysql` использовали (готовую роль)[https://galaxy.ansible.com/geerlingguy/mysql], скорректировав переменные: добавили БД `wordpress` и пользователя `wordpress` с паролем `wordpress`   
 
-
+Playbook успешно отрабатывает:
+![](src/screenshots/YC_DB_MYSQL_2022-08-03_16-45-41.png)
 
 ___
 
