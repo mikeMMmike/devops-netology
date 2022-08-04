@@ -3,10 +3,10 @@ upstream gitlab {
     server 192.168.1.13;
 }
 
-server {listen 80;
-    server_name {{ gitlab }};
-    return 301 https://{{ gitlab }}$request_uri;
-}
+#server {listen 80;
+#    server_name {{ gitlab }};
+#    return 301 https://{{ gitlab }}$request_uri;
+#}
 
 server {
        listen       443 ssl;

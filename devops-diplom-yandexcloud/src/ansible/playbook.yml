@@ -1,20 +1,28 @@
-- hosts: mycompanyname.ru
+### hostname from inventoryfile
+- hosts: nginx
   become: yes
   become_user: root
   remote_user: ubuntu
   roles:
   - nginx-proxy
 
-- hosts: db01.mycompanyname.ru
+- hosts: mysql #db01.mycompanyname.ru
   become: yes
   become_user: root
   remote_user: ubuntu
   roles:
   - mysql
 
-- hosts: db02.mycompanyname.ru
+#- hosts: db02.mycompanyname.ru
+#  become: yes
+#  become_user: root
+#  remote_user: ubuntu
+#  roles:
+#  - mysql
+
+- hosts: wordpress #app.mycompanyname.ru
   become: yes
   become_user: root
   remote_user: ubuntu
   roles:
-  - mysql
+  - wordpress

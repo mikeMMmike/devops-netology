@@ -19,6 +19,7 @@ runner.mycompanyname.ru
 
 [nodes:children]
     mysql
+    wordpress
 [nodes:vars]
 ansible_ssh_common_args= "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -J ubuntu@mycompanyname.ru"
 
@@ -29,14 +30,21 @@ ansible_ssh_common_args= "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev
 
 /*  depends_on = [yandex_compute_instance.nginx]*/
 
-/*[
-    yandex_compute_instance.node02,
-    yandex_compute_instance.node03,
-    yandex_compute_instance.node04,
-    yandex_compute_instance.node05,
-    yandex_compute_instance.node06
-    ]
-*/
+
   #[all:vars]
 #ansible_ssh_common_args= "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -J ubuntu@mycompanyname.ru"
+
+/*
+Вариант конфигурации для автоподтверждения публичного ключа. У меня не работало на mysql серверах
+[nodes:children]
+    mysql
+    wordpress
+
+[nginx:vars]
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+ansible_ssh_user=ubuntu
+ansible_ssh_private_key_file=/home/mike/.ssh/id_rsa.pub
+[nodes:vars]
+ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="ssh -W %h:%p -q ubuntu@mycompanyname.ru"'
+ansible_ssh_user=ubuntu*/
 }

@@ -4,10 +4,10 @@ upstream alertmanager {
 }
 
 
-server {listen 80;
-    server_name {{ alertmanager }};
-    return 301 https://{{ alertmanager }}$request_uri;
-}
+#server {listen 80;
+#    server_name {{ alertmanager }};
+#    return 301 https://{{ alertmanager }}$request_uri;
+#}
 
 server {
        listen       443 ssl;

@@ -3,10 +3,10 @@ upstream grafana {
     server 192.168.1.14:3000;
 }
 
-server {listen 80;
-    server_name {{ grafana }};
-    return 301 https://{{ grafana }}$request_uri;
-}
+#server {listen 80;
+#    server_name {{ grafana }};
+#    return 301 https://{{ grafana }}$request_uri;
+#}
 
 server {
        listen       443 ssl;

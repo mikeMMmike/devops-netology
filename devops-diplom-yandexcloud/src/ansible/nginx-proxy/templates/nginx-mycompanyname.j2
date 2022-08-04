@@ -1,13 +1,13 @@
 ############################################___WordPress
 upstream nginx {
-    server 62.84.118.229:80;
+#    server 62.84.118.229:80;
+    server 192.168.1.15:80;
 }
 
-server {listen 80;
-    server_name {{ domain_name }};
-    return 301 https://{{ domain_name }}$request_uri;
-
-}
+#server {listen 80;
+#    server_name {{ domain_name }};
+#    return 301 https://{{ domain_name }}$request_uri;
+#}
 
 server {
        listen       443 ssl;
