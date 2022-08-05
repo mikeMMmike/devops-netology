@@ -6,7 +6,7 @@ resource "yandex_compute_instance" "app" {
     resources {
     core_fraction = 20
     cores  = 4
-    memory = 4
+    memory = 8
       }
     scheduling_policy {
     preemptible = true

@@ -13,13 +13,6 @@
   roles:
   - mysql
 
-#- hosts: db02.mycompanyname.ru
-#  become: yes
-#  become_user: root
-#  remote_user: ubuntu
-#  roles:
-#  - mysql
-
 - hosts: wordpress #app.mycompanyname.ru
   become: yes
   become_user: root
