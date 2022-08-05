@@ -6,3 +6,4 @@ grafana: grafana.mycompanyname.ru
 prometheus: prometheus.mycompanyname.ru
 alertmanager: alertmanager.mycompanyname.ru
 letsencrypt_email: example@mycompanyname.ru
+domain_names: mycompanyname.ru,www.mycompanyname.ru,grafana.mycompanyname.ru,prometheus.mycompanyname.ru,alertmanager.mycompanyname.ru,gitlab.mycompanyname.ru

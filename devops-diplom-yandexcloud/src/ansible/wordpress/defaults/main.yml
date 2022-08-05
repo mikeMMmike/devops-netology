@@ -14,3 +14,5 @@ mysql_server: "db01.mycompanyname.ru"
 http_host: "www.mycompanyname.ru"
 http_conf: "www.mycompanyname.ru.conf"
 http_port: "80"
+
+
