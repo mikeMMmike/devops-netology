@@ -18,18 +18,8 @@
  * @package WordPress
  */
 
-define('FORCE_SSL_LOGIN', true);
-#define('FORCE_SSL_LOGIN', false);
-#define('FORCE_SSL_ADMIN', false);
-define('FORCE_SSL_ADMIN', true);
-if ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')
-$_SERVER['HTTPS']='on';
-
-# Включил, но еще не проверял!!!!!!! На данный момент apache работает по HTTPS, но не работает WP!
-# Вот это еще предлагают здесь https://gist.github.com/chrisjhoughton/8646918:
-if (isset($_SERVER['HTTP_X_FORWARDED_HOST'])) {
-$_SERVER['HTTP_HOST'] = $_SERVER['HTTP_X_FORWARDED_HOST'];
-}
+define('FORCE_SSL_LOGIN', false);
+define('FORCE_SSL_ADMIN', false);
 
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
