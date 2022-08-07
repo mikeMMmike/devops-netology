@@ -6,9 +6,9 @@ add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsaf
 
 
 upstream wordpress {
-#    server 62.84.118.229:80;
-#    server 192.168.1.15:80;
-    server 192.168.1.15;
+    server 192.168.1.15:80;
+#    server 192.168.1.15:443;
+#    server 192.168.1.15;
 }
 
 #server {listen 80;
@@ -36,10 +36,16 @@ server {
     ssl_prefer_server_ciphers on;
 
     location / {
+    #переиспользование ssl сессий
+    proxy_ssl_session_reuse on;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header Host $host;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_pass http://wordpress;
+#
+    proxy_set_header X-Forwarded-Proto https;
+    proxy_pass https://wordpress;
+    #хттпс делаем на апстрим
+#    proxy_pass https://wordpress;
     error_page 500 502 503 504 /50x.html;
     location = /50x.html {
         root html;

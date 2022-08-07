@@ -13,6 +13,6 @@ mysql_server: "db01.mycompanyname.ru"
 #HTTP Settings
 http_host: "www.mycompanyname.ru"
 http_conf: "www.mycompanyname.ru.conf"
-http_port: "80"
+http_port: "443"
 
 
