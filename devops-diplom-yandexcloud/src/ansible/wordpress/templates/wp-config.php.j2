@@ -24,15 +24,17 @@ define('FORCE_SSL_ADMIN', false);
 
 #также самостоятельно нашел решение, но при таком варианте конфигурации при переходе на www.mycompanyname.ru просто открывается страница apache:
 #https://gist.github.com/chrisjhoughton/8646918:
-#080822# define('FORCE_SSL_LOGIN', true);
-#080822# define('FORCE_SSL_ADMIN', true);
-#080822# if (isset($_SERVER['HTTP_X_FORWARDED_HOST'])) {
-#080822# $_SERVER['HTTP_HOST'] = $_SERVER['HTTP_X_FORWARDED_HOST'];
-#080822# }
+/**
+Handle SSL reverse proxy
+*/
+if ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')
+$_SERVER['HTTPS']='on';
+if (isset($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+$_SERVER['HTTP_HOST'] = $_SERVER['HTTP_X_FORWARDED_HOST'];
+}
 
-#080822# Проверил 08.08.22 не работает. Дополнительно в роли nginx необходимо добавить в конфиг сервера wordpress это: proxy_set_header X-Forwarded-Proto https;
-#080822# if ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')
-#080822# $_SERVER['HTTPS']='on';
+
+
 
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */

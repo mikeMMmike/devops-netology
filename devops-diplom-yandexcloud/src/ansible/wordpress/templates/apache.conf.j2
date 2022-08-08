@@ -9,6 +9,9 @@
     <Directory /var/www/{{ http_host }}>
           Options -Indexes
           AllowOverride All
+# не очень работает
+     https://gist.github.com/chrisjhoughton/8646918:
+          allow from all
     </Directory>
 
     <IfModule mod_dir.c>

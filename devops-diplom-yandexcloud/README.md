@@ -516,16 +516,13 @@ ___
 
 Необходимо разработать Ansible роль для установки WordPress.
 
-Рекомендации:
+Данные:
   - Имя сервера: `app.mycompanyname.ru`
   - Характеристики: 4vCPU, 4 RAM, Internal address.
 
 Цель:
 
-1. Установить [WordPress](https://wordpress.org/download/). Это система управления содержимым сайта ([CMS](https://ru.wikipedia.org/wiki/Система_управления_содержимым)) с открытым исходным кодом.
-
-
-По данным W3techs, WordPress используют 64,7% всех веб-сайтов, которые сделаны на CMS. Это 41,1% всех существующих в мире сайтов. Эту платформу для своих блогов используют The New York Times и Forbes. Такую популярность WordPress получил за удобство интерфейса и большие возможности.
+1. Установить [WordPress](https://wordpress.org/download/).
 
 Ожидаемые результаты:
 
@@ -535,3 +532,12 @@ ___
 3. На сервере `mycompanyname.ru` отредактирован upstream для выше указанного URL и он смотрит на виртуальную машину на которой установлен WordPress.
 4. В браузере можно открыть URL `https://www.mycompanyname.ru` и увидеть главную страницу WordPress.
 ---
+
+Результаты:
+1. [tf-файл ВМ с WordPress](./src/terraform/wordpress.tf)
+2. Настроена A-запись в доменной зоне mycompanyname.ru:
+![](src/screenshots/WP-a-record.png)
+3. На сервере `mycompanyname.ru` отредактирован upstream для WordPress. [ссылка](./src/ansible/nginx-proxy/templates/nginx-mycompanyname.j2) на шаблон конфигурационного файла
+4. Главная страница WordPress:
+![](src/screenshots/WP_main_page_2022-08-08_21-12-22.png)
+
