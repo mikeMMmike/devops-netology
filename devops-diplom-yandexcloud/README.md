@@ -531,7 +531,7 @@ ___
     - `https://www.mycompanyname.ru` (WordPress)
 3. На сервере `mycompanyname.ru` отредактирован upstream для выше указанного URL и он смотрит на виртуальную машину на которой установлен WordPress.
 4. В браузере можно открыть URL `https://www.mycompanyname.ru` и увидеть главную страницу WordPress.
----
+
 
 Результаты:
 1. [tf-файл ВМ с WordPress](./src/terraform/wordpress.tf)
@@ -540,4 +540,31 @@ ___
 3. На сервере `mycompanyname.ru` отредактирован upstream для WordPress. [ссылка](./src/ansible/nginx-proxy/templates/nginx-mycompanyname.j2) на шаблон конфигурационного файла
 4. Главная страница WordPress:
 ![](src/screenshots/WP_main_page_2022-08-08_21-12-22.png)
+---
 
+
+### Установка Gitlab CE и Gitlab Runner
+
+Необходимо настроить CI/CD систему для автоматического развертывания приложения при изменении кода.
+По результатам работ коллег было решено увеличить размер оперативной памяти ВМ. Будем использовать 8 Гб против 4Гб для повыешния производительности сервера при установке и настройке.
+Данные:
+  - Имена серверов: `gitlab.mycompanyname.ru` и `runner.mycompanyname.ru`
+  - Характеристики: 4vCPU, 8 RAM, Internal address.
+
+Цель:
+1. Построить pipeline доставки кода в среду эксплуатации, то есть настроить автоматический деплой на сервер `app.you.domain` при коммите в репозиторий с WordPress.
+
+Подробнее о [Gitlab CI](https://about.gitlab.com/stages-devops-lifecycle/continuous-integration/)
+
+Ожидаемый результат:
+
+1. Интерфейс Gitlab доступен по https.
+2. В вашей доменной зоне настроена A-запись на внешний адрес reverse proxy:
+    - `https://gitlab.you.domain` (Gitlab)
+3. На сервере `you.domain` отредактирован upstream для выше указанного URL и он смотрит на виртуальную машину на которой установлен Gitlab.
+4. При любом коммите в репозиторий с WordPress и создании тега (например, v1.0.0) происходит деплой на виртуальную машину.
+
+Для установки gitlab будем использовать готовую [ansible-роль](https://github.com/geerlingguy/ansible-role-gitlab) за основу
+Для установки gitlab-runner будем использовать готовую [ansible-роль](https://github.com/riemers/ansible-gitlab-runner) за основу
+
+___

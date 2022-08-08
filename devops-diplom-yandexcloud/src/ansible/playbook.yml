@@ -6,16 +6,30 @@
   roles:
   - nginx-proxy
 
-- hosts: mysql #db01.mycompanyname.ru
+- hosts: mysql
   become: yes
   become_user: root
   remote_user: ubuntu
   roles:
   - mysql
 
-- hosts: wordpress #app.mycompanyname.ru
+- hosts: wordpress
   become: yes
   become_user: root
   remote_user: ubuntu
   roles:
   - wordpress
+
+- hosts: gitlab
+  become: yes
+  become_user: root
+  remote_user: ubuntu
+  roles:
+  - gitlab
+
+- hosts: runner
+  become: yes
+  become_user: root
+  remote_user: ubuntu
+  roles:
+  - runner
