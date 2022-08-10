@@ -8,8 +8,8 @@ locals {
     prod  = 4
   }
   yc_disk_size = {
-    stage = 10
-    prod  = 20
+    stage = 40
+    prod  = 50
   }
   yc_instance_count = {
     stage = 1

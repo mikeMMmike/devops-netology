@@ -53,10 +53,21 @@
 # Start and configure GitLab. Sometimes the first run fails, but after that,
 # restarts fix problems, so ignore failures on this run.
 - name: Reconfigure GitLab (first run).
+#!!!!! вот еще можно попрбовать:
+# ignore_errors: True
   command: >
     gitlab-ctl reconfigure
     creates=/var/opt/gitlab/bootstrapped
-  failed_when: false
+# Это не помогло, задача висит более 30 минут без движения
+#  failed_when: false
+# Пробуем запуск в асинхронном режиме, т.к. ansible повисает на данной таске. время на выполнение отвел 5 минут
+  async: 300
+  poll: 0
+# Игнорировать статус unreachable
+  ignore_unreachable: yes
+# Теперь падает со статусом failed. Пробую починить:
+  failed_when: diff_cmd.rc == 0 or diff_cmd.rc >= 2
+
 
 - name: Create GitLab SSL configuration folder.
   file:

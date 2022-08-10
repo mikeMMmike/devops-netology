@@ -4,7 +4,7 @@ resource "yandex_compute_instance" "gitlab" {
   platform_id = local.yc_instance_type_map[terraform.workspace]
   zone = local.vpc_zone[terraform.workspace]
     resources {
-    core_fraction = 20
+    core_fraction = 50
     cores  = 4
     memory = 8
       }
