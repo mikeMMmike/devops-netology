@@ -53,11 +53,11 @@
 # Start and configure GitLab. Sometimes the first run fails, but after that,
 # restarts fix problems, so ignore failures on this run.
 - name: Reconfigure GitLab (first run).
-#!!!!! вот еще можно попрбовать:
- ignore_errors: True
   command: >
     gitlab-ctl reconfigure
     creates=/var/opt/gitlab/bootstrapped
+    #!!!!! вот еще можно попрбовать:
+    ignore_errors: True
 # Это не помогло, задача висит более 30 минут без движения
 #  failed_when: false
 # Пробуем запуск в асинхронном режиме, т.к. ansible повисает на данной таске. время на выполнение отвел 5 минут
