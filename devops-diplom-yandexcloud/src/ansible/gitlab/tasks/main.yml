@@ -54,7 +54,7 @@
 # restarts fix problems, so ignore failures on this run.
 - name: Reconfigure GitLab (first run).
 #!!!!! вот еще можно попрбовать:
-# ignore_errors: True
+ ignore_errors: True
   command: >
     gitlab-ctl reconfigure
     creates=/var/opt/gitlab/bootstrapped
@@ -66,7 +66,11 @@
 # Игнорировать статус unreachable
   ignore_unreachable: yes
 # Теперь падает со статусом failed. Пробую починить:
-  failed_when: diff_cmd.rc == 0 or diff_cmd.rc >= 2
+#  failed_when: diff_cmd.rc == 0 or diff_cmd.rc >= 2
+# Это тоже не помогло:
+# fatal: [gitlab.mycompanyname.ru]: FAILED! => {"ansible_job_id": "88983687712.16314", "changed": true, "failed_when_result": "The conditional check 'diff_cmd.rc == 0 or diff_cmd.rc >= 2' failed. The error was: error while evaluating conditional (diff_cmd.rc == 0 or diff_cmd.rc >= 2): 'diff_cmd' is undefined", "finished": 0, "results_file": "/root/.ansible_async/88983687712.16314", "started": 1}
+# попрбовал игнорировать ошибки в параметре выше: ignore_errors: True
+
 
 
 - name: Create GitLab SSL configuration folder.
