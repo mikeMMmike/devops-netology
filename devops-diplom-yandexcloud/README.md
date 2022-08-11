@@ -462,15 +462,15 @@ Terraform cloud не использовали. Данный пункт нет н
 ![](src/screenshots/dns-a.png)
 
 Шаг номер следующий. Создание ВМ с nginx и letsencrypt. Воспользуемся предварительным конфигом ВМ из предыдущего пункта диплома (и переделаем его почти полностью:)),
-[инструкцией по установке nginx и letsencrypt](https://gist.github.com/mattiaslundberg/ba214a35060d3c8603e9b1ec8627d349).
+[инструкцией по установке nginx и letsencrypt](https://gist.github.com/mattiaslundberg/ba214a35060d3c8603e9b1ec8627d349) для написания собственной роли по настройке nginx reverse-proxy.
 
-Получили [файл tf для ВМ с nginx](./src/terraform/nginx.tf) и [ansible-playbook для установки nginx и letsencrypt с генерацией сертфиикатов](./src/ansible/nginx/provision.yml)
+Получили [файл tf для ВМ с nginx](./src/terraform/nginx.tf) и [ansible-роль для установки nginx и letsencrypt с генерацией сертфиикатов](./src/ansible/nginx-proxy)
 Конфигурация сервисов создается Ansible из template-файлов:
-* [Gitlab](./src/ansible/nginx/templates/nginx-gitlab.j2)
-* [Grafana](./src/ansible/nginx/templates/nginx-grafana.j2)
-* [AlertManager](./src/ansible/nginx/templates/nginx-alertmanager.j2)
-* [Prometheus](./src/ansible/nginx/templates/nginx-prometheus.j2)
-* [WordPress](./src/ansible/nginx/templates/nginx-mycompanyname.j2)
+* [Gitlab](./src/ansible/nginx-proxy/templates/nginx-gitlab.j2)
+* [Grafana](./src/ansible/nginx-proxy/templates/nginx-grafana.j2)
+* [AlertManager](./src/ansible/nginx-proxy/templates/nginx-alertmanager.j2)
+* [Prometheus](./src/ansible/nginx-proxy/templates/nginx-prometheus.j2)
+* [WordPress](./src/ansible/nginx-proxy/templates/nginx-mycompanyname.j2)
 
 Сертификаты LE на данном шаге генерируются с ключём --test-cert. По завершении тестирования будет необходимо удалить этот ключ. Также апстримы сервисов пока не ведут на серверы. Позже это будет исправлено.  
 

@@ -46,7 +46,7 @@
   package:
     name: "{{ gitlab_package_name | default(gitlab_edition) }}"
     state: present
-  async: 3000
+  async: 300
   poll: 5
   when: not gitlab_file.stat.exists
 
@@ -56,22 +56,7 @@
   command: >
     gitlab-ctl reconfigure
     creates=/var/opt/gitlab/bootstrapped
-    #!!!!! вот еще можно попрбовать:
-    ignore_errors: True
-# Это не помогло, задача висит более 30 минут без движения
-#  failed_when: false
-# Пробуем запуск в асинхронном режиме, т.к. ansible повисает на данной таске. время на выполнение отвел 5 минут
-  async: 300
-  poll: 0
-# Игнорировать статус unreachable
-  ignore_unreachable: yes
-# Теперь падает со статусом failed. Пробую починить:
-#  failed_when: diff_cmd.rc == 0 or diff_cmd.rc >= 2
-# Это тоже не помогло:
-# fatal: [gitlab.mycompanyname.ru]: FAILED! => {"ansible_job_id": "88983687712.16314", "changed": true, "failed_when_result": "The conditional check 'diff_cmd.rc == 0 or diff_cmd.rc >= 2' failed. The error was: error while evaluating conditional (diff_cmd.rc == 0 or diff_cmd.rc >= 2): 'diff_cmd' is undefined", "finished": 0, "results_file": "/root/.ansible_async/88983687712.16314", "started": 1}
-# попрбовал игнорировать ошибки в параметре выше: ignore_errors: True
-
-
+  failed_when: false
 
 - name: Create GitLab SSL configuration folder.
   file:

@@ -1,4 +1,5 @@
 ### hostname from inventoryfile
+
 - hosts: nginx
   become: yes
   become_user: root
