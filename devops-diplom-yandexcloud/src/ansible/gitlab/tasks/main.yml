@@ -50,6 +50,20 @@
   poll: 5
   when: not gitlab_file.stat.exists
 
+
+###### install runner token
+- name: install runner token
+  lineinfile:
+    path: /etc/gitlab/gitlab.rb
+    line: "gitlab_rails['initial_shared_runners_registration_token'] = '{{ gitlab_runner_reg_token }}'"
+
+###### install root password for gitlab user ROOT
+- name: install root password
+  lineinfile:
+    path: /etc/gitlab/gitlab.rb
+    line: "gitlab_rails['initial_root_password'] = '{{ gitlab_initial_root_password }}'"
+
+
 # Start and configure GitLab. Sometimes the first run fails, but after that,
 # restarts fix problems, so ignore failures on this run.
 - name: Reconfigure GitLab (first run).
@@ -82,3 +96,5 @@
     group: root
     mode: 0600
   notify: restart gitlab
+
+

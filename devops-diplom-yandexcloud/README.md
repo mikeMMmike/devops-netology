@@ -478,6 +478,11 @@ Terraform cloud не использовали. Данный пункт нет н
 
 ![](src/screenshots/504.png)
 
+<details><summary>Вывод Ansible</summary>
+
+```
+```
+</details>
 
 
 ___ 
@@ -509,6 +514,12 @@ ___
 
 Playbook успешно отрабатывает:
 ![](src/screenshots/YC_DB_MYSQL_2022-08-03_16-45-41.png)
+
+<details><summary>Вывод Ansible</summary>
+
+```
+```
+</details>
 
 
 ___
@@ -542,6 +553,12 @@ ___
 ![](src/screenshots/WP_main_page_2022-08-08_21-12-22.png)
 ---
 
+<details><summary>Вывод Ansible</summary>
+
+```
+```
+</details>
+
 
 ### Установка Gitlab CE и Gitlab Runner
 
@@ -567,4 +584,45 @@ ___
 Для установки gitlab будем использовать готовую [ansible-роль](https://github.com/geerlingguy/ansible-role-gitlab) за основу
 Для установки gitlab-runner будем использовать готовую [ansible-роль](https://github.com/riemers/ansible-gitlab-runner) за основу
 
+
+<details><summary>Вывод Ansible</summary>
+
+```
+```
+</details>
+
+Роль производит автоматическое добавление gitlab-runner  на сервер gitlab, но установить свой пароль не вышло. 
+Поэтому после завершения работы ansible-playbook необходимо подключиться к серверу gitlab и сменить пароль:
+```bash
+ssh -J ubuntu@62.84.118.229 ubuntu@192.168.1.13
+sudo gitlab-rake "gitlab:password:reset[root]"
+```
+
 ___
+### Установка Prometheus, Alert Manager, Node Exporter и Grafana
+
+Необходимо разработать Ansible роль для установки Prometheus, Alert Manager и Grafana.
+
+Рекомендации:
+  - Имя сервера: `monitoring.mycompanyname.ru`
+  - Характеристики: 4vCPU, 4 RAM, Internal address.
+
+Цель:
+
+1. Получение метрик со всей инфраструктуры.
+
+Ожидаемые результаты:
+
+1. Интерфейсы Prometheus, Alert Manager и Grafana доступны по https.
+2. В вашей доменной зоне настроены A-записи на внешний адрес reverse proxy:
+  - `https://grafana.you.domain` (Grafana)
+  - `https://prometheus.you.domain` (Prometheus)
+  - `https://alertmanager.you.domain` (Alert Manager)
+3. На сервере `you.domain` отредактированы upstreams для выше указанных URL и они смотрят на виртуальную машину на которой установлены Prometheus, Alert Manager и Grafana.
+4. На всех серверах установлен Node Exporter и его метрики доступны Prometheus.
+5. У Alert Manager есть необходимый [набор правил](https://awesome-prometheus-alerts.grep.to/rules.html) для создания алертов.
+6. В Grafana есть дашборд, отображающий метрики из Node Exporter по всем серверам.
+7. В Grafana есть дашборд, отображающий метрики из MySQL (*).
+8. В Grafana есть дашборд, отображающий метрики из WordPress (*).
+
+*Примечание: дашборды со звёздочкой являются опциональными заданиями повышенной сложности их выполнение желательно, но не обязательно.*

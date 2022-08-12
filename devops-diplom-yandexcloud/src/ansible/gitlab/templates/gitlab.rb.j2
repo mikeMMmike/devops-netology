@@ -115,3 +115,5 @@ registry_nginx['ssl_certificate_key'] = "{{ gitlab_registry_nginx_ssl_certificat
 
 # To change other settings, see:
 # https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/README.md#changing-gitlab-yml-settings
+gitlab_rails['initial_shared_runners_registration_token'] =  '{{ gitlab_runner_reg_token }}'
+gitlab_rails['initial_root_password'] = {{ gitlab_initial_root_password }}
