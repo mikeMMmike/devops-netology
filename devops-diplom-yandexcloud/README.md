@@ -1880,7 +1880,10 @@ ok: [192.168.1.14]
 * [alertmanager](./src/ansible/alertmanager)
 * [node-exporter](./src/ansible/node-exporter)
 
-В роль `prometheus` добавил таску для копирования файла hosts.
+В роль `prometheus` добавил таску для копирования файла [hosts](./src/ansible/prometheus/templates/hosts.j2). 
+
+Немного позже узнал, что можно использовать в конфигурации сервисов адреса из Cloud DNS YC. Они имеют `.` в конце, и это работает:
+![](src/screenshots/Ping_NS_YC_2022-08-13_02-20-01.png)
 
 Все роли запускаются в общем playbook таской:
 
