@@ -44,7 +44,7 @@
   become_user: root
   remote_user: ubuntu
   roles:
+  - node-exporter
   - prometheus
   - alertmanager
-  - node-exporter
   - grafana

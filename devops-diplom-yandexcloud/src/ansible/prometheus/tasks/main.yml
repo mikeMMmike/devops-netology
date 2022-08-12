@@ -17,6 +17,11 @@
     - '/etc/prometheus'
     - '/var/lib/prometheus'
 
+- name: Create hosts-File
+  template:
+    src=templates/hosts.j2
+    dest=/etc/
+
 - name: Download And Unzipped Prometheus
   retries: 3
   delay: 2

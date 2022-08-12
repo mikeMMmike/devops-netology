@@ -340,7 +340,6 @@ resource "yandex_compute_instance" "test-server" {
   }
   network_interface {
     subnet_id = yandex_vpc_subnet.yc_subnet.id
-    /*yandex_vpc_network.yc_network.id*/
     nat       = true
   }
   metadata = {
@@ -348,6 +347,7 @@ resource "yandex_compute_instance" "test-server" {
   }
 }
 ```
+
 * `locals.tf`
 ```terraform
 locals {
@@ -381,6 +381,7 @@ locals {
   }
 }
 ```
+
 * `network.tf`
 ```terraform
 resource "yandex_vpc_network" "yc_network" {
@@ -395,7 +396,7 @@ resource "yandex_vpc_subnet" "yc_subnet" {
 ```
 
 5. Убедитесь, что теперь вы можете выполнить команды `terraform destroy` и `terraform apply` без дополнительных ручных действий.
-Все работает за рядом исключений. Чтобы не светить ключи, необходимо экспортировать переменные перед инициализацией терраформ:
+Все работает за одним исключением. Чтобы не светить ключи, необходимо экспортировать переменные перед инициализацией терраформ:
 
 ```bash 
  export AWS_ACCESS_KEY_ID=Ключ доступа
@@ -823,7 +824,6 @@ changed: [192.168.1.16]
 changed: [192.168.1.17]
 ```
 </details>
-
 
 ___
 ### Установка WordPress
@@ -1736,10 +1736,10 @@ ___
 
 1. Интерфейсы Prometheus, Alert Manager и Grafana доступны по https.
 2. В вашей доменной зоне настроены A-записи на внешний адрес reverse proxy:
-  - `https://grafana.you.domain` (Grafana)
-  - `https://prometheus.you.domain` (Prometheus)
-  - `https://alertmanager.you.domain` (Alert Manager)
-3. На сервере `you.domain` отредактированы upstreams для выше указанных URL и они смотрят на виртуальную машину на которой установлены Prometheus, Alert Manager и Grafana.
+  - `https://grafana.mycompanyname.ru` (Grafana)
+  - `https://prometheus.mycompanyname.ru` (Prometheus)
+  - `https://alertmanager.mycompanyname.ru` (Alert Manager)
+3. На сервере `mycompanyname.ru` отредактированы upstreams для выше указанных URL и они смотрят на виртуальную машину на которой установлены Prometheus, Alert Manager и Grafana.
 4. На всех серверах установлен Node Exporter и его метрики доступны Prometheus.
 5. У Alert Manager есть необходимый [набор правил](https://awesome-prometheus-alerts.grep.to/rules.html) для создания алертов.
 6. В Grafana есть дашборд, отображающий метрики из Node Exporter по всем серверам.
@@ -1880,6 +1880,8 @@ ok: [192.168.1.14]
 * [alertmanager](./src/ansible/alertmanager)
 * [node-exporter](./src/ansible/node-exporter)
 
+В роль `prometheus` добавил таску для копирования файла hosts.
+
 Все роли запускаются в общем playbook таской:
 
 ```yml
@@ -1893,4 +1895,23 @@ ok: [192.168.1.14]
   - node-exporter
   - grafana
 ```
+
+Результаты работы.
+Все компоненты системы мониторинга доступны по протоколу https. 
+* [grafana] - в пример.
+![](src/screenshots/grafana_2022-08-12_22-33-14.png)
+
+Для демонстрации работы системы оповещения выключим APP сервер...
+![](src/screenshots/AppServerIsDown_2022-08-13_01-30-51.png)
+
+... и дождемся срабатывания алертов:
+* [alertmanager]
+![](src/screenshots/alertmanager_2022-08-13_01-27-42.png)
+
+* [prometheus] тоже недоволен сложившейся ситуацией:
+![](src/screenshots/prometheus_2022-08-13_01-28-37.png)
+
+
+
+
 
