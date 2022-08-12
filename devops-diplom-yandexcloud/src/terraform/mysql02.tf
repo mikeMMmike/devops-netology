@@ -11,13 +11,11 @@ resource "yandex_compute_instance" "db02" {
     scheduling_policy {
     preemptible = true
 }
-
   boot_disk {
     initialize_params {
       image_id = "fd8f1tik9a7ap9ik2dg1" //Ubunutu2004
       size = local.yc_disk_size[terraform.workspace]
     }
-
   }
   network_interface {
     subnet_id = yandex_vpc_subnet.yc_subnet.id

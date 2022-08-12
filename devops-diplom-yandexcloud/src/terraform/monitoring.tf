@@ -1,6 +1,6 @@
-resource "yandex_compute_instance" "db01" {
-  name = "db01"
-  hostname = "db01.mycompanyname.ru"
+resource "yandex_compute_instance" "monitoring" {
+  name = "monitoring"
+  hostname = "monitoring.mycompanyname.ru"
   platform_id = local.yc_instance_type_map[terraform.workspace]
   zone = local.vpc_zone[terraform.workspace]
     resources {
@@ -11,16 +11,18 @@ resource "yandex_compute_instance" "db01" {
     scheduling_policy {
     preemptible = true
 }
+
   boot_disk {
     initialize_params {
       image_id = "fd8f1tik9a7ap9ik2dg1" //Ubunutu2004
       size = local.yc_disk_size[terraform.workspace]
     }
+
   }
   network_interface {
     subnet_id = yandex_vpc_subnet.yc_subnet.id
     nat       = false
-    ip_address = "192.168.1.16"
+    ip_address = "192.168.1.14"
   }
   metadata = {
     ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"

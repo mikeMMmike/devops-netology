@@ -11,7 +11,7 @@ ${yandex_compute_instance.db02.network_interface.0.ip_address} mysql_server_id=2
 [wordpress]
 ${yandex_compute_instance.app.network_interface.0.ip_address}
 [monitoring]
-192.168.1.14
+${yandex_compute_instance.monitoring.network_interface.0.ip_address}
 [gitlab]
 ${yandex_compute_instance.gitlab.network_interface.0.ip_address}
 [runner]
@@ -28,47 +28,9 @@ ansible_ssh_common_args= "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev
 
     DOC
   filename = "../ansible/inventory"
-
-/*  depends_on = [yandex_compute_instance.nginx]*/
-
-
-  #[all:vars]
-#ansible_ssh_common_args= "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -J ubuntu@mycompanyname.ru"
-
 /*
-Вариант конфигурации для автоподтверждения публичного ключа. У меня не работало на mysql серверах
-[nodes:children]
-    mysql
-    wordpress
-
-[nginx:vars]
-ansible_ssh_common_args='-o StrictHostKeyChecking=no'
-ansible_ssh_user=ubuntu
-ansible_ssh_private_key_file=/home/mike/.ssh/id_rsa.pub
-[nodes:vars]
-ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="ssh -W %h:%p -q ubuntu@mycompanyname.ru"'
-ansible_ssh_user=ubuntu
-
 Вот это ломает терраформ:
 [nginx]
 ${yandex_compute_instance.nginx.hostname}
-
-
-[nginx]
-mycompanyname.ru
-[mysql]
-192.168.1.16 mysql_server_id=1 mysql_replication_role=master
-192.168.1.17 mysql_server_id=2 mysql_replication_role=slave
-[wordpress]
-192.168.1.15
-[monitoring]
-192.168.1.14
-[gitlab]
-192.168.1.13
-[runner]
-192.168.1.18
-
 */
-
-
 }

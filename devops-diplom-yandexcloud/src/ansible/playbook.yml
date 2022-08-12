@@ -6,6 +6,7 @@
   remote_user: ubuntu
   roles:
   - nginx-proxy
+  - node-exporter
 
 - hosts: mysql
   become: yes
@@ -20,6 +21,7 @@
   remote_user: ubuntu
   roles:
   - wordpress
+  - node-exporter
 
 - hosts: gitlab
   become: yes
@@ -27,6 +29,7 @@
   remote_user: ubuntu
   roles:
   - gitlab
+  - node-exporter
 
 - hosts: runner
   become: yes
@@ -34,3 +37,14 @@
   remote_user: ubuntu
   roles:
   - gitlab-runner
+  - node-exporter
+
+- hosts: monitoring
+  become: yes
+  become_user: root
+  remote_user: ubuntu
+  roles:
+  - prometheus
+  - alertmanager
+  - node-exporter
+  - grafana
