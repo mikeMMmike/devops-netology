@@ -1719,6 +1719,50 @@ ssh -J ubuntu@62.84.118.229 ubuntu@192.168.1.13
 sudo gitlab-rake "gitlab:password:reset[root]"
 ```
 
+После смены пароля можно залогиниться в системе и продолжить работу.
+GitLab runner уже подключен:
+![](src/screenshots/gitlab_runner_2022-08-13_04-35-01.png)
+
+Клонируем проект с GitHub:
+![](src/screenshots/gitlab_clone_WP_2022-08-13_05-01-04.png)
+
+
+Добавляем файл `gitlab-ci.yaml`:
+```yaml
+---
+before_script:
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+  - eval $(ssh-agent -s)
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | s
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+
+stages:          # List of stages for jobs, and their order of execution
+  - test
+  - deploy
+
+unit-test-job:   # This job runs in the test stage.
+  stage: test    # It only starts when the job in the build stage completes successfully.
+  script:
+    - echo "Running unit tests;-). It does not take a lot of time."
+    - sleep 5
+    - echo "test well done"
+
+deploy-job:      # This job runs in the deploy stage.
+  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+  script:
+    - ssh -o StrictHostKeyChecking=no ubuntu@app.mycompanyname.ru. sudo chown ubuntu /var/www/www.mycompanyname.ru/wordpress/ -R
+    - rsync -rvz -e "ssh -o StrictHostKeyChecking=no" ./* ubuntu@app.mycompanyname.ru.:/var/www/www.mycompanyname.ru/wordpress/
+    - ssh -o StrictHostKeyChecking=no ubuntu@app.mycompanyname.ru. rm -rf /var/www/www.mycompanyname.ru/wordpress/.git
+    - ssh -o StrictHostKeyChecking=no ubuntu@app.mycompanyname.ru. chown www-data /var/www/www.mycompanyname.ru/wordpress/ -R
+    - echo "well done"
+    - sleep 3
+```
+
+
+
+
+
 ___
 ### Установка Prometheus, Alert Manager, Node Exporter и Grafana
 
