@@ -50,8 +50,8 @@
         state: restarted
 # Запрос на выпуск сертификатов
     - name: Create letsencrypt certificate {{ domain_name }}
-      shell: letsencrypt certonly -n --webroot --test-cert -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ domain_names }}
-#      shell: letsencrypt certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ domain_names }}
+#      shell: letsencrypt certonly -n --webroot --test-cert -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ domain_names }}
+      shell: letsencrypt certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ domain_names }}
       args:
         creates: /etc/letsencrypt/live/{{ domain_name }}
 #    - name: Create letsencrypt certificate {{ gitlab }}
@@ -101,5 +101,6 @@
       cron:
         name: letsencrypt_renewal
         special_time: weekly
-        job: letsencrypt --renew certonly -n --webroot --test-cert -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ domain_names }} && service nginx reload
+#        job: letsencrypt --renew certonly -n --webroot --test-cert -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ domain_names }} && service nginx reload
+        job: letsencrypt --renew certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ domain_names }} && service nginx reload
 #        job: letsencrypt --renew certonly -n --webroot --test-cert -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ domain_name }}, {{ gitlab }}, {{ grafana }}, {{ prometheus }}, {{ alertmanager }} && service nginx reload

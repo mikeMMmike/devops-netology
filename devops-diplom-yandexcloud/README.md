@@ -473,7 +473,11 @@ Terraform cloud не использовали. Данный пункт нет н
 * [Prometheus](./src/ansible/nginx-proxy/templates/nginx-prometheus.j2)
 * [WordPress](./src/ansible/nginx-proxy/templates/nginx-mycompanyname.j2)
 
-Сертификаты LE на данном шаге генерируются с ключём --test-cert. По завершении тестирования будет необходимо удалить этот ключ. Также апстримы сервисов пока не ведут на серверы. Позже это будет исправлено.  
+Сертификаты LE на данном шаге генерируются. Скрин сертификата:
+![](src/screenshots/LE_prod_cert_2022-08-13_22-17-59.png)
+
+
+Апстримы сервисов пока не ведут на серверы. Позже это будет исправлено.  
 
 В браузере открывается страница 504 (Ошибка тайм-аута):
 
@@ -1726,27 +1730,22 @@ GitLab runner уже подключен:
 Клонируем проект с GitHub:
 ![](src/screenshots/gitlab_clone_WP_2022-08-13_05-01-04.png)
 
+Добавим SSH ключ в переменную `ssh_key` в блоке настроек CI\CD: settings/ci_cd/Variables/add Variable
 
-Добавляем файл `gitlab-ci.yaml`:
+
+
+Добавляем файл `gitlab-ci.yaml` в проект:
 ```yaml
 ---
 before_script:
   - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
   - eval $(ssh-agent -s)
-  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | s
+  - echo "$ssh_key" | tr -d '\r' | s
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
 
 stages:          # List of stages for jobs, and their order of execution
-  - test
   - deploy
-
-unit-test-job:   # This job runs in the test stage.
-  stage: test    # It only starts when the job in the build stage completes successfully.
-  script:
-    - echo "Running unit tests;-). It does not take a lot of time."
-    - sleep 5
-    - echo "test well done"
 
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
