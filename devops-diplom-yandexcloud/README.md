@@ -367,6 +367,7 @@ ___
 * [mysql02.tf](./src/terraform/mysql02.tf)
 
 Подготовили ansible роль [mysql](./src/ansible/mysql)
+
 При подготовке ansible роли `mysql` использовали [готовую роль](https://galaxy.ansible.com/geerlingguy/mysql), скорректировав переменные: добавили БД `wordpress` и пользователя `wordpress` с паролем `wordpress`   
 
 Playbook успешно отрабатывает:
@@ -1525,13 +1526,13 @@ deploy-job:      # This job runs in the deploy stage.
     - tags
   script:
     - ssh -o StrictHostKeyChecking=no ubuntu@app.mycompanyname.ru sudo chown ubuntu /var/www/www.mycompanyname.ru/wordpress/ -R
-    - rsync -rvz -e "ssh -o StrictHostKeyChecking=no" ./* ubuntu@app.mycompanyname.ru:/var/www/www.mycompanyname.ru/wordpress/
+    - rsync -vz -e "ssh -o StrictHostKeyChecking=no" ./* ubuntu@app.mycompanyname.ru:/var/www/www.mycompanyname.ru/wordpress/
     - ssh -o StrictHostKeyChecking=no ubuntu@app.mycompanyname.ru rm -rf /var/www/www.mycompanyname.ru/wordpress/.git
     - ssh -o StrictHostKeyChecking=no ubuntu@app.mycompanyname.ru sudo chown www-data /var/www/www.mycompanyname.ru/wordpress/ -R
 
 ```
 
-Для наглядной демонтрации работоспособности CI\DC внесем изменения в файл `index.php`, добавив строку:
+Для наглядной демонстрации работоспособности CI\DC внесем изменения в файл `index.php`, добавив строку:
 ```php
 echo "test pipeline that push project with tags into app server\r\r\r";
 ```
