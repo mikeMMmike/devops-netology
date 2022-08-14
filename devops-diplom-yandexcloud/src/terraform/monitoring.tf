@@ -25,7 +25,7 @@ resource "yandex_compute_instance" "monitoring" {
     ip_address = "192.168.1.14"
   }
   metadata = {
-    ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
+    ssh-keys = "ubuntu:${file("~/.ssh/yc_diplom.pub")}"
     serial-port-enable=1
   }
 

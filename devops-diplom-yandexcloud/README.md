@@ -598,7 +598,7 @@ ___
 * [mysql02.tf](./src/terraform/mysql02.tf)
 
 Подготовили ansible роль [mysql](./src/ansible/mysql)
-При подготовке ansible роли `mysql` использовали (готовую роль)[https://galaxy.ansible.com/geerlingguy/mysql], скорректировав переменные: добавили БД `wordpress` и пользователя `wordpress` с паролем `wordpress`   
+При подготовке ansible роли `mysql` использовали [готовую роль](https://galaxy.ansible.com/geerlingguy/mysql), скорректировав переменные: добавили БД `wordpress` и пользователя `wordpress` с паролем `wordpress`   
 
 Playbook успешно отрабатывает:
 ![](src/screenshots/YC_DB_MYSQL_2022-08-03_16-45-41.png)
@@ -970,11 +970,12 @@ ok: [192.168.1.15]
 
 1. Интерфейс Gitlab доступен по https.
 2. В вашей доменной зоне настроена A-запись на внешний адрес reverse proxy:
-    - `https://gitlab.you.domain` (Gitlab)
-3. На сервере `you.domain` отредактирован upstream для выше указанного URL и он смотрит на виртуальную машину на которой установлен Gitlab.
+    - `https://gitlab.mycompanyname.ru` (Gitlab)
+3. На сервере `mycompanyname.ru` отредактирован upstream для выше указанного URL и он смотрит на виртуальную машину на которой установлен Gitlab.
 4. При любом коммите в репозиторий с WordPress и создании тега (например, v1.0.0) происходит деплой на виртуальную машину.
 
 Для установки gitlab будем использовать готовую [ansible-роль](https://github.com/geerlingguy/ansible-role-gitlab) за основу
+
 Для установки gitlab-runner будем использовать готовую [ansible-роль](https://github.com/riemers/ansible-gitlab-runner) за основу
 
 
@@ -1716,14 +1717,16 @@ ok: [192.168.1.18]
 ```
 </details>
 
-Роль производит автоматическое добавление gitlab-runner на сервер gitlab, но установить свой пароль не вышло. 
-Поэтому после завершения работы ansible-playbook необходимо подключиться к серверу gitlab и сменить пароль:
+Роль производит автоматическое добавление gitlab-runner на сервер gitlab с логином `root` и паролем `123qweasd` 
+
+В случае, если пароль не устанавливается ролью ansible, необходимо подключиться к серверу gitlab и сменить пароль:
 ```bash
 ssh -J ubuntu@62.84.118.229 ubuntu@192.168.1.13
 sudo gitlab-rake "gitlab:password:reset[root]"
 ```
 
 После смены пароля можно залогиниться в системе и продолжить работу.
+
 GitLab runner уже подключен:
 ![](src/screenshots/gitlab_runner_2022-08-13_04-35-01.png)
 
@@ -1732,34 +1735,32 @@ GitLab runner уже подключен:
 
 Добавим SSH ключ в переменную `ssh_key` в блоке настроек CI\CD: settings/ci_cd/Variables/add Variable
 
-
-
 Добавляем файл `gitlab-ci.yaml` в проект:
 ```yaml
 ---
 before_script:
   - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
   - eval $(ssh-agent -s)
-  - echo "$ssh_key" | tr -d '\r' | s
+  - echo "$ssh_key" | tr -d '\r' | ssh-add -
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
+#  - ssh-keyscan app.mycompanyname.ru >> ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
 
 stages:          # List of stages for jobs, and their order of execution
   - deploy
 
 deploy-job:      # This job runs in the deploy stage.
-  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+  stage: deploy
+  only:
+    - tags
   script:
-    - ssh -o StrictHostKeyChecking=no ubuntu@app.mycompanyname.ru. sudo chown ubuntu /var/www/www.mycompanyname.ru/wordpress/ -R
-    - rsync -rvz -e "ssh -o StrictHostKeyChecking=no" ./* ubuntu@app.mycompanyname.ru.:/var/www/www.mycompanyname.ru/wordpress/
-    - ssh -o StrictHostKeyChecking=no ubuntu@app.mycompanyname.ru. rm -rf /var/www/www.mycompanyname.ru/wordpress/.git
-    - ssh -o StrictHostKeyChecking=no ubuntu@app.mycompanyname.ru. chown www-data /var/www/www.mycompanyname.ru/wordpress/ -R
-    - echo "well done"
-    - sleep 3
+    - ssh -o StrictHostKeyChecking=no ubuntu@app.mycompanyname.ru sudo chown ubuntu /var/www/www.mycompanyname.ru/wordpress/ -R
+    - rsync -rvz -e "ssh -o StrictHostKeyChecking=no" ./* ubuntu@app.mycompanyname.ru:/var/www/www.mycompanyname.ru/wordpress/
+    - ssh -o StrictHostKeyChecking=no ubuntu@app.mycompanyname.ru rm -rf /var/www/www.mycompanyname.ru/wordpress/.git
+    - ssh -o StrictHostKeyChecking=no ubuntu@app.mycompanyname.ru sudo chown www-data /var/www/www.mycompanyname.ru/wordpress/ -R
+
 ```
-
-
-
 
 
 ___
@@ -1942,7 +1943,8 @@ ok: [192.168.1.14]
   - grafana
 ```
 
-Результаты работы.
+### Результаты работы.
+
 Все компоненты системы мониторинга доступны по протоколу https. 
 * [grafana] - в пример.
 ![](src/screenshots/grafana_2022-08-12_22-33-14.png)
@@ -1956,8 +1958,4 @@ ok: [192.168.1.14]
 
 * [prometheus] тоже недоволен сложившейся ситуацией:
 ![](src/screenshots/prometheus_2022-08-13_01-28-37.png)
-
-
-
-
 

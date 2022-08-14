@@ -23,7 +23,7 @@ resource "yandex_compute_instance" "db02" {
     ip_address = "192.168.1.17"
   }
   metadata = {
-    ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
+    ssh-keys = "ubuntu:${file("~/.ssh/yc_diplom.pub")}"
     serial-port-enable=1
   }
 }
