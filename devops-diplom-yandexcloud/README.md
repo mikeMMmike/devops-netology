@@ -367,6 +367,7 @@ ___
 Подготовили tf файлы конфигурации ВМ согласно рекомендаций:
 * [mysql01.tf](./src/terraform/mysql01.tf)
 * [mysql02.tf](./src/terraform/mysql02.tf)
+
 Подготовили ansible роль:
 * [mysql](./src/ansible/mysql)
 
