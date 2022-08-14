@@ -58,10 +58,6 @@ backend "s3" {
 ```
 
 ### 3. Настройка workspaces 
-[workspaces](https://www.terraform.io/docs/language/state/workspaces.html)
-   * Рекомендуемый вариант: создайте два workspace: *stage* и *prod*. В случае выбора этого варианта все последующие шаги должны учитывать факт существования нескольких workspace.  
-   * Альтернативный вариант: используйте один workspace, назвав его *stage*. Пожалуйста, не используйте workspace, создаваемый Terraform-ом по-умолчанию (*default*).
-
 
 Создаем workspaces `prod` и `stage`:
 <details><summary>Результат работы</summary>
@@ -221,10 +217,10 @@ Terraform cloud не использовали. Данный пункт нет н
 
 ___
 
-### 1. 
+### Шаг 1. 
 [Резервирование статического IP-адреса по инструкции](https://cloud.yandex.ru/docs/vpc/operations/get-static-ip) 
 
-### 2. 
+### Шаг 2. 
 Добавление А-записей в DNS нашей доменной зоны:
 
 ![](src/screenshots/dns-a.png)
