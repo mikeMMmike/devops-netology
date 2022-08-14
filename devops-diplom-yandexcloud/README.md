@@ -57,7 +57,8 @@ backend "s3" {
 }
 ```
 
-3. Настройте [workspaces](https://www.terraform.io/docs/language/state/workspaces.html)
+### 3. Настройка workspaces 
+[workspaces](https://www.terraform.io/docs/language/state/workspaces.html)
    * Рекомендуемый вариант: создайте два workspace: *stage* и *prod*. В случае выбора этого варианта все последующие шаги должны учитывать факт существования нескольких workspace.  
    * Альтернативный вариант: используйте один workspace, назвав его *stage*. Пожалуйста, не используйте workspace, создаваемый Terraform-ом по-умолчанию (*default*).
 
@@ -88,7 +89,7 @@ mike@make-lptp:~/PycharmProjects/devops-netology/devops-diplom-yandexcloud/src/t
 ```
 </details>
 
-4. Создание VPC с подсетями в разных зонах доступности.
+### 4. Создание VPC с подсетями в разных зонах доступности.
 
 <details><summary>Результат работы</summary>
 Подготовили tf. файлы: 
@@ -167,7 +168,7 @@ resource "yandex_vpc_subnet" "yc_subnet" {
 ```
 </details>
 
-5. Убедитесь, что теперь вы можете выполнить команды `terraform destroy` и `terraform apply` без дополнительных ручных действий.
+### 5. Убедитесь, что теперь вы можете выполнить команды `terraform destroy` и `terraform apply` без дополнительных ручных действий.
 Все работает за одним исключением. Чтобы не светить ключи, необходимо экспортировать переменные перед инициализацией терраформ:
 
 ```bash 
@@ -187,7 +188,7 @@ PLAY RECAP *********************************************************************
 mycompanyname.ru           : ok=27   changed=25   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0 
 ```
 
-6. В случае использования [Terraform Cloud](https://app.terraform.io/) в качестве [backend](https://www.terraform.io/docs/language/settings/backends/index.html) убедитесь, что применение изменений успешно проходит, используя web-интерфейс Terraform cloud.
+### 6. В случае использования [Terraform Cloud](https://app.terraform.io/) в качестве [backend](https://www.terraform.io/docs/language/settings/backends/index.html) убедитесь, что применение изменений успешно проходит, используя web-интерфейс Terraform cloud.
 
 Terraform cloud не использовали. Данный пункт нет необходимости проверять.
 
@@ -220,16 +221,22 @@ Terraform cloud не использовали. Данный пункт нет н
 
 ___
 
-Итак, шаг номер раз. [Резервирование статического IP-адреса по инструкции](https://cloud.yandex.ru/docs/vpc/operations/get-static-ip) 
+### 1. 
+[Резервирование статического IP-адреса по инструкции](https://cloud.yandex.ru/docs/vpc/operations/get-static-ip) 
 
-Шаг 2. Добавление А-записей в DNS нашей доменной зоны:
+### 2. 
+Добавление А-записей в DNS нашей доменной зоны:
 
 ![](src/screenshots/dns-a.png)
 
-Шаг номер следующий. Создание ВМ с nginx и letsencrypt. Воспользуемся предварительным конфигом ВМ из предыдущего пункта диплома (и переделаем его почти полностью:)),
+### Шаг номер следующий. 
+Создание ВМ с nginx и letsencrypt. Воспользуемся предварительным конфигом ВМ из предыдущего пункта диплома (и переделаем его почти полностью:)),
 [инструкцией по установке nginx и letsencrypt](https://gist.github.com/mattiaslundberg/ba214a35060d3c8603e9b1ec8627d349) для написания собственной роли по настройке nginx reverse-proxy.
 
-Получили [файл tf для ВМ с nginx](./src/terraform/nginx.tf) и [ansible-роль для установки nginx и letsencrypt с генерацией сертфиикатов](./src/ansible/nginx-proxy)
+### Результаты
+* [файл tf для ВМ с nginx](./src/terraform/nginx.tf) 
+* [ansible-роль для установки nginx и letsencrypt с генерацией сертфиикатов](./src/ansible/nginx-proxy)
+
 Конфигурация сервисов создается Ansible из template-файлов:
 * [Gitlab](./src/ansible/nginx-proxy/templates/nginx-gitlab.j2)
 * [Grafana](./src/ansible/nginx-proxy/templates/nginx-grafana.j2)
@@ -237,11 +244,13 @@ ___
 * [Prometheus](./src/ansible/nginx-proxy/templates/nginx-prometheus.j2)
 * [WordPress](./src/ansible/nginx-proxy/templates/nginx-mycompanyname.j2)
 
-Сертификаты LE на данном шаге генерируются. Скрин сертификата:
+### Сертификат LE. 
+Скрин сертификата:
 ![](src/screenshots/LE_prod_cert_2022-08-13_22-17-59.png)
 
 
-Апстримы сервисов пока не ведут на серверы. Позже это будет исправлено.  
+### Апстримы сервисов пока не ведут на серверы. 
+Позже это будет исправлено.  
 
 В браузере открывается страница 504 (Ошибка тайм-аута):
 
@@ -358,11 +367,12 @@ ___
 
 ___
 
+### Результаты
 Подготовили tf файлы конфигурации ВМ согласно рекомендаций:
 * [mysql01.tf](./src/terraform/mysql01.tf)
 * [mysql02.tf](./src/terraform/mysql02.tf)
-
-Подготовили ansible роль [mysql](./src/ansible/mysql)
+Подготовили ansible роль:
+* [mysql](./src/ansible/mysql)
 
 При подготовке ansible роли `mysql` использовали [готовую роль](https://galaxy.ansible.com/geerlingguy/mysql), скорректировав переменные: добавили БД `wordpress` и пользователя `wordpress` с паролем `wordpress`   
 
@@ -618,14 +628,14 @@ ___
 
 ___
 
-Результаты:
+### Результаты:
 1. [tf-файл ВМ с WordPress](./src/terraform/wordpress.tf)
 2. Настроена A-запись в доменной зоне mycompanyname.ru:
 ![](src/screenshots/WP-a-record.png)
 3. На сервере `mycompanyname.ru` отредактирован upstream для WordPress. [ссылка](./src/ansible/nginx-proxy/templates/nginx-mycompanyname.j2) на шаблон конфигурационного файла
 4. Главная страница WordPress:
 ![](src/screenshots/WP_main_page_2022-08-08_21-12-22.png)
----
+
 
 <details><summary>Вывод Ansible</summary>
 
@@ -1504,9 +1514,11 @@ GitLab runner уже подключен:
 Клонируем проект с GitHub:
 ![](src/screenshots/gitlab_clone_WP_2022-08-13_05-01-04.png)
 
+### Настройка CI/CD
+
 Добавим SSH ключ в переменную `ssh_key` в блоке настроек CI\CD: settings/ci_cd/Variables/add Variable
 
-Добавляем файл `gitlab-ci.yaml` в проект:
+Создадим файл `gitlab-ci.yaml`:
 ```yaml
 ---
 before_script:
@@ -1533,7 +1545,7 @@ deploy-job:      # This job runs in the deploy stage.
 
 ```
 
-Для наглядной демонстрации работоспособности CI\DC внесем изменения в файл `index.php`, добавив строку:
+Для наглядной демонстрации работоспособности CI\CD внесем изменения в файл `index.php`, добавив строку:
 ```php
 echo "test pipeline that push project with tags into app server\r\r\r";
 ```
@@ -1713,6 +1725,9 @@ ok: [192.168.1.14]
 Немного позже узнал, что можно использовать в конфигурации сервисов адреса из Cloud DNS YC. Они имеют `.` в конце, и это работает:
 ![](src/screenshots/Ping_NS_YC_2022-08-13_02-20-01.png)
 
+
+
+### Результаты работы.
 Все роли запускаются в общем playbook таской:
 
 ```yml
@@ -1726,9 +1741,6 @@ ok: [192.168.1.14]
   - node-exporter
   - grafana
 ```
-
-### Результаты работы.
-
 Все компоненты системы мониторинга доступны по протоколу https. 
 * [grafana] - в пример.
 ![](src/screenshots/grafana_2022-08-12_22-33-14.png)
