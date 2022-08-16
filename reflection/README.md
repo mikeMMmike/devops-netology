@@ -9,3 +9,8 @@
 
 Срок обучения: 21 октября — 22 декабря
 ![](screenshots/reflexion_module_1_2022-07-27_02-02-55.png)
+
+### Рефлексия по курсу "DevOps-инженер" (DVPSPDC)
+Срок обучения: 6 июня — 6 июня
+![](screenshots/cource_reflection_16.08.22.PNG)
+
