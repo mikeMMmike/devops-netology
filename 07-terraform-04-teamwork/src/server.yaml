@@ -1,5 +1,5 @@
 repos:
-  - id: github.com/AlexDies/homework
+  - id: github.com/mikemmmike/devops-netotlogy
     apply_requirements: [approved]
     workflow: default
     allowed_overrides: [workflow]
