@@ -1,0 +1,97 @@
+1.Подключитесь к публичному маршрутизатору в интернет. Найдите маршрут к вашему публичному IP
+telnet route-views.routeviews.org
+Username: rviews
+route-views>show ip route 95.78.255.6 255.255.255.255
+% Subnet not in table
+route-views>show bgp 95.78.254.20 255.255.255.255
+% Network not in table
+
+Моих публичных адресов не оказалось в таблице маршрутизации route-views.routeviews.org
+
+2.Создайте dummy0 интерфейс в Ubuntu. 
+root@vagrant:/home/vagrant# nano /etc/network/interfaces
+auto dummy0
+iface dummy0 inet static
+    address 10.0.2.10/32
+    pre-up ip link add dummy0 type dummy
+    post-down ip link del dummy0
+
+root@vagrant:/home/vagrant# systemctl restart networking
+root@vagrant:/home/vagrant# ip addr sh
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:73:60:cf brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic eth0
+       valid_lft 85293sec preferred_lft 85293sec
+    inet6 fe80::a00:27ff:fe73:60cf/64 scope link
+       valid_lft forever preferred_lft forever
+4: dummy0: <BROADCAST,NOARP,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/ether f2:0c:c4:86:5d:9b brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.10/32 brd 10.0.2.10 scope global dummy0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::f00c:c4ff:fe86:5d9b/64 scope link
+       valid_lft forever preferred_lft forever
+
+Добавьте несколько статических маршрутов. 
+Добавим временные маршруты:
+root@vagrant:/home/vagrant# ip route add 10.0.150.0/24 dev dummy0
+root@vagrant:/home/vagrant# ip route add 8.8.8.8/32 dev dummy0
+root@vagrant:/home/vagrant# ip route add 192.168.203.64/27 dev dummy0
+
+Проверьте таблицу маршрутизации.
+root@vagrant:/home/vagrant# ip route show
+default via 10.0.2.2 dev eth0 proto dhcp src 10.0.2.15 metric 100
+8.8.8.8 dev dummy0 scope link
+10.0.2.0/24 dev eth0 proto kernel scope link src 10.0.2.15
+10.0.2.2 dev eth0 proto dhcp scope link src 10.0.2.15 metric 100
+10.0.150.0/24 dev dummy0 scope link
+192.168.203.64/27 dev dummy0 scope link
+
+3.Проверьте открытые TCP порты в Ubuntu  
+root@vagrant:/home/vagrant# ss -atn
+State         Recv-Q        Send-Q               Local Address:Port               Peer Address:Port       Process
+LISTEN        0             4096                       0.0.0.0:111                     0.0.0.0:*
+LISTEN        0             4096                 127.0.0.53%lo:53                      0.0.0.0:*
+LISTEN        0             128                        0.0.0.0:22                      0.0.0.0:*
+ESTAB         0             0                        10.0.2.15:22                     10.0.2.2:2185
+LISTEN        0             4096                          [::]:111                        [::]:*
+LISTEN        0             128                           [::]:22                         [::]:*
+
+какие протоколы и приложения используют эти порты?
+22 - SSH
+53 - DNS
+111 - SUNRPC, Sun RPC, удаленный вызов процедур
+
+Приведите несколько примеров.
+root@vagrant:/home/vagrant# ss -at
+State        Recv-Q       Send-Q               Local Address:Port                 Peer Address:Port       Process
+LISTEN       0            4096                       0.0.0.0:sunrpc                    0.0.0.0:*
+LISTEN       0            4096                 127.0.0.53%lo:domain                    0.0.0.0:*
+LISTEN       0            128                        0.0.0.0:ssh                       0.0.0.0:*
+ESTAB        0            0                        10.0.2.15:ssh                      10.0.2.2:2185
+LISTEN       0            4096                          [::]:sunrpc                       [::]:*
+LISTEN       0            128                           [::]:ssh                          [::]:*
+
+4.Проверьте используемые UDP сокеты в Ubuntu
+root@vagrant:/home/vagrant# ss -aun
+State        Recv-Q        Send-Q                Local Address:Port               Peer Address:Port       Process
+UNCONN       0             0                     127.0.0.53%lo:53                      0.0.0.0:*
+UNCONN       0             0                    10.0.2.15%eth0:68                      0.0.0.0:*
+UNCONN       0             0                           0.0.0.0:111                     0.0.0.0:*
+UNCONN       0             0                              [::]:111                        [::]:*
+
+какие протоколы и приложения используют эти порты?
+53 - DNS
+68 - bootpc (Bootstrap protocol client), для клиентов бездисковых станций
+111 - SUNRPC, Sun RPC, удаленный вызов процедур
+
+
+5. Используя diagrams.net, создайте L3 диаграмму вашей домашней сети или любой другой сети, с которой вы работали.
+прикрепил ссылки на картинку и схему
+
+

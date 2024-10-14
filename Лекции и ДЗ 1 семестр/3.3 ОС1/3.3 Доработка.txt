@@ -1,0 +1,27 @@
+Здравствуйте. Спасибо за вариант с truncate, я не знал об этой программе.
+и тем не менее, truncate ни с 1 из параметров не помог обнулить файл: команда выполняется без ошибок, но ни с 1 из параметров не удалось обнулить файл. echo также возвращает ошибку доступа. Возможно. все-таки, проблема в реализации тестового кейса.
+
+vagrant@vagrant:~$ sudo lsof -p 88943 | grep deleted
+ping    88943 vagrant    1w   REG  253,0    64382 131081 /home/vagrant/lsof.log (deleted)
+vagrant@vagrant:~$ sudo echo “” >/proc/88943/fd/1
+bash: /proc/88943/fd/1: Permission denied
+vagrant@vagrant:~$ sudo truncate -o -s 0 /proc/88943/fd/1
+vagrant@vagrant:~$ sudo lsof -p 88943 | grep deleted
+ping    88943 vagrant    1w   REG  253,0    66686 131081 /home/vagrant/lsof.log (deleted)
+vagrant@vagrant:~$ sudo truncate -r 1 /proc/88943/fd/1
+vagrant@vagrant:~$ sudo lsof -p 88943 | grep deleted
+ping    88943 vagrant    1w   REG  253,0    67910 131081 /home/vagrant/lsof.log (deleted)
+vagrant@vagrant:~$ sudo truncate -cs 0 /proc/88943/fd/1
+vagrant@vagrant:~$ sudo lsof -p 88943 | grep deleted
+ping    88943 vagrant    1w   REG  253,0    68630 131081 /home/vagrant/lsof.log (deleted)
+
+...........
+
+vagrant@vagrant:~$ sudo truncate --size=0K  /proc/88943/fd/1
+vagrant@vagrant:~$ sudo lsof -p 88943 | grep deleted
+ping    88943 vagrant    1w   REG  253,0    98004 131081 /home/vagrant/lsof.log (deleted)
+vagrant@vagrant:~$ sudo lsof -p 88943 | grep deleted
+ping    88943 vagrant    1w   REG  253,0    98661 131081 /home/vagrant/lsof.log (deleted)
+vagrant@vagrant:~$ sudo truncate --size=0KB  /proc/88943/fd/1
+vagrant@vagrant:~$ sudo lsof -p 88943 | grep deleted
+ping    88943 vagrant    1w   REG  253,0    99902 131081 /home/vagrant/lsof.log (deleted)

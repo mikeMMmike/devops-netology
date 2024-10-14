@@ -1,0 +1,63 @@
+echo "<html> <head> Hey, Netology </head> <body> <h1>I’m DevOps Engineer!</h1> </body> </html>" > /var/www/html/index.nginx-debian.html
+
+
+cp  /var/www/html/index.nginx-debian.html /var/www/html/index.nginx-debian.html_bkp
+echo "<html>" > /var/www/html/index.nginx-debian.html
+echo "<head>" >> /var/www/html/index.nginx-debian.html
+echo "Hey, Netology" >> /var/www/html/index.nginx-debian.html
+echo "</head>" >> /var/www/html/index.nginx-debian.html
+echo "<body>" >> /var/www/html/index.nginx-debian.html
+
+echo "<html><head>Hey, Netology</head><body><h1>I’m DevOps Engineer</h1></body></html>" > /var/www/html/index.nginx-debian.html
+
+echo "<html><head>Hey, Netology</head><body>" > /var/www/html/index.nginx-debian.html
+
+
+
+
+
+* Репозиторий https://hub.docker.com/u/mikemmmike
+* Выбрали репозиторий ubuntu/nginx
+* создадим файл mike@mike-VirtualBox:~/devops/05-virt-03-docker/docker$ nano Dockerfile:
+
+```bash
+FROM ubuntu/nginx
+
+#установим nano и очистим стандартную страницу nginx
+RUN
+        apt-get install -y nano &&
+        service nginx stop
+        echo "" > /var/www/html/index.nginx-debian.html
+#создадим пользователя
+RUN
+        useradd -u $UID mike
+        ENV EDITOR=nano
+        USER=mike
+        WORKDIR /home/mike
+        ENTRYPOINT [ "bash","-c","$EDITOR" ]
+
+
+
+FROM ubuntu/nginx
+
+#установим nano(для редактирования конфигов), остановим nginx и отредактируем дефолтную страницу
+MAINTAINER mikemmmike
+RUN apt-get update && apt-get install -y nano && service nginx stop && echo "" > /var/www/html/index.nginx-debian.html 
+
+
+
+
+
+не работает:
+  GNU nano 4.8                                                                          Dockerfile                                                                                    
+FROM ubuntu/nginx
+
+#установим nano(для редактирования конфигов при необходимости), 
+#скопируем подготовленный файл из точки монтирования ФС хостовой ОС и снова запустим web-сервер
+
+MAINTAINER mikemmmike
+RUN apt-get update && apt-get install -y nano && \ service nginx stop
+cp /etc/tmp/devops/example.html /var/www/html/index.nginx-debian.html && service nginx start
+
+
+docker build -v /home/mike/devops/05-virt-03-docker/docker:/etc/tmp/devops/ -t ubuntu-nginx-devops .

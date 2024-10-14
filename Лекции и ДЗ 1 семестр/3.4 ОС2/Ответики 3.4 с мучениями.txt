@@ -1,0 +1,334 @@
+1. На лекции мы познакомились с node_exporter. В демонстрации его исполняемый файл запускался в background. Этого достаточно для демо, но не для настоящей production-системы, где процессы должны находиться под внешним управлением. Используя знания из лекции по systemd, создайте самостоятельно простой unit-файл для node_exporter:
+
+поместите его в автозагрузку,
+предусмотрите возможность добавления опций к запускаемому процессу через внешний файл (посмотрите, например, на systemctl cat cron),
+удостоверьтесь, что с помощью systemctl процесс корректно стартует, завершается, а после перезагрузки автоматически поднимается.
+
+
+Пропустим распаковку архива.
+Переключаемся в каталог  node_exporter и создаем файл, содержащий параметры запуска будущей службы:
+cd /home/vagrant/os34/node_exporter-1.3.0.linux-amd64/
+nano param:
+$params=--collector.os --collector.cpu --collector.netstat
+
+создаем unit-файл для node_exporter:
+sudo nano /etc/systemd/system/node_exporter.service:
+
+[Unit]
+Description=node_exporter
+
+[Service]
+#файл с переменной, содержащий флаги запуска
+EnvironmentFile=/home/vagrant/os34/node_exporter-1.3.0.linux-amd64/param
+#исполняемый файл и переменная, содержащая флаги запуска
+ExecStart=/home/vagrant/os34/node_exporter-1.3.0.linux-amd64/node_exporter $params
+IgnoreSIGPIPE=false
+KillMode=process
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
+Включаем службу:
+sudo systemctl enable node_exporter
+запускаем службу:
+sudo systemctl start node_exporter
+Останавливаем службу:
+sudo systemctl stop node_exporter
+Запускаем службу снова:
+sudo systemctl start node_exporter
+проверяем статус службы:
+vagrant@vagrant:/etc/systemd/system$ sudo systemctl status node_exporter
+● node_exporter.service - node_exporter
+     Loaded: loaded (/etc/systemd/system/node_exporter.service; enabled; vendor preset: enabled)
+     Active: active (running) since Tue 2021-11-23 22:00:17 UTC; 6min ago
+   Main PID: 48600 (node_exporter)
+      Tasks: 4 (limit: 1071)
+     Memory: 2.4M
+     CGroup: /system.slice/node_exporter.service
+             └─48600 /home/vagrant/os34/node_exporter-1.3.0.linux-amd64/node_exporter
+
+Nov 23 22:00:17 vagrant node_exporter[48600]: ts=2021-11-23T22:00:17.827Z caller=node_exporter.go:115 level=info collector=thermal_zone
+Nov 23 22:00:17 vagrant node_exporter[48600]: ts=2021-11-23T22:00:17.827Z caller=node_exporter.go:115 level=info collector=time
+Nov 23 22:00:17 vagrant node_exporter[48600]: ts=2021-11-23T22:00:17.827Z caller=node_exporter.go:115 level=info collector=timex
+Nov 23 22:00:17 vagrant node_exporter[48600]: ts=2021-11-23T22:00:17.827Z caller=node_exporter.go:115 level=info collector=udp_queues
+Nov 23 22:00:17 vagrant node_exporter[48600]: ts=2021-11-23T22:00:17.827Z caller=node_exporter.go:115 level=info collector=uname
+Nov 23 22:00:17 vagrant node_exporter[48600]: ts=2021-11-23T22:00:17.827Z caller=node_exporter.go:115 level=info collector=vmstat
+Nov 23 22:00:17 vagrant node_exporter[48600]: ts=2021-11-23T22:00:17.827Z caller=node_exporter.go:115 level=info collector=xfs
+Nov 23 22:00:17 vagrant node_exporter[48600]: ts=2021-11-23T22:00:17.827Z caller=node_exporter.go:115 level=info collector=zfs
+Nov 23 22:00:17 vagrant node_exporter[48600]: ts=2021-11-23T22:00:17.827Z caller=node_exporter.go:199 level=info msg="Listening on" address=:9100
+Nov 23 22:00:17 vagrant node_exporter[48600]: ts=2021-11-23T22:00:17.828Z caller=tls_config.go:195 level=info msg="TLS is disabled." http2=false
+
+После перезагрузки работает:
+vagrant@vagrant:~$ sudo systemctl status node_exporter
+● node_exporter.service - node_exporter
+     Loaded: loaded (/etc/systemd/system/node_exporter.service; enabled; vendor preset: enabled)
+     Active: active (running) since Tue 2021-11-23 22:12:40 UTC; 2min 8s ago
+   Main PID: 611 (node_exporter)
+      Tasks: 4 (limit: 1112)
+     Memory: 14.3M
+     CGroup: /system.slice/node_exporter.service
+             └─611 /home/vagrant/os34/node_exporter-1.3.0.linux-amd64/node_exporter
+
+Nov 23 22:12:40 vagrant node_exporter[611]: ts=2021-11-23T22:12:40.812Z caller=node_exporter.go:115 level=info collector=thermal_zone
+Nov 23 22:12:40 vagrant node_exporter[611]: ts=2021-11-23T22:12:40.812Z caller=node_exporter.go:115 level=info collector=time
+Nov 23 22:12:40 vagrant node_exporter[611]: ts=2021-11-23T22:12:40.812Z caller=node_exporter.go:115 level=info collector=timex
+Nov 23 22:12:40 vagrant node_exporter[611]: ts=2021-11-23T22:12:40.812Z caller=node_exporter.go:115 level=info collector=udp_queues
+Nov 23 22:12:40 vagrant node_exporter[611]: ts=2021-11-23T22:12:40.812Z caller=node_exporter.go:115 level=info collector=uname
+Nov 23 22:12:40 vagrant node_exporter[611]: ts=2021-11-23T22:12:40.812Z caller=node_exporter.go:115 level=info collector=vmstat
+Nov 23 22:12:40 vagrant node_exporter[611]: ts=2021-11-23T22:12:40.812Z caller=node_exporter.go:115 level=info collector=xfs
+Nov 23 22:12:40 vagrant node_exporter[611]: ts=2021-11-23T22:12:40.812Z caller=node_exporter.go:115 level=info collector=zfs
+Nov 23 22:12:40 vagrant node_exporter[611]: ts=2021-11-23T22:12:40.812Z caller=node_exporter.go:199 level=info msg="Listening on" address=:9100
+Nov 23 22:12:40 vagrant node_exporter[611]: ts=2021-11-23T22:12:40.824Z caller=tls_config.go:195 level=info msg="TLS is disabled." http2=false
+vagrant@vagrant:~$ uptime
+ 22:15:11 up 2 min,  1 user,  load average: 0.12, 0.11, 0.05
+
+Также есть скрин.
+
+2. Ознакомьтесь с опциями node_exporter и выводом /metrics по-умолчанию. Приведите несколько опций, которые вы бы выбрали для базового мониторинга хоста по CPU, памяти, диску и сети.
+
+vagrant@vagrant:~/os34/node_exporter-1.3.0.linux-amd64$ ./node_exporter -h | grep "default: enabled"
+
+Для базового мониторинга хоста по CPU, памяти, диску и сети я бы выбрал:
+--collector.cpu
+--collector.diskstats
+--collector.meminfo
+--collector.netstat
+
+3. Установите в свою виртуальную машину Netdata. Воспользуйтесь готовыми пакетами для установки (sudo apt install -y netdata). После успешной установки:
+
+в конфигурационном файле /etc/netdata/netdata.conf в секции [web] замените значение с localhost на bind to = 0.0.0.0,
+добавьте в Vagrantfile проброс порта Netdata на свой локальный компьютер и сделайте vagrant reload: config.vm.network "forwarded_port", guest: 19999, host: 19999
+После успешной перезагрузки в браузере на своем ПК (не в виртуальной машине) вы должны суметь зайти на localhost:19999. Ознакомьтесь с метриками, которые по умолчанию собираются Netdata и с комментариями, которые даны к этим метрикам.
+
+curl -s https://packagecloud.io/install/repositories/netdata/netdata/script.deb.sh | sudo bash
+sudo apt-get install netdata
+nano /etc/netdata/netdata.conf
+root@vagrant:/home/vagrant# netdata -p 19999 (без этого не работало никак)
+скрин приложил для демонстрации
+
+
+
+
+4. Можно ли по выводу dmesg понять, осознает ли ОС, что загружена не на настоящем оборудовании, а на системе виртуализации?
+ДА, можно:
+vagrant@vagrant:/etc/netdata$ dmesg | grep virt
+[    0.003270] CPU MTRRs all blank - virtualized system.
+[    0.135276] Booting paravirtualized kernel on KVM
+[    0.328870] Performance Events: PMU not available due to virtualization, using software events only.
+[    3.559960] systemd[1]: Detected virtualization oracle.
+
+
+5.Как настроен sysctl fs.nr_open на системе по-умолчанию? 
+vagrant@vagrant:/etc/netdata$ sysctl fs.nr_open
+fs.nr_open = 1048576
+
+Узнайте, что означает этот параметр.
+Это ограничение на количество открытых файловых дескрипторов
+
+Какой другой существующий лимит не позволит достичь такого числа (ulimit --help)?
+
+параметр ulimit -n 1024 не позволит достичь числа открытых ФД fs.nr_open = 1048576
+максимум, что можно установить - ulimit -n 2048
+
+6. Запустите любой долгоживущий процесс (не ls, который отработает мгновенно, а, например, sleep 1h) в отдельном неймспейсе процессов; покажите, что ваш процесс работает под PID 1 через nsenter. Для простоты работайте в данном задании под root (sudo -i). Под обычным пользователем требуются дополнительные опции (--map-root-user) и т.д.
+
+Работать будем с повышенными привелегиями
+у меня так и не вышло запустить sleep 1h с PID 1, либо я не так понял задание и не понял, как работать с namespace.
+Вышло лишь воспроизвести пример из лекции,тогда получилось получить запущенный процесс /bin/bash с PID1:
+
+sudo su
+root@vagrant:/home/vagrant#screen
+root@vagrant:/home/vagrant# screen
+root@vagrant:/home/vagrant# unshare -f --pid --mount-proc /bin/bash
+root@vagrant:/home/vagrant# sleep 1h&
+ctrl+a, n
+root@vagrant:/home/vagrant# ps -aux | grep 'bin/bash'
+root         964  0.0  0.3   9836  3956 pts/1    Ss   22:05   0:00 /bin/bash
+root         972  0.0  0.3   9836  3944 pts/2    Ss   22:05   0:00 /bin/bash
+root         979  0.0  0.0   8080   528 pts/1    S    22:06   0:00 unshare -f --pid --mount-proc /bin/bash
+root         980  0.0  0.3   9836  3988 pts/1    S+   22:06   0:00 /bin/bash
+root         989  0.0  0.0   9032   672 pts/2    S+   22:06   0:00 grep --color=auto bin/bash
+root@vagrant:/home/vagrant# nsenter --target 980 --pid --mount
+root@vagrant:/# ps -aux
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.3   9836  3988 pts/1    S+   22:06   0:00 /bin/bash
+root           8  0.0  0.0   8076   592 pts/1    S    22:06   0:00 sleep 1h
+root           9  0.0  0.3   9836  3968 pts/2    S    22:08   0:00 -bash
+root          18  0.0  0.3  11680  3628 pts/2    R+   22:08   0:00 ps -aux
+
+В данном случае мы подключились к namespace,  котором оболочка выполняется  с PID 1 и также выполняется sleep 1h с PID 8
+Это лучшее, чего я смог добиться за 4 часа работы над этой задачей.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1.
+план:
+инсталляция софта
+создание конфиг-файла для службы, откуда будут дергаться опции запуска
+создание unit-файла для node_exporter
+
+
+
+[Unit]
+Description=node_exporter
+
+[Service]
+EnvironmentFile=-/etc/default/cron
+EnvironmentFile=/home/vagrant/os34/node_exporter-1.3.0.linux-amd64/param
+ExecStart=/home/vagrant/os34/node_exporter-1.3.0.linux-amd64/node_exporter 
+--collector.os --collector.cpu --collector.netstat
+IgnoreSIGPIPE=false
+KillMode=process
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
+--collector.os --collector.cpu --collector.netstat
+
+
+3.
+
+
+Заменил с localhost на bind to = 0.0.0.0
+в вагрант-файле добавил проброс портов, но после перезагрузки гостевой ОС http://127.0.0.1:19999/ не открывается на хостовой машине.
+Бранмауэр отключил
+настройки браузера в части прокси-сервера проверил
+route print на хосте говорит:
+Активные маршруты:
+Сетевой адрес           Маска сети      Адрес шлюза       Интерфейс  Метрика
+        127.0.0.0        255.0.0.0         On-link         127.0.0.1    331
+Активные маршруты:
+ Метрика   Сетевой адрес            Шлюз
+  1    331 ::1/128                  On-link
+  1    331 ff00::/8                 On-link
+
+но тем не менее зайти на http://127.0.0.1:19999/ так и не смог.
+на гостевой машине ps -aux | grep netdata говорит, что программа выполняется:
+vagrant     1145  0.0  0.0   8900   676 pts/0    S+   23:20   0:00 grep --color=auto netdata
+Также я развернул ВМ на хосте с ОС  Ubuntu 20.04, но зайти из браузера тоже не получилось
+
+
+6.
+
+
+
+#root@vagrant:/home/vagrant# unshare -f --pid --mount-proc sleep 1h
+#root@vagrant:/home/vagrant# ps -aux | grep sleep
+#root        1299  0.0  0.0   8080   592 pts/1    S    21:55   0:00 unshare -f --pid --mount-proc sleep 1h
+#root        1300  0.0  0.0   8076   592 pts/1    S    21:55   0:00 sleep 1h
+#root        1304  0.0  0.0   8900   736 pts/1    S+   21:56   0:00 grep --color=auto sleep
+#root@vagrant:/home/vagrant# nsenter --target 1299 --pid --mount
+#root@vagrant:/#
+
+
+
+
+
+
+
+root@vagrant:/home/vagrant# unshare -f --pid --mount-proc /bin/bash
+root@vagrant:/home/vagrant# ps -aux | grep 'bin/bash'
+root           1  0.0  0.3   9836  3984 pts/1    S    21:38   0:00 /bin/bash
+root           9  0.0  0.0   9032   736 pts/1    S+   21:38   0:00 grep --color=auto bin/bash
+root@vagrant:/home/vagrant# exit
+exit
+root@vagrant:/# ps -aux | grep 'bin/bash'
+root        1105  0.0  0.3   9836  4004 pts/1    S+   21:45   0:00 /bin/bash
+root@vagrant:/# nsenter --target 1105 --pid --mount
+root@vagrant:/# ps -aux
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.3   9836  4004 pts/1    S+   21:45   0:00 /bin/bash
+root          28  0.0  0.4   9836  4216 pts/2    S    21:49   0:00 -bash
+root          37  0.0  0.3  11680  3560 pts/2    R+   21:49   0:00 ps -aux
+
+
+
+
+root@vagrant:/#  ps -aux | grep 'bin/bash'
+root        1030  0.0  0.4   9836  4092 pts/1    Ss   21:37   0:00 /bin/bash
+root        1094  0.0  0.0   9032   736 pts/1    S+   21:43   0:00 grep --color=auto bin/bash
+
+за 4 часа не вышло сделать. даже пример из лекции не работает
+
+
+
+
+
+
+
+exit
+root@vagrant:/home/vagrant# ps -aux | grep '/bin/bash'
+root         971  0.0  0.4   9836  4048 pts/1    Ss   21:33   0:00 /bin/bash
+root         987  0.0  0.0   9032   736 pts/1    S+   21:34   0:00 grep --color=auto /bin/bash
+nsenter --target 1008 --pid --mount -bash 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+nsenter --target 1008 --pid --mount -bash
+
+unshare -f --pid --mount-proc sleep 1h&
+nsenter --target 1550 --pid --mount -bash
+
+
+#sudo unshare -fp sleep 1h&
+
+sleep 1h &
+
+unshare -f --pid --mount-proc sleep 1h&
+sudo -i  nsenter -t <pid> --mount --pid -i bash
+
+Создаем пространство имен PID c пространством имен монтирования:
+sudo unshare -fp --mount-proc sleep 1h&
+
+
+Просмотр пространства имен sudo nsenter -t 990 -m -p
+-t <pid> --mount --pid -i bash
+sudo nsenter --target 1 --pid --mount
+
+screen
+unshare -f --pid --mount-proc sleep 1h&
+ps aux
+/usr/bin/sleep
+
+screen
+unshare -f --pid --mount-proc sleep 1h&
+nsenter --target  --pid --mount
+
+
+
+
+
+
+
+
+
+

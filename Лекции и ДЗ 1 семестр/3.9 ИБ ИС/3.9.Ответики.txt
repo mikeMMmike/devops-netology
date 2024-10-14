@@ -1,0 +1,228 @@
+1.Установите Bitwarden плагин для браузера. Зарегестрируйтесь и сохраните несколько паролей.
+ответ - скрин
+2.Установите Google authenticator на мобильный телефон. Настройте вход в Bitwarden акаунт через Google authenticator OTP.
+ответ - скрин
+3.Установите apache2, сгенерируйте самоподписанный сертификат, настройте тестовый сайт для работы по HTTPS.
+root@vagrant:/home/vagrant# apt-get install apache2
+root@vagrant:/home/vagrant# a2enmod ssl
+root@vagrant:/home/vagrant#  systemctl restart apache2
+root@vagrant:/home/vagrant# openssl req -x509 -nodes -days 365 -newkey rsa:2048 \-keyout /etc/ssl/private/apache-selfsigned.key \-out /etc/ssl/certs/apache-selfsigned.crt \-subj "/C=RU/ST=Orenburg/L=Orenburg/O=The Best Solutions/OU=Org/CN=www.tbs.com"
+Generating a RSA private key
+.........................................................................................+++++
+.................................................................................................................................................................+++++
+writing new private key to '/etc/ssl/private/apache-selfsigned.key'
+-----
+
+
+root@vagrant:/home/vagrant# nano /etc/apache2/sites-available/tbs.conf
+<VirtualHost *:443>
+
+ServerName tbs
+DocumentRoot /var/www/tbs
+SSLEngine on
+SSLCertificateFile /etc/ssl/certs/apache-selfsigned.crt
+SSLCertificateKeyFile /etc/ssl/private/apache-selfsigned.key
+
+</VirtualHost>
+
+root@vagrant:/home/vagrant# cd /var/www/
+root@vagrant:/var/www# mkdir ./tbs
+root@vagrant:/var/www# nano /var/www/tbs/index.html
+<h1>it worked!</h1>
+
+root@vagrant:/var/www# root@vagrant:/var/www# a2ensite tbs.conf
+Enabling site tbs.
+To activate the new configuration, you need to run:
+  systemctl reload apache2
+root@vagrant:/var/www# systemctl reload apache2
+root@vagrant:/var/www# apache2ctl configtest
+Syntax OK
+root@vagrant:/var/www# systemctl reload apache2
+
+Добавил в конфиг vagrant строку:
+	config.vm.network "forwarded_port", guest: 443, host: 443
+и перезапустил VM
+
+После старта ВМ в браузере хоста: https://localhost/
+в ответ открылся сайт с руганью на самоподписанный сертификат. приложил скрин
+
+
+4.Проверьте на TLS уязвимости произвольный сайт в интернете.
+vagrant@vagrant:~$ git clone --depth 1 https://github.com/drwetter/testssl.sh.git
+Cloning into 'testssl.sh'...
+remote: Enumerating objects: 100, done.
+remote: Counting objects: 100% (100/100), done.
+remote: Compressing objects: 100% (93/93), done.
+remote: Total 100 (delta 14), reused 40 (delta 6), pack-reused 0
+Receiving objects: 100% (100/100), 8.60 MiB | 1.35 MiB/s, done.
+Resolving deltas: 100% (14/14), done.
+vagrant@vagrant:~$ cd testssl.sh
+vagrant@vagrant:~/testssl.sh$ sudo su
+root@vagrant:/home/vagrant/testssl.sh# mv -f /var/www/tbs/index.html  /var/www/tbs/index.html.bak
+root@vagrant:/home/vagrant/testssl.sh# apt-get install aha
+root@vagrant:/home/vagrant/testssl.sh# ./testssl.sh -U --sneaky https://vk.com | aha > /var/www/tbs/testssl.html
+
+когда тест завершится, на хосте в браузере откроем https://localhost/testssl.html:
+
+###########################################################
+    testssl.sh       3.1dev from https://testssl.sh/dev/
+    (0eb73d9 2021-12-07 08:55:54 -- )
+
+      This program is free software. Distribution and
+             modification under GPLv2 permitted.
+      USAGE w/o ANY WARRANTY. USE IT AT YOUR OWN RISK!
+
+       Please file bugs @ https://testssl.sh/bugs/
+
+###########################################################
+
+ Using "OpenSSL 1.0.2-chacha (1.0.2k-dev)" [~183 ciphers]
+ on vagrant:./bin/openssl.Linux.x86_64
+ (built: "Jan 18 17:12:17 2019", platform: "linux-x86_64")
+
+
+Testing all IPv4 addresses (port 443): 87.240.190.72 87.240.190.67 87.240.137.158 87.240.139.194 93.186.225.208 87.240.190.78
+-------------------------------------------------------------------------------------------------------------
+ Start 2021-12-07 19:53:08        -->> 87.240.190.72:443 (vk.com) <<--
+
+ Further IP addresses:   87.240.190.78 93.186.225.208 87.240.139.194 87.240.137.158 87.240.190.67 
+ rDNS (87.240.190.72):   srv72-190-240-87.vk.com.
+ Service detected:       HTTP
+
+
+ Testing vulnerabilities 
+
+ Heartbleed (CVE-2014-0160)                not vulnerable (OK), no heartbeat extension
+ CCS (CVE-2014-0224)                       not vulnerable (OK)
+ Ticketbleed (CVE-2016-9244), experiment.  not vulnerable (OK), no session ticket extension
+ ROBOT                                     not vulnerable (OK)
+ Secure Renegotiation (RFC 5746)           supported (OK)
+ Secure Client-Initiated Renegotiation     not vulnerable (OK)
+ CRIME, TLS (CVE-2012-4929)                not vulnerable (OK)
+ BREACH (CVE-2013-3587)                    potentially NOT ok, "gzip deflate" HTTP compression detected. - only supplied "/" tested
+                                           Can be ignored for static pages or if no secrets in the page
+ POODLE, SSL (CVE-2014-3566)               not vulnerable (OK)
+ TLS_FALLBACK_SCSV (RFC 7507)              Downgrade attack prevention supported (OK)
+ SWEET32 (CVE-2016-2183, CVE-2016-6329)    not vulnerable (OK)
+ FREAK (CVE-2015-0204)                     not vulnerable (OK)
+ DROWN (CVE-2016-0800, CVE-2016-0703)      not vulnerable on this host and port (OK)
+                                           make sure you don't use this certificate elsewhere with SSLv2 enabled services
+                                           https://censys.io/ipv4?q=96B8B1CAA44E3CBFD64797C7C7F882BAC91CF33E88723867B48389FF281357CE could help you to find out
+ LOGJAM (CVE-2015-4000), experimental      not vulnerable (OK): no DH EXPORT ciphers, no common prime detected
+ BEAST (CVE-2011-3389)                     TLS1: ECDHE-ECDSA-AES128-SHA ECDHE-RSA-AES128-SHA DHE-RSA-AES128-SHA AES128-SHA 
+                                           VULNERABLE -- but also supports higher protocols  TLSv1.1 TLSv1.2 (likely mitigated)
+ LUCKY13 (CVE-2013-0169), experimental     potentially VULNERABLE, uses cipher block chaining (CBC) ciphers with TLS. Check patches
+ Winshock (CVE-2014-6321), experimental    not vulnerable (OK)
+ RC4 (CVE-2013-2566, CVE-2015-2808)        no RC4 ciphers detected (OK)
+
+
+ Done 2021-12-07 19:53:50 [  48s] -->> 87.240.190.72:443 (vk.com) <<--
+
+и т.д. У vk.com 5 или 6 ip адресов, по каждому вывод в ответы указывать - будет много букв. html-файл приложил в ответах.
+
+
+
+5.Установите на Ubuntu ssh сервер, сгенерируйте новый приватный ключ. Скопируйте свой публичный ключ на другой сервер. Подключитесь к серверу по SSH-ключу.
+
+Устанавливаем openssh сервер
+root@vagrant:/home/vagrant/testssl.sh# apt install openssh-server
+генерируем ключ:
+vagrant@vagrant:~/.ssh$ ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/vagrant/.ssh/id_rsa):
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /home/vagrant/.ssh/id_rsa
+Your public key has been saved in /home/vagrant/.ssh/id_rsa.pub
+The key fingerprint is:
+SHA256:ogrC41boho1wq24ijn2gWVDidKaZLWc3rIExiMd3yh4 vagrant@vagrant
+The key's randomart image is:
++---[RSA 3072]----+
+|o.               |
+|+++o. .          |
+|o+@o.o           |
+|.B =E+           |
+| .=.+.o S        |
+|o.+o.. .         |
+|*X.o.            |
+|@B+..            |
+|@=o.             |
++----[SHA256]-----+
+Копируем ключ на другой сревер:
+vagrant@vagrant:~/.ssh$ ssh-copy-id mike@192.168.31.130
+/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/home/vagrant/.ssh/id_rsa.pub"
+The authenticity of host '192.168.31.130 (192.168.31.130)' can't be established.
+ECDSA key fingerprint is SHA256:JjZT9HDJIDF57KHDLkCC4f8qKY9ejstzzkoPFXLmBf8.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+mike@192.168.31.130's password:
+
+Number of key(s) added: 1
+
+Now try logging into the machine, with:   "ssh 'mike@192.168.31.130'"
+and check to make sure that only the key(s) you wanted were added.
+
+Подключаемся к серверу по ssh:
+vagrant@vagrant:~/.ssh$ ssh mike@192.168.31.130
+Welcome to Ubuntu 20.04.3 LTS (GNU/Linux 5.11.0-40-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+74 updates can be applied immediately.
+Чтобы просмотреть дополнительные обновления выполните: apt list --upgradable
+
+Your Hardware Enablement Stack (HWE) is supported until April 2025.
+Last login: Sun Nov 21 05:14:34 2021
+
+Буква Н - Нейминг;)
+mike@mike-VirtualBox:~$
+
+
+6.Переименуйте файлы ключей из задания 5. Настройте файл конфигурации SSH клиента, так чтобы вход на удаленный сервер осуществлялся по имени сервера.
+
+создаем файл конфигурации и огранициваем на него разрешения:
+vagrant@vagrant:~/.ssh$ touch ~/.ssh/config && chmod 600 ~/.ssh/config
+правим конфиг-файл:
+vagrant@vagrant:~/.ssh$nano config
+
+Host mike-VirtualBox
+HostName 192.168.31.130
+IdentityFile ~/.ssh/mike-VirtualBox
+User mike
+
+Host *
+User default_username
+IdentityFile ~/.ssh/id_rsa
+Protocol 2
+
+заходим по SSH используя только имя имя сервера:
+vagrant@vagrant:~/.ssh$ ssh mike-VirtualBox
+Welcome to Ubuntu 20.04.3 LTS (GNU/Linux 5.11.0-40-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+74 updates can be applied immediately.
+Чтобы просмотреть дополнительные обновления выполните: apt list --upgradable
+
+Your Hardware Enablement Stack (HWE) is supported until April 2025.
+Last login: Wed Dec  8 04:05:30 2021 from 192.168.31.130
+
+
+
+7.Соберите дамп трафика утилитой tcpdump в формате pcap, 100 пакетов. Откройте файл pcap в Wireshark
+Запустим запись дампа 100 пакетов в файл
+vagrant@vagrant:~$ sudo tcpdump -c 100 -w 100.pcap -i eth0
+tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes
+100 packets captured
+127 packets received by filter
+0 packets dropped by kernel
+
+по завершении скопируем в каталог web-сервера для упрощения копирования дампа на хост при помощи браузера:
+vagrant@vagrant:~$ sudo cp 100.pcap /var/www/tbs/
+
+Ответ в скрине.

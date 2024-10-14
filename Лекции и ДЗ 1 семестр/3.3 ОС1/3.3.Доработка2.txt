@@ -1,0 +1,37 @@
+запускаем команду пинг с записью в файл результатов:
+vagrant@vagrant:~$ ping ya.ru > lsof.log
+^Z
+[1]+  Stopped                 ping ya.ru > lsof.log
+
+сворачиваем
+vagrant@vagrant:~$ bg
+[1]+ ping ya.ru > lsof.log &
+
+удаляем файл лога 
+vagrant@vagrant:~$ rm lsof.log
+
+смотрим PID
+vagrant@vagrant:~$ jobs -l
+[1]+  1170 Running                 ping ya.ru > lsof.log &
+
+проверяем, что файл удален:
+vagrant@vagrant:~$ sudo lsof -p 1170 | grep deleted
+ping    1170 vagrant    1w   REG  253,0     3611 131087 /home/vagrant/lsof.log (deleted)
+
+применяем транкейт:
+vagrant@vagrant:~$ sudo truncate -o -s 0 /proc/1170/fd/1
+
+Проверяем, сотался ли файл? (остался):
+vagrant@vagrant:~$ sudo lsof -p 1170 | grep deleted
+ping    1170 vagrant    1w   REG  253,0    10876 131087 /home/vagrant/lsof.log (deleted)
+
+смотрим свободное место:
+vagrant@vagrant:~$ df | grep sda1
+/dev/sda1                     523248         4    523244   1% /boot/efi
+
+спустя время снова проверяем, и свободное место не уменьшилось:
+vagrant@vagrant:~$ df | grep sda1
+/dev/sda1                     523248         4    523244   1% /boot/efi
+
+
+Да, все подтвердилось. утилита truncate помогла обнулить файл:)

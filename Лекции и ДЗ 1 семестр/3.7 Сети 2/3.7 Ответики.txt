@@ -1,0 +1,238 @@
+1.Проверьте список доступных сетевых интерфейсов на вашем компьютере. 
+vagrant@vagrant:~$ ip addr sh
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:73:60:cf brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic eth0
+       valid_lft 75499sec preferred_lft 75499sec
+    inet6 fe80::a00:27ff:fe73:60cf/64 scope link
+       valid_lft forever preferred_lft forever
+
+Какие команды есть для этого в Linux и в Windows?
+linux:
+устаревшая - ifconfig
+текущая - ip address show
+также можно -  cat /etc/network/interfaces
+windows:
+ipconfig /all
+
+2.Какой протокол используется для распознавания соседа по сетевому интерфейсу? 
+Протокол LLDP
+Какой пакет и команды есть в Linux для этого?
+lldpd - пакет
+lldpctl - команда
+vagrant@vagrant:~$ lldpctl
+-------------------------------------------------------------------------------
+LLDP neighbors:
+-------------------------------------------------------------------------------
+
+3.Какая технология используется для разделения L2 коммутатора на несколько виртуальных сетей? 
+VLAN - виртуальная локальная сеть (virtual local area network).
+Какой пакет и команды есть в Linux для этого? 
+пакет в linux - vlan
+команда (устаревшая) - vconfig
+команда (новая ) - iproute2
+
+Приведите пример конфига.
+root@vagrant:/home/vagrant# ip addr sh
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:73:60:cf brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic eth0
+       valid_lft 85713sec preferred_lft 85713sec
+    inet6 fe80::a00:27ff:fe73:60cf/64 scope link
+       valid_lft forever preferred_lft forever
+
+root@vagrant:/home/vagrant# nano /etc/network/interfaces
+auto vlan666
+iface vlan666 inet static        
+address 10.0.2.15        
+netmask 255.255.255.0        
+vlan_raw_device eth0
+
+root@vagrant:/home/vagrant# ifdown -a && ifup -a
+root@vagrant:/home/vagrant# ip addr sh
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:73:60:cf brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic eth0
+       valid_lft 85713sec preferred_lft 85713sec
+    inet6 fe80::a00:27ff:fe73:60cf/64 scope link
+       valid_lft forever preferred_lft forever
+4: vlan666@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether 08:00:27:73:60:cf brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global vlan666
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fe73:60cf/64 scope link
+       valid_lft forever preferred_lft forever
+
+4.Какие типы агрегации интерфейсов есть в Linux? 
+Статический и динамический типы
+Какие опции есть для балансировки нагрузки? 
+mode=0 (balance-rr)
+Последовательно кидает пакеты, с первого по последний интерфейс.
+mode=1 (active-backup)
+Один из интерфейсов активен. Если активный интерфейс выходит из строя (link down и т.д.), другой интерфейс заменяет активный. Не требует дополнительной настройки коммутатора
+mode=2 (balance-xor)
+Передачи распределяются между интерфейсами на основе формулы ((MAC-адрес источника) XOR (MAC-адрес получателя)) % число интерфейсов. Один и тот же интерфейс работает с определённым получателем. Режим даёт балансировку нагрузки и отказоустойчивость.
+mode=3 (broadcast)
+Все пакеты на все интерфейсы
+mode=4 (802.3ad)
+Link Agregation — IEEE 802.3ad, требует от коммутатора настройки.
+mode=5 (balance-tlb)
+Входящие пакеты принимаются только активным сетевым интерфейсом, исходящий распределяется в зависимости от текущей загрузки каждого интерфейса. Не требует настройки коммутатора.
+mode=6 (balance-alb)
+Тоже самое что 5, только входящий трафик тоже распределяется между интерфейсами. Не требует настройки коммутатора, но интерфейсы должны уметь изменять MAC.
+
+Приведите пример конфига.
+root@vagrant:/home/vagrant# nano /etc/network/interfaces
+file used by ifup(8) and ifdown(8)
+# Include files from /etc/network/interfaces.d:
+#source-directory /etc/network/interfaces.d
+iface eth0 inet static
+address 10.0.2.15
+netmask 255.255.255.0
+gateway 10.0.2.1
+auto eth0
+
+iface bond0 inet static
+address 192.168.200.35
+netmask 255.255.255.0
+network 192.168.200.0
+gateway 192.168.200.1
+bond_mode balance-tlb
+bond_miimon 100
+bond_downdelay 200
+bond_updelay 200
+slaves eth1 eth2
+auto bond0
+
+root@vagrant:/home/vagrant# reboot
+root@vagrant:/home/vagrant# ifconfig
+bond0: flags=5123<UP,BROADCAST,MASTER,MULTICAST>  mtu 1500
+        inet 192.168.200.35  netmask 255.255.255.0  broadcast 192.168.200.255
+        ether 66:23:b1:26:f6:0f  txqueuelen 1000  (Ethernet)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 10.0.2.15  netmask 255.255.255.0  broadcast 10.0.2.255
+        inet6 fe80::a00:27ff:fe73:60cf  prefixlen 64  scopeid 0x20<link>
+        ether 08:00:27:73:60:cf  txqueuelen 1000  (Ethernet)
+        RX packets 110  bytes 19413 (19.4 KB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 107  bytes 13825 (13.8 KB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+eth1: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.200.87  netmask 255.255.255.0  broadcast 192.168.200.255
+        inet6 fe80::a00:27ff:fe8f:6059  prefixlen 64  scopeid 0x20<link>
+        ether 08:00:27:8f:60:59  txqueuelen 1000  (Ethernet)
+        RX packets 1394  bytes 101118 (101.1 KB)
+        RX errors 0  dropped 194  overruns 0  frame 0
+        TX packets 36  bytes 4124 (4.1 KB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+eth2: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.200.108  netmask 255.255.255.0  broadcast 192.168.200.255
+        inet6 fe80::a00:27ff:fe21:28a4  prefixlen 64  scopeid 0x20<link>
+        ether 08:00:27:21:28:a4  txqueuelen 1000  (Ethernet)
+        RX packets 1331  bytes 95499 (95.4 KB)
+        RX errors 0  dropped 183  overruns 0  frame 0
+        TX packets 14  bytes 1604 (1.6 KB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+5.Сколько IP адресов в сети с маской /29 ? 
+6 для хостов+2 служебных - адрес сети и широковещательный адрес
+
+root@vagrant:/home/vagrant# ipcalc 192.168.1.0/29
+Address:   192.168.1.0          11000000.10101000.00000001.00000 000
+Netmask:   255.255.255.248 = 29 11111111.11111111.11111111.11111 000
+Wildcard:  0.0.0.7              00000000.00000000.00000000.00000 111
+=>
+Network:   192.168.1.0/29       11000000.10101000.00000001.00000 000
+HostMin:   192.168.1.1          11000000.10101000.00000001.00000 001
+HostMax:   192.168.1.6          11000000.10101000.00000001.00000 110
+Broadcast: 192.168.1.7          11000000.10101000.00000001.00000 111
+Hosts/Net: 6                     Class C, Private Internet
+
+
+5.Сколько /29 подсетей можно получить из сети с маской /24. 
+32 = 256/8
+Приведите несколько примеров /29 подсетей внутри сети 10.10.10.0/24.
+10.10.10.8/29
+10.10.10.16/29
+10.10.10.24/29
+10.10.10.32/29
+10.10.10.40/29
+10.10.10.48/29
+10.10.10.56/29
+10.10.10.64/29
+и т.д.
+
+6.Задача: вас попросили организовать стык между 2-мя организациями. Диапазоны 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 уже заняты. Из какой подсети допустимо взять частные IP адреса? 
+из подсети 100.64.0.0/10
+Маску выберите из расчета максимум 40-50 хостов внутри подсети.
+40-50 умещаются в /26 маску, т.к. она обеспечит адресами до 62 хостов
+mike@make-lptp:~$ ipcalc -b --split 40 50 100.64.0.0 /10  
+Address:   100.64.0.0           
+Netmask:   255.192.0.0 = 10                                                             
+Wildcard:  0.63.255.255                                                                 
+=>                                                                                      
+Network:   100.64.0.0/10                                                                
+HostMin:   100.64.0.1                                                                   
+HostMax:   100.127.255.254                                                              
+Broadcast: 100.127.255.255                                                              
+Hosts/Net: 4194302               Class A
+
+1. Requested size: 40 hosts
+Netmask:   255.255.255.192 = 26 
+Network:   100.64.0.0/26        
+HostMin:   100.64.0.1           
+HostMax:   100.64.0.62          
+Broadcast: 100.64.0.63          
+Hosts/Net: 62                    Class A
+
+2. Requested size: 50 hosts
+Netmask:   255.255.255.192 = 26 
+Network:   100.64.0.64/26       
+HostMin:   100.64.0.65          
+HostMax:   100.64.0.126         
+Broadcast: 100.64.0.127         
+Hosts/Net: 62                    Class A
+
+
+
+
+7.Как проверить ARP таблицу в Linux, Windows? 
+в Linux и Windows - программа arp с ключом -a
+root@vagrant:/home/vagrant# arp -a
+? (10.0.2.3) at 52:54:00:12:35:03 [ether] on eth0
+_gateway (10.0.2.2) at 52:54:00:12:35:02 [ether] on eth0
+
+
+Как очистить ARP кеш полностью? 
+root@vagrant:/home/vagrant# ip neigh flush all
+
+Как из ARP таблицы удалить только один нужный IP?
+root@vagrant:/home/vagrant# arp -i eth0 -d 10.0.2.2 - удаляет запись с IP 10.0.2.2 на интерфейсе eth0
+
+
+

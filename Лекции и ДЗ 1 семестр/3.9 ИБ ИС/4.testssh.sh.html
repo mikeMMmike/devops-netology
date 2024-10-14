@@ -1,0 +1,249 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0030)https://localhost/testssl.html -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>stdin</title>
+</head>
+<body>
+<pre><span style="font-weight:bold;">
+###########################################################
+    testssl.sh       3.1dev from </span><span style="font-weight:bold;">https://testssl.sh/dev/</span>
+<span style="font-weight:bold;">    (</span><span style="font-weight:bold;color:dimgray;">0eb73d9 2021-12-07 08:55:54 -- </span><span style="font-weight:bold;">)</span>
+<span style="font-weight:bold;">
+      This program is free software. Distribution and
+             modification under GPLv2 permitted.
+      USAGE w/o ANY WARRANTY. USE IT AT YOUR OWN RISK!
+
+       Please file bugs @ </span><span style="font-weight:bold;">https://testssl.sh/bugs/</span>
+<span style="font-weight:bold;">
+###########################################################</span>
+
+ Using "OpenSSL 1.0.2-chacha (1.0.2k-dev)" [~183 ciphers]
+ on vagrant:./bin/openssl.Linux.x86_64
+ (built: "Jan 18 17:12:17 2019", platform: "linux-x86_64")
+
+
+<span style="font-weight:bold;">Testing all IPv4 addresses (port 443): </span>87.240.190.72 87.240.190.67 87.240.137.158 87.240.139.194 93.186.225.208 87.240.190.78
+-------------------------------------------------------------------------------------------------------------
+<span style="color:white;background-color:black;"> Start 2021-12-07 19:53:08        --&gt;&gt; 87.240.190.72:443 (vk.com) &lt;&lt;--</span>
+
+ Further IP addresses:   87.240.190.78 93.186.225.208 87.240.139.194 87.240.137.158 87.240.190.67 
+ rDNS (87.240.190.72):   srv72-190-240-87.vk.com.
+ Service detected:       HTTP
+
+
+<span style="font-weight:bold;"></span><span style="text-decoration:underline;font-weight:bold;"> Testing vulnerabilities </span>
+
+<span style="font-weight:bold;"> Heartbleed</span> (CVE-2014-0160)                <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>, no heartbeat extension
+<span style="font-weight:bold;"> CCS</span> (CVE-2014-0224)                       <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> Ticketbleed</span> (CVE-2016-9244), experiment.  <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>, no session ticket extension
+<span style="font-weight:bold;"> ROBOT                                     </span><span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> Secure Renegotiation (RFC 5746)           </span><span style="font-weight:bold;color:green;">supported (OK)</span>
+<span style="font-weight:bold;"> Secure Client-Initiated Renegotiation     </span><span style="color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> CRIME, TLS </span>(CVE-2012-4929)                <span style="color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> BREACH</span> (CVE-2013-3587)                    <span style="color:olive;">potentially NOT ok, "gzip deflate" HTTP compression detected.</span> - only supplied "/" tested
+                                           Can be ignored for static pages or if no secrets in the page
+<span style="font-weight:bold;"> POODLE, SSL</span> (CVE-2014-3566)               <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> TLS_FALLBACK_SCSV</span> (RFC 7507)              <span style="color:green;">Downgrade attack prevention supported (OK)</span>
+<span style="font-weight:bold;"> SWEET32</span> (CVE-2016-2183, CVE-2016-6329)    <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> FREAK</span> (CVE-2015-0204)                     <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> DROWN</span> (CVE-2016-0800, CVE-2016-0703)      <span style="font-weight:bold;color:green;">not vulnerable on this host and port (OK)</span>
+                                           make sure you don't use this certificate elsewhere with SSLv2 enabled services
+                                           https://censys.io/ipv4?q=96B8B1CAA44E3CBFD64797C7C7F882BAC91CF33E88723867B48389FF281357CE could help you to find out
+<span style="font-weight:bold;"> LOGJAM</span> (CVE-2015-4000), experimental      <span style="color:green;">not vulnerable (OK):</span> no DH EXPORT ciphers, no common prime detected
+<span style="font-weight:bold;"> BEAST</span> (CVE-2011-3389)                     TLS1: <span style="font-weight:bold;color:olive;">ECDHE-ECDSA-AES128-SHA ECDHE-RSA-AES128-SHA DHE-RSA-AES128-SHA AES128-SHA </span>
+                                           <span style="font-weight:bold;color:olive;">VULNERABLE</span> -- but also supports higher protocols  TLSv1.1 TLSv1.2 (likely mitigated)
+<span style="font-weight:bold;"> LUCKY13</span> (CVE-2013-0169), experimental     potentially <span style="font-weight:bold;color:olive;">VULNERABLE</span>, uses cipher block chaining (CBC) ciphers with TLS. Check patches
+<span style="font-weight:bold;"> Winshock</span> (CVE-2014-6321), experimental    <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> RC4</span> (CVE-2013-2566, CVE-2015-2808)        <span style="color:green;">no RC4 ciphers detected (OK)</span>
+
+
+<span style="color:white;background-color:black;"> Done 2021-12-07 19:53:50 [  48s] --&gt;&gt; 87.240.190.72:443 (vk.com) &lt;&lt;--</span>
+
+-------------------------------------------------------------------------------------------------------------
+<span style="color:white;background-color:black;"> Start 2021-12-07 19:53:50        --&gt;&gt; 87.240.190.67:443 (vk.com) &lt;&lt;--</span>
+
+ Further IP addresses:   87.240.190.78 93.186.225.208 87.240.139.194 87.240.137.158 87.240.190.72 
+ rDNS (87.240.190.67):   srv67-190-240-87.vk.com.
+ Service detected:       HTTP
+
+
+<span style="font-weight:bold;"></span><span style="text-decoration:underline;font-weight:bold;"> Testing vulnerabilities </span>
+
+<span style="font-weight:bold;"> Heartbleed</span> (CVE-2014-0160)                <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>, no heartbeat extension
+<span style="font-weight:bold;"> CCS</span> (CVE-2014-0224)                       <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> Ticketbleed</span> (CVE-2016-9244), experiment.  <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>, no session ticket extension
+<span style="font-weight:bold;"> ROBOT                                     </span><span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> Secure Renegotiation (RFC 5746)           </span><span style="font-weight:bold;color:green;">supported (OK)</span>
+<span style="font-weight:bold;"> Secure Client-Initiated Renegotiation     </span><span style="color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> CRIME, TLS </span>(CVE-2012-4929)                <span style="color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> BREACH</span> (CVE-2013-3587)                    <span style="color:olive;">potentially NOT ok, "gzip deflate" HTTP compression detected.</span> - only supplied "/" tested
+                                           Can be ignored for static pages or if no secrets in the page
+<span style="font-weight:bold;"> POODLE, SSL</span> (CVE-2014-3566)               <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> TLS_FALLBACK_SCSV</span> (RFC 7507)              <span style="color:green;">Downgrade attack prevention supported (OK)</span>
+<span style="font-weight:bold;"> SWEET32</span> (CVE-2016-2183, CVE-2016-6329)    <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> FREAK</span> (CVE-2015-0204)                     <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> DROWN</span> (CVE-2016-0800, CVE-2016-0703)      <span style="font-weight:bold;color:green;">not vulnerable on this host and port (OK)</span>
+                                           make sure you don't use this certificate elsewhere with SSLv2 enabled services
+                                           https://censys.io/ipv4?q=96B8B1CAA44E3CBFD64797C7C7F882BAC91CF33E88723867B48389FF281357CE could help you to find out
+<span style="font-weight:bold;"> LOGJAM</span> (CVE-2015-4000), experimental      <span style="color:green;">not vulnerable (OK):</span> no DH EXPORT ciphers, no common prime detected
+<span style="font-weight:bold;"> BEAST</span> (CVE-2011-3389)                     TLS1: <span style="font-weight:bold;color:olive;">ECDHE-ECDSA-AES128-SHA ECDHE-RSA-AES128-SHA DHE-RSA-AES128-SHA AES128-SHA </span>
+                                           <span style="font-weight:bold;color:olive;">VULNERABLE</span> -- but also supports higher protocols  TLSv1.1 TLSv1.2 (likely mitigated)
+<span style="font-weight:bold;"> LUCKY13</span> (CVE-2013-0169), experimental     potentially <span style="font-weight:bold;color:olive;">VULNERABLE</span>, uses cipher block chaining (CBC) ciphers with TLS. Check patches
+<span style="font-weight:bold;"> Winshock</span> (CVE-2014-6321), experimental    <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> RC4</span> (CVE-2013-2566, CVE-2015-2808)        <span style="color:green;">no RC4 ciphers detected (OK)</span>
+
+
+<span style="color:white;background-color:black;"> Done 2021-12-07 19:54:39 [  97s] --&gt;&gt; 87.240.190.67:443 (vk.com) &lt;&lt;--</span>
+
+-------------------------------------------------------------------------------------------------------------
+<span style="color:white;background-color:black;"> Start 2021-12-07 19:54:39        --&gt;&gt; 87.240.137.158:443 (vk.com) &lt;&lt;--</span>
+
+ Further IP addresses:   87.240.190.78 93.186.225.208 87.240.139.194 87.240.190.67 87.240.190.72 
+ rDNS (87.240.137.158):  srv158-137-240-87.vk.com.
+ Service detected:       HTTP
+
+
+<span style="font-weight:bold;"></span><span style="text-decoration:underline;font-weight:bold;"> Testing vulnerabilities </span>
+
+<span style="font-weight:bold;"> Heartbleed</span> (CVE-2014-0160)                <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>, no heartbeat extension
+<span style="font-weight:bold;"> CCS</span> (CVE-2014-0224)                       <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> Ticketbleed</span> (CVE-2016-9244), experiment.  <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>, no session ticket extension
+<span style="font-weight:bold;"> ROBOT                                     </span><span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> Secure Renegotiation (RFC 5746)           </span><span style="font-weight:bold;color:green;">supported (OK)</span>
+<span style="font-weight:bold;"> Secure Client-Initiated Renegotiation     </span><span style="color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> CRIME, TLS </span>(CVE-2012-4929)                <span style="color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> BREACH</span> (CVE-2013-3587)                    <span style="color:olive;">potentially NOT ok, "gzip deflate" HTTP compression detected.</span> - only supplied "/" tested
+                                           Can be ignored for static pages or if no secrets in the page
+<span style="font-weight:bold;"> POODLE, SSL</span> (CVE-2014-3566)               <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> TLS_FALLBACK_SCSV</span> (RFC 7507)              <span style="color:green;">Downgrade attack prevention supported (OK)</span>
+<span style="font-weight:bold;"> SWEET32</span> (CVE-2016-2183, CVE-2016-6329)    <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> FREAK</span> (CVE-2015-0204)                     <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> DROWN</span> (CVE-2016-0800, CVE-2016-0703)      <span style="font-weight:bold;color:green;">not vulnerable on this host and port (OK)</span>
+                                           make sure you don't use this certificate elsewhere with SSLv2 enabled services
+                                           https://censys.io/ipv4?q=96B8B1CAA44E3CBFD64797C7C7F882BAC91CF33E88723867B48389FF281357CE could help you to find out
+<span style="font-weight:bold;"> LOGJAM</span> (CVE-2015-4000), experimental      <span style="color:green;">not vulnerable (OK):</span> no DH EXPORT ciphers, no common prime detected
+<span style="font-weight:bold;"> BEAST</span> (CVE-2011-3389)                     TLS1: <span style="font-weight:bold;color:olive;">ECDHE-ECDSA-AES128-SHA ECDHE-RSA-AES128-SHA DHE-RSA-AES128-SHA AES128-SHA </span>
+                                           <span style="font-weight:bold;color:olive;">VULNERABLE</span> -- but also supports higher protocols  TLSv1.1 TLSv1.2 (likely mitigated)
+<span style="font-weight:bold;"> LUCKY13</span> (CVE-2013-0169), experimental     potentially <span style="font-weight:bold;color:olive;">VULNERABLE</span>, uses cipher block chaining (CBC) ciphers with TLS. Check patches
+<span style="font-weight:bold;"> Winshock</span> (CVE-2014-6321), experimental    <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> RC4</span> (CVE-2013-2566, CVE-2015-2808)        <span style="color:green;">no RC4 ciphers detected (OK)</span>
+
+
+<span style="color:white;background-color:black;"> Done 2021-12-07 19:55:30 [ 147s] --&gt;&gt; 87.240.137.158:443 (vk.com) &lt;&lt;--</span>
+
+-------------------------------------------------------------------------------------------------------------
+<span style="color:white;background-color:black;"> Start 2021-12-07 19:55:30        --&gt;&gt; 87.240.139.194:443 (vk.com) &lt;&lt;--</span>
+
+ Further IP addresses:   87.240.190.78 93.186.225.208 87.240.137.158 87.240.190.67 87.240.190.72 
+ rDNS (87.240.139.194):  srv194-139-240-87.vk.com.
+ Service detected:       HTTP
+
+
+<span style="font-weight:bold;"></span><span style="text-decoration:underline;font-weight:bold;"> Testing vulnerabilities </span>
+
+<span style="font-weight:bold;"> Heartbleed</span> (CVE-2014-0160)                <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>, no heartbeat extension
+<span style="font-weight:bold;"> CCS</span> (CVE-2014-0224)                       <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> Ticketbleed</span> (CVE-2016-9244), experiment.  <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>, no session ticket extension
+<span style="font-weight:bold;"> ROBOT                                     </span><span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> Secure Renegotiation (RFC 5746)           </span><span style="font-weight:bold;color:green;">supported (OK)</span>
+<span style="font-weight:bold;"> Secure Client-Initiated Renegotiation     </span><span style="color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> CRIME, TLS </span>(CVE-2012-4929)                <span style="color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> BREACH</span> (CVE-2013-3587)                    <span style="color:olive;">potentially NOT ok, "gzip deflate" HTTP compression detected.</span> - only supplied "/" tested
+                                           Can be ignored for static pages or if no secrets in the page
+<span style="font-weight:bold;"> POODLE, SSL</span> (CVE-2014-3566)               <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> TLS_FALLBACK_SCSV</span> (RFC 7507)              <span style="color:green;">Downgrade attack prevention supported (OK)</span>
+<span style="font-weight:bold;"> SWEET32</span> (CVE-2016-2183, CVE-2016-6329)    <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> FREAK</span> (CVE-2015-0204)                     <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> DROWN</span> (CVE-2016-0800, CVE-2016-0703)      <span style="font-weight:bold;color:green;">not vulnerable on this host and port (OK)</span>
+                                           make sure you don't use this certificate elsewhere with SSLv2 enabled services
+                                           https://censys.io/ipv4?q=96B8B1CAA44E3CBFD64797C7C7F882BAC91CF33E88723867B48389FF281357CE could help you to find out
+<span style="font-weight:bold;"> LOGJAM</span> (CVE-2015-4000), experimental      <span style="color:green;">not vulnerable (OK):</span> no DH EXPORT ciphers, no common prime detected
+<span style="font-weight:bold;"> BEAST</span> (CVE-2011-3389)                     TLS1: <span style="font-weight:bold;color:olive;">ECDHE-ECDSA-AES128-SHA ECDHE-RSA-AES128-SHA DHE-RSA-AES128-SHA AES128-SHA </span>
+                                           <span style="font-weight:bold;color:olive;">VULNERABLE</span> -- but also supports higher protocols  TLSv1.1 TLSv1.2 (likely mitigated)
+<span style="font-weight:bold;"> LUCKY13</span> (CVE-2013-0169), experimental     potentially <span style="font-weight:bold;color:olive;">VULNERABLE</span>, uses cipher block chaining (CBC) ciphers with TLS. Check patches
+<span style="font-weight:bold;"> Winshock</span> (CVE-2014-6321), experimental    <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> RC4</span> (CVE-2013-2566, CVE-2015-2808)        <span style="color:green;">no RC4 ciphers detected (OK)</span>
+
+
+<span style="color:white;background-color:black;"> Done 2021-12-07 19:56:21 [ 199s] --&gt;&gt; 87.240.139.194:443 (vk.com) &lt;&lt;--</span>
+
+-------------------------------------------------------------------------------------------------------------
+<span style="color:white;background-color:black;"> Start 2021-12-07 19:56:21        --&gt;&gt; 93.186.225.208:443 (vk.com) &lt;&lt;--</span>
+
+ Further IP addresses:   87.240.190.78 87.240.139.194 87.240.137.158 87.240.190.67 87.240.190.72 
+ rDNS (93.186.225.208):  --
+ Service detected:       HTTP
+
+
+<span style="font-weight:bold;"></span><span style="text-decoration:underline;font-weight:bold;"> Testing vulnerabilities </span>
+
+<span style="font-weight:bold;"> Heartbleed</span> (CVE-2014-0160)                <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>, no heartbeat extension
+<span style="font-weight:bold;"> CCS</span> (CVE-2014-0224)                       <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> Ticketbleed</span> (CVE-2016-9244), experiment.  <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>, no session ticket extension
+<span style="font-weight:bold;"> ROBOT                                     </span><span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> Secure Renegotiation (RFC 5746)           </span><span style="font-weight:bold;color:green;">supported (OK)</span>
+<span style="font-weight:bold;"> Secure Client-Initiated Renegotiation     </span><span style="color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> CRIME, TLS </span>(CVE-2012-4929)                <span style="color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> BREACH</span> (CVE-2013-3587)                    <span style="color:olive;">potentially NOT ok, "gzip deflate" HTTP compression detected.</span> - only supplied "/" tested
+                                           Can be ignored for static pages or if no secrets in the page
+<span style="font-weight:bold;"> POODLE, SSL</span> (CVE-2014-3566)               <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> TLS_FALLBACK_SCSV</span> (RFC 7507)              <span style="color:green;">Downgrade attack prevention supported (OK)</span>
+<span style="font-weight:bold;"> SWEET32</span> (CVE-2016-2183, CVE-2016-6329)    <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> FREAK</span> (CVE-2015-0204)                     <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> DROWN</span> (CVE-2016-0800, CVE-2016-0703)      <span style="font-weight:bold;color:green;">not vulnerable on this host and port (OK)</span>
+                                           make sure you don't use this certificate elsewhere with SSLv2 enabled services
+                                           https://censys.io/ipv4?q=96B8B1CAA44E3CBFD64797C7C7F882BAC91CF33E88723867B48389FF281357CE could help you to find out
+<span style="font-weight:bold;"> LOGJAM</span> (CVE-2015-4000), experimental      <span style="color:green;">not vulnerable (OK):</span> no DH EXPORT ciphers, no common prime detected
+<span style="font-weight:bold;"> BEAST</span> (CVE-2011-3389)                     TLS1: <span style="font-weight:bold;color:olive;">ECDHE-ECDSA-AES128-SHA ECDHE-RSA-AES128-SHA DHE-RSA-AES128-SHA AES128-SHA </span>
+                                           <span style="font-weight:bold;color:olive;">VULNERABLE</span> -- but also supports higher protocols  TLSv1.1 TLSv1.2 (likely mitigated)
+<span style="font-weight:bold;"> LUCKY13</span> (CVE-2013-0169), experimental     potentially <span style="font-weight:bold;color:olive;">VULNERABLE</span>, uses cipher block chaining (CBC) ciphers with TLS. Check patches
+<span style="font-weight:bold;"> Winshock</span> (CVE-2014-6321), experimental    <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> RC4</span> (CVE-2013-2566, CVE-2015-2808)        <span style="color:green;">no RC4 ciphers detected (OK)</span>
+
+
+<span style="color:white;background-color:black;"> Done 2021-12-07 19:57:12 [ 250s] --&gt;&gt; 93.186.225.208:443 (vk.com) &lt;&lt;--</span>
+
+-------------------------------------------------------------------------------------------------------------
+<span style="color:white;background-color:black;"> Start 2021-12-07 19:57:13        --&gt;&gt; 87.240.190.78:443 (vk.com) &lt;&lt;--</span>
+
+ Further IP addresses:   93.186.225.208 87.240.139.194 87.240.137.158 87.240.190.67 87.240.190.72 
+ rDNS (87.240.190.78):   srv78-190-240-87.vk.com.
+ Service detected:       HTTP
+
+
+<span style="font-weight:bold;"></span><span style="text-decoration:underline;font-weight:bold;"> Testing vulnerabilities </span>
+
+<span style="font-weight:bold;"> Heartbleed</span> (CVE-2014-0160)                <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>, no heartbeat extension
+<span style="font-weight:bold;"> CCS</span> (CVE-2014-0224)                       <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> Ticketbleed</span> (CVE-2016-9244), experiment.  <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>, no session ticket extension
+<span style="font-weight:bold;"> ROBOT                                     </span><span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> Secure Renegotiation (RFC 5746)           </span><span style="font-weight:bold;color:green;">supported (OK)</span>
+<span style="font-weight:bold;"> Secure Client-Initiated Renegotiation     </span><span style="color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> CRIME, TLS </span>(CVE-2012-4929)                <span style="color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> BREACH</span> (CVE-2013-3587)                    <span style="color:olive;">potentially NOT ok, "gzip deflate" HTTP compression detected.</span> - only supplied "/" tested
+                                           Can be ignored for static pages or if no secrets in the page
+<span style="font-weight:bold;"> POODLE, SSL</span> (CVE-2014-3566)               <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> TLS_FALLBACK_SCSV</span> (RFC 7507)              <span style="color:green;">Downgrade attack prevention supported (OK)</span>
+<span style="font-weight:bold;"> SWEET32</span> (CVE-2016-2183, CVE-2016-6329)    <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> FREAK</span> (CVE-2015-0204)                     <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> DROWN</span> (CVE-2016-0800, CVE-2016-0703)      <span style="font-weight:bold;color:green;">not vulnerable on this host and port (OK)</span>
+                                           make sure you don't use this certificate elsewhere with SSLv2 enabled services
+                                           https://censys.io/ipv4?q=96B8B1CAA44E3CBFD64797C7C7F882BAC91CF33E88723867B48389FF281357CE could help you to find out
+<span style="font-weight:bold;"> LOGJAM</span> (CVE-2015-4000), experimental      <span style="color:green;">not vulnerable (OK):</span> no DH EXPORT ciphers, no common prime detected
+<span style="font-weight:bold;"> BEAST</span> (CVE-2011-3389)                     TLS1: <span style="font-weight:bold;color:olive;">ECDHE-ECDSA-AES128-SHA ECDHE-RSA-AES128-SHA DHE-RSA-AES128-SHA AES128-SHA </span>
+                                           <span style="font-weight:bold;color:olive;">VULNERABLE</span> -- but also supports higher protocols  TLSv1.1 TLSv1.2 (likely mitigated)
+<span style="font-weight:bold;"> LUCKY13</span> (CVE-2013-0169), experimental     potentially <span style="font-weight:bold;color:olive;">VULNERABLE</span>, uses cipher block chaining (CBC) ciphers with TLS. Check patches
+<span style="font-weight:bold;"> Winshock</span> (CVE-2014-6321), experimental    <span style="font-weight:bold;color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> RC4</span> (CVE-2013-2566, CVE-2015-2808)        <span style="color:green;">no RC4 ciphers detected (OK)</span>
+
+
+<span style="color:white;background-color:black;"> Done 2021-12-07 19:58:04 [ 302s] --&gt;&gt; 87.240.190.78:443 (vk.com) &lt;&lt;--</span>
+
+-------------------------------------------------------------------------------------------------------------
+<span style="font-weight:bold;">Done testing now all IP addresses (on port 443): </span>87.240.190.72 87.240.190.67 87.240.137.158 87.240.139.194 93.186.225.208 87.240.190.78
+
+</pre>
+
+
+</body></html>

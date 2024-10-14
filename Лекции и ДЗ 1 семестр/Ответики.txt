@@ -1,0 +1,67 @@
+1.Найдите полный хеш и комментарий коммита, хеш которого начинается на aefea
+
+полный хэш: aefead2207ef7e2aa5dc81a34aedf0cad4c32545
+Комментарий: Update CHANGELOG.md
+
+Найти помогла команда git show c параметром aefea
+
+2.Какому тегу соответствует коммит 85024d3
+сокращенный хэш коммита 85024d3 соответвтвует хэшу 85024d3100126de36331c6982bfaac02cdab9e76 (tag: v0.12.23)
+тег коммита 85024d3 v0.12.23
+
+
+3.Сколько родителей у коммита b8d720? Напишите их хеши.
+2 родителя:
+commit 56cd7859e05c36c06b56d013b55a252d0bb7e158
+commit 9ea88f22fc6269854151c571162c5bcf958bee2b
+Помогли команды git show b8d720^1, git show b8d720^2 и git show b8d720^3. предка 3 не удалось найти, на команду git show b8d720^3 гит вернул сообщение, что такой части нет в рабочем дереве
+
+4.Перечислите хеши и комментарии всех коммитов которые были сделаны между тегами v0.12.23 и v0.12.24
+их много:
+33ff1c03b (tag: v0.12.24) v0.12.24
+b14b74c49 [Website] vmc provider links
+3f235065b Update CHANGELOG.md
+6ae64e247 registry: Fix panic when server is unreachable
+5c619ca1b website: Remove links to the getting started guide's old location
+06275647e Update CHANGELOG.md
+d5f9411f5 command: Fix bug when using terraform login on Windows
+4b6d06cc5 Update CHANGELOG.md
+dd01a3507 Update CHANGELOG.md
+225466bc3 Cleanup after v0.12.23 release
+
+Команда git log v0.12.23..v0.12.24 --oneline помогла ответить на этот вопрос. включить хэш коммита с тэгом v0.12.23 можно увеличив диапазон: v0.12.22..v0.12.24 
+
+5. Найдите коммит в котором была создана функция func providerSource, ее определение в коде выглядит так func providerSource(...) (вместо троеточего перечислены аргументы)
+Ответ:
+Коммите 8c928e835 main: Consult local directories as potential mirrors of providers
+
+Помогла команда  git log -S'providerSource(' --oneline
+затем git show 8c928e8358.
+в коммите было указание на добавление функции:
++func providerSource(services *disco.Disco) getproviders.Source {
+
+
+6.Найдите все коммиты в которых была изменена функция globalPluginDirs
+вот эти коммиты:
+35a058fb3 main: configure credentials from the CLI config file
+c0b176109 prevent log output during init
+8364383c3 Push plugin discovery down into command package
+
+Для поиска коммитов воспользовался командой git log -S'globalPluginDirs' --oneline
+
+
+7. Кто автор функции synchronizedWriters?
+Команда git log -S'synchronizedWriters' --oneline показала 3 коммита.
+посмотрели первый коммит, в котором упоминалась функция synchronizedWriters git show 5ac311e2a и обнаружили автором коммита  Martin Atkins <mart@degeneration.co.uk>
+
+
+
+
+
+
+
+
+
+
+
+

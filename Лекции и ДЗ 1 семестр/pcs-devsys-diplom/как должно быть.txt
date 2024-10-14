@@ -1,0 +1,81 @@
+Инструкция
+cat www.example.com.crt bundle.crt > www.example.com.chained.crt
+
+из телеги
+$ cat vault.example.com.crt | jq -r .data.certificate > vault.example.com.crt.pem
+$ cat vault.example.com.crt | jq -r .data.issuing_ca >> vault.example.com.crt.pem
+cat /etc/ssl/test.netology.ru.crt | jq -r '.data.ca_chain | [ ]' >> /etc/ssl/test.netology.ru.crt.pem
+
+$ cat vault.example.com.crt | jq -r .data.private_key > vault.example.com.crt.key
+2 января номр обсуждение. посоветовали hosts поменять
+
+
+7января: 
+
+cat /etc/ssl/test.netology.ru.crt | jq -r '.data.certificate' > /etc/ssl/test.netology.ru.crt.pem
+cat /etc/ssl/test.netology.ru.crt | jq -r '.data.ca_chain[ ]' >> /etc/ssl/test.netology.ru.crt.pem
+cat /etc/ssl/test.netology.ru.crt | jq -r '.data.private_key' > /etc/ssl/test.netology.ru.crt.key
+
+
+у меня при этом сайт test.netology.ru
+cat pki_int/issue/netology-dot-ru
+
+также 2 января:
+
+
+Sergey Belov, [02.01.2022 20:05]
+[В ответ на Vitaly]
+дошел до той же проблемы
+удалось вам решить ее, Виталий?
+вроде переменные экспортирую прямо в начале скрипта каждый раз
+
+Vitaly, [02.01.2022 21:19]
+[В ответ на Sergey Belov]
+Как я понял там пути не прописаны, поэтому к волту обращался через api, а к крону по полному пути
+
+Dmitry, [02.01.2022 21:23]
+[В ответ на Sergey Belov]
+В начале скрипта нужно задать переменные
+
+Sergey Belov, [02.01.2022 21:24]
+[В ответ на Dmitry]
+я сейчас делаю это так
+
+export VAULT_ADDR=http://127.0.0.1:8200
+export VAULT_TOKEN=root
+
+или вы имеете в виду еще какие-то переменные?..
+
+Dmitry, [02.01.2022 21:27]
+Он у вас скорее всего выдаёт что сертификат на листнере не имеет ip sans
+
+Dmitry, [02.01.2022 21:27]
+export VAULT_ADDR='https://localhost:8200'
+export VAULT_TOKEN='token'
+
+Dmitry, [02.01.2022 21:27]
+Так попробуйте
+
+Sergey Belov, [02.01.2022 21:27]
+[В ответ на Dmitry]
+вообще, отрабатывает без ошибок =) просто не обновляет сертификат
+
+Vitaly, [02.01.2022 21:27]
+А я тупо курлом в апи постучался... по сути команда волт делает то же самое
+
+Vitaly, [02.01.2022 21:27]
+curl \ --header "X-Vault-Token: root" \ --request POST \ --data @payload.json \ http://127.0.0.1:8200/v1/pki_int/issue/mycompany-dot-xyz > mycompany.xyz.keys.json
+
+
+
+10 января:
+Aleksei Iarin, [10.01.2022 18:54]
+[В ответ на Alexandr Myagkikh]
+Получилось))) Но реально, без ошибок я настроил домен с поддоменом vault.sample.com и все прошло отлично. Не пойму тольео одно, почему при выпуске сертификата для домена принимает только с поддоменом, просто example.com не принимает.
+
+Aleksei Iarin, [10.01.2022 19:02]
+vault write -format=json pki_int_ca/issue/example-dot-com-server \ common_name="vault.example.com"
+
+Vitaly, [10.01.2022 23:38]
+[В ответ на Aleksei Iarin]
+При создании роли добавь параметр allow_bare_domains=true тогда можно будет и для домена

@@ -1,0 +1,69 @@
+docker pull postgres
+root@make-lptp:/home/mike/PycharmProjects/devops-netology/06-db-02-sql# docker pull postgres:12-alpine
+
+docker run -it -v /home/mike/devops/06-db-02-sql/database:/media/database -v /home/mike/devops/06-db-02-sql/backup:/media/database/backup  7461e2b092df bash
+
+Для инициализации кластера баз данных применяется команда initdb. Расположение кластера в файловой системе задаётся параметром -D, например:
+
+$ initdb -D /media/databse/data
+
+
+выполняем задание 2
+psql -U test
+create user test_admin_user;
+create database test_db;
+create table orders (id serial primary key, Наименование varchar, Цена integer);
+create table clients (id serial primary key, фамилия varchar, "страна проживания" varchar, заказ serial references orders (id));
+create index "страна проживания" on clients ("страна проживания");
+
+grant all on orders to test_admin_user;
+grant all on clients to test_admin_user;
+creat euser test_simple_user;
+grant SELECT,INSERT,UPDATE,DELETE on orders to test_simple_user;
+grant SELECT,INSERT,UPDATE,DELETE on clients to test_simple_user;
+\list;
+\connect test_db;
+\dt;
+список пользователей select username from pg_shadow; но нужно из БД: 
+select * from test_db;
+
+Задание 3 операции с данными
+#insert into orders (Наименование) values (Шоколад, Принтер, Книга, Монитор, Гитара);
+#insert into orders (Цена) values (10, 3000, 500, 7000, 4000);
+#insert into clients (фамилия) values (Иванов Иван Иванович, Петров Петр Петрович, Иоганн Себастьян Бах, Ронни Джеймс Дио, Ritchie Blackmore);
+#insert into clients (Срана проживания) values (USA, Canada, Japan, Russia, Russia);
+
+insert into orders (Наименование, Цена) values (Шоколад, 10), (Принтер, 3000) (Книга, 500), (Монитор, 7000) (Гитара, 4000);
+insert into clients (фамилия, "страна проживания") values ('Иванов Иван Иванович', 'USA'), ('Петров Петр Петрович', 'Canada'), ('Иоганн Себастьян Бах', 'Japan'), ('Ронни Джеймс Дио', 'Russia'), ('Ritchie Blackmore', 'Russia');
+
+
+#select* from test-db;
+SELECT table_catalog, table_schema, table_name, privilege_type
+FROM information_schema.table_privileges
+WHERE grantee = 'test_admin_user';
+
+Select column id from orders;
+Select column id from clients;
+
+Задание 4
+
+
+
+Задание 5
+
+
+
+Задание 6
+
+
+
+pg_dump -U test-admin-user test_db > /media/database/backup/test_db.bkp
+
+docker cp e56335ceec64:/var/lib/postgresql /home/mike/devops/06-db-02-sql/db
+
+
+docker run -it -v /home/mike/devops/06-db-02-sql/database:/media/database -v /home/mike/devops/06-db-02-sql/backup:/media/database/backup -v /home/mike/devops/06-db-02-sql/db:/var/lib/postgresql postgres:12 bash
+
+
+
+docker run -it -v /home/mike/devops/06-db-02-sql/database:/media/database -v /home/mike/devops/06-db-02-sql/backup:/media/database/backup -v /home/mike/devops/06-db-02-sql/db:/var/lib/postgresql postgres:12 bash
